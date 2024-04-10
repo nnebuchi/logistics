@@ -89,26 +89,12 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 
     public function account()
     {
-        return $this->belongsTo(
-            Account::class, 
-            "account_id"
-        );
+        return $this->belongsTo(Account::class, "account_id");
     }
 
     public function wallet()
     {
-        return $this->hasOne(
-            Wallet::class, 
-            "user_id"
-        );
-    }
-
-    public function transactions()
-    {
-        return $this->hasMany(
-            Transaction::class, 
-            "user_id"
-        );
+        return $this->hasOne(Wallet::class, "user_id");
     }
 
     /*public function shipments()

@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Dashboard</h5>
+                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipment</h5>
                         <div class="d-flex">
                             <a href="{{url('/users')}}" class="btn btn-primary mr-2">
                                 <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
@@ -17,53 +17,6 @@
                         </div>
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-xl-4 col-lg-4 col-md-4" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <div class="mb-2 reload-wallet" type="button" data-type="balance">
-                                        <img src="{{asset('assets/images/icons/reload.svg')}}">
-                                    </div>
-                                    <span>Curent Wallet Balance</span>
-                                    <h2 class="balance"></h2>
-                                    <span class="text-sec">Last updated: 12/03/2024</span>
-                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
-                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
-                                    </div>
-                                </div>
-                                <div class=" pr-2">
-                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <div class="mb-2 reload-wallet" type="button" data-type="all-funding">
-                                        <img src="{{asset('assets/images/icons/reload.svg')}}">
-                                    </div>
-                                    <span>All-time Funding</span>
-                                    <h2 class="balance"></h2>
-                                    <span class="text-sec">Last updated: 12/03/2024</span>
-                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
-                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
-                                    </div>
-                                </div>
-                                <div class=" pr-2">
-                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <span>Wallet Account Details</span>
-                                    <h2 class="balance"></h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="row mt-5">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
@@ -71,6 +24,9 @@
                                     <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
                                         <h5 class="card-title fw-semibold">Recent Shipments</h5>
                                         <div class="d-flex flex-wrap">
+                                            <a class="btn btn-light btn-light-active mr-2 mb-3 period" data-filter="all">
+                                                All
+                                            </a>
                                             <a class="btn btn-light mr-2 mb-3 period" data-filter="today">
                                                 Today
                                             </a>
@@ -82,10 +38,6 @@
                                             </a>
                                             <a class="btn btn-light mr-2 mb-3 period" data-filter="year">
                                                 This Year
-                                            </a>
-                                            <a class="btn" href="/">
-                                                See All
-                                                <img src="{{asset('assets/images/icons/move-right.svg')}}" />
                                             </a>
                                         </div>
                                     </div>
@@ -243,7 +195,6 @@
 
     $(".period").on("click", function(event){
         event.preventDefault();
-        $(this).html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
         $(".period").removeClass("btn-light-active");
         $(this).addClass("btn-light-active");
         let filter = $(this).data("filter");

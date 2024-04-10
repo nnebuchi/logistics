@@ -143,7 +143,7 @@
                 toast(message);
                 btn.attr("disabled", false).text("Sign In");
                 // Add User Auth Bearer Token To Local Storage
-                localStorage.setItem('userToken', response.data.results.user.token);
+                localStorage.setItem('token', response.data.results.user.token);
                 window.location.href = response.data.results.redirect;
             })
             .catch(function(error){

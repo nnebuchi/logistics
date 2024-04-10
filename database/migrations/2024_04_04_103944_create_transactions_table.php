@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            //$table->unsignedBigInteger('shipping_id');
-            //$table->string('channel')->nullable();
-            $table->integer('amount');
+            $table->unsignedBigInteger('wallet_id');
+            $table->foreign('wallet_id')->references('id')->on('wallets')->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
             $table->enum('type', ['Debit', 'Credit']);
             $table->enum('status', [
                 'pending', 
                 'success', 
                 'failed'
             ])->default('pending');
+            $table->string('purpose');
             $table->string('reference')->unique();
             $table->boolean('verified')->default(0);
             $table->timestamps();

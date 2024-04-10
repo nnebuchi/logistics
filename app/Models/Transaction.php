@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Transaction extends Model
 {
     use HasFactory;
-    use BelongsToUser;
 
     protected $fillable = [
-        "user_id",
         "wallet_id",
+        "purpose",
         "amount",
         "type",
         "status",
@@ -27,7 +25,7 @@ class Transaction extends Model
     {
         return Attribute::make(
             //get: fn ($value) => Carbon::parse($value)->format('M j, Y g:ia')
-            get: fn ($value) => Carbon::parse($value)->toFormattedDateString(),
+            get: fn ($value) => Carbon::parse($value)->format('d/m/y'),
             set: fn ($value) => $value
         );
     }
@@ -42,9 +40,11 @@ class Transaction extends Model
 
     public function shipments()
     {
-        return $this->hasOne(
-            Shipping::class, 
-            "transaction_id"
-        );
+        return $this->hasOne(Shipping::class, "transaction_id");
+    }
+
+    public function wallet()
+    {
+        return $this->belongsTo(Wallet::class, "wallet_id");
     }
 }

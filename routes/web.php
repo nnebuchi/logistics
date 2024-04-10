@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\WalletController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::group(['middleware' => ['guest']], function () {
@@ -42,9 +44,10 @@ Route::group([
 ], function () {
     Route::get('/logout', [AuthController::class, 'logOut']);
 
-    Route::get('/', function () {
-        return view('admin.index');
-    });
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/shipments', [UserController::class, 'showShipments']);
+    Route::get('/wallet', [WalletController::class, 'index']);
+    Route::post('/wallet/create-transaction', [WalletController::class, 'createTransaction']);
 
     Route::get('/admin/transactions', function() {
         return view('transactions.transactions', ["transactions"=> []]);

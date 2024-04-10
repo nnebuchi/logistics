@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<base href="{{url('')}}">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+		<meta name="csrf-token" content="{{csrf_token()}}">
+		<meta name="base-url" content="{{url('')}}">
+
+		<meta name="theme-color" content="" />
+  		<meta name="apple-mobile-web-app-status-bar-style" content="" />
+		<title>Ziga-Afrika Logistics</title>
+		<link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
+		<link rel="stylesheet" href="{{asset('assets/libs/magnificpopup/magnific-popup.css')}}" />
+		<link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
+		<link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
+		<link rel="stylesheet" href="{{asset('assets/css/main.css')}}" />
+		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
+		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+		<?php date_default_timezone_set("Africa/Lagos"); ?>
+	</head>
+	<body>
+		<!--  Body Wrapper -->
+		<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+			data-sidebar-position="fixed" data-header-position="fixed">
+			<!-- Sidebar Start -->
+			<aside class="left-sidebar">
+				<!-- Sidebar scroll-->
+				<div style="background-image: linear-gradient(to right, #4F659C, #233E83);">
+					<div class="brand-logo d-flex align-items-center justify-content-between">
+						<a href="{{url('/')}}" class="text-nowrap logo-img">
+							<img src="{{asset('assets/images/logos/ziga-blue2.svg')}}" width="180" alt="" />
+						</a>
+						<div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+							<i class="ti ti-x fs-8"></i>
+						</div>
+					</div>
+					<!-- Sidebar navigation-->
+					<nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+						<ul id="sidebarnav">
+							<li class="nav-small-cap">
+								<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+								<span class="hide-menu">Home</span>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/circle-gauge.svg')}}" />
+									</span>
+									<span class="hide-menu">Dashboard</span>
+								</a>
+							</li>
+							<li class="nav-small-cap">
+								<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+								<span class="hide-menu">UI COMPONENTS</span>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/shipments')}}" aria-expanded="false">
+									<span>
+										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
+									</span>
+									<span class="hide-menu">Shipment</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/wallet')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/wallet.svg')}}" />
+									</span>
+									<span class="hide-menu">Wallet</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/subadmins')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/settings.svg')}}" />
+									</span>
+									<span class="hide-menu">Settings</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/logout')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/logout.svg')}}" />
+									</span>
+									<span class="hide-menu">Logout</span>
+								</a>
+							</li>
+						</ul>
+						<div class="unlimited-access hide-menu mb-7 mt-5">
+							<div class="">
+								<h6 class="fs-2 text-center">Copyright &copy; 2024</h6>
+								<h6 class="fs-2 text-center">Ziga Afrika All Rights Reserved</h6>
+							</div>
+						</div>
+						
+					</nav>
+					<!-- End Sidebar navigation -->
+				</div>
+				<!-- End Sidebar scroll-->
+			</aside>
+
+			
+			<!--  Sidebar End -->
+			<!--  Main wrapper -->
+			<div class="body-wrapper">
+				<!--  Header Start -->
+				<header class="app-header">
+					<nav class="navbar navbar-expand-lg navbar-light">
+						<ul class="navbar-nav">
+							<li class="nav-item d-block d-xl-none">
+								<a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+									<i class="ti ti-menu-2"></i>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link nav-icon-hover" href="javascript:void(0)">
+									<i class="ti ti-bell-ringing"></i>
+									<div class="notification bg-primary rounded-circle"></div>
+								</a>
+							</li>
+						</ul>
+						<div class="d-flex align-items-center justify-content-between w-100">
+							<h5 class="m-0">Welcome <?=$user->firstname?>!👋</h5>
+							<div class="d-flex">
+								<div class="d-flex align-items-center">
+									<img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="" width="35" height="35" class="rounded-circle mr-2">
+									<div class="d-flex flex-column justify-content-center p-0">
+										<h6 class="m-0 p-0 mb-1"><?=$user->firstname." ".$user->lastname?></h6>
+										<p class="m-0 p-0"><?=$user->email?></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--<div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+							<ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+								<li class="nav-item dropdown">
+									<a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+										aria-expanded="false">
+										<img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="" width="35" height="35" class="rounded-circle">
+									</a>
+									<div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+										<div class="message-body">
+											<a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+												<i class="ti ti-user fs-6"></i>
+												<p class="mb-0 fs-3">My Profile</p>
+											</a>
+											<a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+												<i class="ti ti-mail fs-6"></i>
+												<p class="mb-0 fs-3">My Account</p>
+											</a>
+											<a href="{{url('/subadmin')}}" class="d-flex align-items-center gap-2 dropdown-item">
+												<i class="ti ti-mail fs-6"></i>
+												<p class="mb-0 fs-3">Add Subadmin</p>
+											</a>
+											<button 
+											class="d-flex align-items-center gap-2 dropdown-item"
+											type="button" data-toggle="modal" data-target="#changePasswordModal">
+												<i class="ti ti-list-check fs-6"></i>
+												<p class="mb-0 fs-3">Change Password</p>
+											</button>
+											<a href="{{url('/logout')}}" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>-->
+					</nav>
+				</header>
+				<!--  Header End -->
+			
+		
