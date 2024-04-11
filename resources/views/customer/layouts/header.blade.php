@@ -59,7 +59,7 @@
 									<span>
 										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
-									<span class="hide-menu">Shipment</span>
+									<span class="hide-menu">Shipping</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
@@ -71,11 +71,11 @@
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/subadmins')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/profile')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/settings.svg')}}" />
+										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
-									<span class="hide-menu">Settings</span>
+									<span class="hide-menu">Profile</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
@@ -121,11 +121,11 @@
 							</li>
 						</ul>
 						<div class="d-flex align-items-center justify-content-between w-100">
-							<h5 class="m-0">Welcome <?=$user->firstname?>!👋</h5>
+							<h5 class="m-0 welcome-text">Welcome <?=$user->firstname?>!👋</h5>
 							<div class="d-flex">
 								<div class="d-flex align-items-center">
 									<img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="" width="35" height="35" class="rounded-circle mr-2">
-									<div class="d-flex flex-column justify-content-center p-0">
+									<div class="d-flex flex-column justify-content-center p-0 user-details">
 										<h6 class="m-0 p-0 mb-1"><?=$user->firstname." ".$user->lastname?></h6>
 										<p class="m-0 p-0"><?=$user->email?></p>
 									</div>

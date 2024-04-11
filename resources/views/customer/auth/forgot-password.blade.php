@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/user/dashboard.css')}}" />
+        <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
         <?php date_default_timezone_set("Africa/Lagos"); ?>
     </head>
     <style>
@@ -50,33 +50,37 @@
                                 <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
                             </a>
                         </div>
-                        <h4>Reset Password</h4>
-                        <form id="forgot-pwd" action="{{url('/forgot-password')}}" method="POST">
-                            @csrf
-                            <p class="message text-center"></p>
-                            <div class="">
-                                <label for="email" class="custom-input-label">Email</label>
-                                <div class="d-flex position-relative input-box">
-                                    <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
-                                    <input 
-                                    type="email" 
-                                    id="email"
-                                    name="email"
-                                    placeholder="Email"
-                                    class="custom-input" />
-                                </div>
-                                <span class="error"> </span>
-                            </div>
+                        <div class="row justify-content-center">
+                            <div class="col-xl-8 col-lg-10 col-md-12 col-sm-8">
+                                <h4>Reset Password</h4>
+                                <form id="forgot-pwd" action="{{url('/forgot-password')}}" method="POST">
+                                    @csrf
+                                    <p class="message text-center"></p>
+                                    <div class="">
+                                        <label for="email" class="custom-input-label">Email</label>
+                                        <div class="d-flex position-relative input-box">
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
+                                            <input 
+                                            type="email" 
+                                            id="email"
+                                            name="email"
+                                            placeholder="Email"
+                                            class="custom-input" />
+                                        </div>
+                                        <span class="error"> </span>
+                                    </div>
 
-                            <div class="d-flex justify-content-center mt-4">
-                                <button 
-                                type="submit" 
-                                class="custom-btn fs-4 mb-2">
-                                Submit <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
-                                </button>
+                                    <div class="d-flex justify-content-center mt-4">
+                                        <button 
+                                        type="submit" 
+                                        class="custom-btn fs-4 mb-2">
+                                        Submit <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        </button>
+                                    </div>
+                                    <h5 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary fw-bold">Login</a></h5>
+                                </form>
                             </div>
-                            <p style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary">Login</a></p>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,29 +104,32 @@
 
             $('.error').text('');
             $('.message').text('');
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            };
-            axios.post(url, inputs, config)
-            .then(function(response){
-                let message = response.data.message;
-                $(".message").css("color", "green").text(message);
-                toast(message);
-                btn.attr("disabled", false).text("Submit");
-            })
-            .catch(function(error){
-                let errors = error.response.data.error;
-                if(errors.email){
-                    $('.error').eq(0).text(errors.email);
-                }
-    
-                btn.attr("disabled", false).text("Submit");
-            });
+            // Append loader immediately
+            setTimeout(() => {
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                };
+                axios.post(url, inputs, config)
+                .then(function(response){
+                    let message = response.data.message;
+                    $(".message").css("color", "green").text(message);
+                    toast(message);
+                    btn.attr("disabled", false).text("Submit");
+                })
+                .catch(function(error){
+                    let errors = error.response.data.error;
+                    if(errors.email){
+                        $('.error').eq(0).text(errors.email);
+                    }
+        
+                    btn.attr("disabled", false).text("Submit");
+                });
+            }, 100); // Delay submission by 100 milliseconds
         });
 
         function toast(message){
