@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Util\ResponseFormatter;
 
 class UserController extends Controller
 {
@@ -17,6 +18,20 @@ class UserController extends Controller
         //$shipments = $transactions->shipments;
 
         return view('customer.index', compact('user'/*, 'wallet', 'transactions', 'shipments'*/));
+    }
+
+    public function getDashboardData()
+    {
+        $user = User::find(Auth::user()->id);
+        $wallet = $user->wallet;
+        $totalCredit = $wallet->transactions()
+        ->where(['type' => 'Credit', 'status' => 'success'])->sum('amount');
+        
+        $data = [
+            "wallet" => $wallet,
+            "totalCredit" => $totalCredit
+        ];
+        return ResponseFormatter::success("Dashboard Data:", $data, 200); 
     }
 
     public function showShipments()

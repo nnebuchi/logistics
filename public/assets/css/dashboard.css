@@ -845,3 +845,33 @@ span.error, span.message{
         transform: rotate(360deg);
     }
 }
+
+.trx-filter{
+    padding: 10px 20px;
+    border: 1px solid rgba(35, 62, 131, 0.05);
+    border-radius: 10px;
+    background-color: #233E830D;
+    color: rgba(30, 30, 30, 0.5); 
+    width: 220px;
+}
+#trx-status{
+    padding: 10px 20px;
+    border: 1px solid rgba(35, 62, 131, 0.05);
+    border-radius: 10px;
+    background-color: #233E830D;
+    color: rgba(30, 30, 30, 0.5); 
+    width: 220px;
+}
+select#trx-status option {
+    background-color: #F79D1D33;
+    color: black; /* Optionally change text color */
+}
+.trx-filter-dropdown-menu{
+    width: 220px;
+    padding-top:0;
+    padding-bottom: 0; 
+}
+.trx-filter-dropdown-menu .dropdown-item:hover,
+.trx-filter-dropdown-menu .dropdown-item:active{
+    background-color: #F4F5F9;
+}
