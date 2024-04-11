@@ -182,7 +182,6 @@
                 password: $("#password").val(),
                 account_type: $("#account_type").val()
             };
-            alert(JSON.stringify(inputs));
 
             $('.error').text('');
             $('.message').text('');
@@ -200,7 +199,7 @@
                 $(".message").css("color", "green").text(message);
                 toast(message);
                 btn.attr("disabled", false).text("Sign Up");
-                //window.location.href = response.data.results.redirect;
+                window.location.href = response.data.results;
             })
             .catch(function(error){
                 let errors = error.response.data.error;

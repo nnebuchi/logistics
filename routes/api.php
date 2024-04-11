@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\WalletController;
+use App\Http\Controllers\User\TransactionController;
 
 Route::get('/', function () {
     return [
@@ -18,6 +20,8 @@ Route::get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('/user/wallet', [WalletController::class, 'getWallet']);
+        Route::get('/user/dashboard-data', [UserController::class, 'getDashboardData']);
+        Route::get('/transactions', [TransactionController::class, 'filter']);
     });
 });
 

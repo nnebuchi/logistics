@@ -74,12 +74,6 @@ class WalletController extends Controller
         return ResponseFormatter::success("Payment Data:", $data, 200); 
     }
 
-    public function spark(){
-        $totalCredit = $wallet->transactions()->where('type', 'Credit')->sum('amount');
-        $totalDebit = $wallet->transactions()->where('type', 'Debit')->sum('amount');
-        $totalBalance = $totalCredit - $totalDebit;
-    }
-
     public function fundWallet(Request $request)
     {
         $reference = $request["reference"];

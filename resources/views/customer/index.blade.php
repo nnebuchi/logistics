@@ -26,7 +26,7 @@
                                     </div>
                                     <span>Curent Wallet Balance</span>
                                     <h2 class="balance"></h2>
-                                    <span class="text-sec">Last updated: 12/03/2024</span>
+                                    <span class="text-sec"></span>
                                     <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
                                         <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
                                     </div>
@@ -44,7 +44,7 @@
                                     </div>
                                     <span>All-time Funding</span>
                                     <h2 class="balance"></h2>
-                                    <span class="text-sec">Last updated: 12/03/2024</span>
+                                    <span class="text-sec"></span>
                                     <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
                                         <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
                                     </div>
@@ -123,12 +123,6 @@
                         </div>
                     </div>
 
-                    <div class="d-none">
-                        <audio id="mySound" controls>
-                            <source src="{{asset('assets/tunes/possuccess.mp3')}}" type="audio/mp3">
-                        </audio>
-                    </div>
-
                     @include('customer.modals.broadcast-modal')
                     @include('customer.modals.change-password-modal')
                 </div>
@@ -150,16 +144,24 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var authToken = localStorage.getItem('userToken');
+    var userToken = localStorage.getItem('token');
 
     function fetchWallet(){
-        axios.get(`${baseUrl}/api/statistics`)
-        axios.get(`${baseUrl}/api`)
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.get(`${baseUrl}/api/v1/user/dashboard-data`, config)
         .then((res) => {
-            let data = res.data.results;
-            $(".balance").eq(0).text("₦"+parseInt(75000).toLocaleString());
-            $(".balance").eq(1).text("₦"+parseInt(350000).toLocaleString());
-            $(".balance").eq(2).text("₦"+parseInt(325000).toLocaleString());
+            let results = res.data.results;
+            $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
+            $(".balance").eq(0).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
+            $(".balance").eq(1).text("₦"+parseInt(results?.totalCredit).toLocaleString());
+            $(".balance").eq(1).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
+            //$(".balance").eq(2).text("₦"+parseInt(325000).toLocaleString());
         });
     };
     fetchWallet();
@@ -226,19 +228,10 @@
     };
     fetchAllShipments();
 
-    function sound() {
-        let audio = document.getElementById("mySound");
-        if(audio.paused || audio.ended){
-            audio.play();
-        }
-    };
-    sound();
-
     $(".reload-wallet").on("click", function(event){
         event.preventDefault();
         let type = $(this).data("type");
         alert(type);
-        //sound();
     });
 
     $(".period").on("click", function(event){

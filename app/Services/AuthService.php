@@ -34,6 +34,8 @@ class AuthService
                 'password' => $data['password'],
                 'account_id' => $account->id
             ]);    
+
+            $user->wallet()->create();
             
             event(new Registered($user));
 
@@ -43,7 +45,7 @@ class AuthService
         });
         return ResponseFormatter::success(
             "Registration Successful, Please verify your email!", 
-        $result->email, 201);
+        url("/email/verify"), 201);
     }
 
     public function login($data){

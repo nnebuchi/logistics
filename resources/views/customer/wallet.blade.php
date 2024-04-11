@@ -20,7 +20,7 @@
                                     </div>
                                     <span>Curent Wallet Balance</span>
                                     <h2 class="balance"></h2>
-                                    <span class="text-sec">Last updated: 12/03/2024</span>
+                                    <span class="text-sec"></span>
                                     <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
                                         <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
                                     </div>
@@ -50,15 +50,33 @@
                                 <div class="card-body p-0">
                                     <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
                                         <h5 class="card-title fw-semibold">Transaction History</h5>
-                                        <div class="d-flex flex-wrap">
-                                            <select 
-                                            name="transaction-filter"
-                                            class="form-control btn btn-light">
-                                                <option value="">Filtered by: Date</option>
-                                                <option value="">Debit</option>
-                                                <option value="">Credit</option>
-                                                <option value="">Status</option>
-                                            </select>
+                                        <div class="" style="border:2px solid transparent;">
+                                            <div class="dropdown">
+                                                <button class="dropdown-toggle trx-filter d-flex justify-content-between align-items-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <div>
+                                                        Filter by: <span></span>
+                                                    </div>
+                                                    <img src="{{asset('assets/images/icons/reload.svg')}}">
+                                                </button>
+                                                <div class="dropdown-menu trx-filter-dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item" data-key="date" data-value="Date">Date</a>
+                                                    <a class="dropdown-item" data-key="type" data-value="Debit">Debit</a>
+                                                    <a class="dropdown-item" data-key="type" data-value="Credit">Credit</a>
+                                                    <a class="dropdown-item status-dropdown-toggle" data-key="status" data-value="Status">Status</a>
+                                                    <div class="dropdown-menu status-dropdown-menu">
+                                                        <a class="dropdown-item" data-key="status" data-value="Pending">Pending</a>
+                                                        <a class="dropdown-item" data-key="status" data-value="Completed">Completed</a>
+                                                        <a class="dropdown-item" data-key="status" data-value="Failed">Failed</a>
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                            <div class="mt-3">
+                                                <select name="status" id="trx-status">
+                                                    <option value="success">Successful</option>
+                                                    <option value="pending">Pending</option>
+                                                    <option value="failed">Failed</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -133,6 +151,7 @@
         .then((res) => {
             let data = res.data.results;
             $(".balance").eq(0).text("₦"+parseInt(data.wallet?.balance).toLocaleString());
+            $(".balance").eq(0).next("span.text-sec").text("Last updated: "+data?.wallet.updated_at);
             fetchAllTransactions(data?.transactions);
         });
     };
@@ -146,8 +165,8 @@
 
     const rowColors = {failed: "#ffffff", success: "#233E830D", pending: "#ffffff"};
 
-    function fetchAllTransactions(data){
-        let transactions = data.slice(0, 10);
+    function fetchAllTransactions(transactions){
+        //let transactions = data.slice(0, 10);
 
         $(".transactions-table tbody").empty();
         transactions.forEach(function(transaction, index){
@@ -187,15 +206,6 @@
         event.preventDefault();
         //$(this).find("img").addClass("reload-wallet-active");
         fetchWallet();
-    });
-
-    $(".period").on("click", function(event){
-        event.preventDefault();
-        $(this).html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
-        $(".period").removeClass("btn-light-active");
-        $(this).addClass("btn-light-active");
-        let filter = $(this).data("filter");
-        //$(".transactions-table tbody").empty();
     });
 </script>
 <script src="https://js.paystack.co/v1/inline.js"></script>
@@ -278,6 +288,38 @@
         } else {
             $submitButton.prop('disabled', true); //If the value is not greater than 2000, disable the button
         }
+    });
+
+    $(".trx-filter-dropdown-menu .dropdown-item").click(function(){
+        var value = $(this).data("value");
+        var key = $(this).data("key");
+        $(".trx-filter div span").text(value);
+        //$(".dropdown-menu").removeClass("show");  //Hide the dropdown menu
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.get(
+            `${baseUrl}/api/v1/transactions?${key}=${value}`, 
+            config
+        ).then((res) => {
+            let transactions = res.data.results;
+            console.log(transactions);
+            fetchAllTransactions(transactions);
+        });
+    })
+
+    $(document).ready(function() {
+        $('.dropdown-menu .dropdown-item').click(function(e) {
+            //e.stopPropagation(); // Prevent event from bubbling up to parent dropdown
+        });
+
+        $('.status-dropdown-toggle').click(function() {
+            //$('.status-dropdown-menu').toggle();
+        });
     });
 </script>
 @include("customer.layouts.footer")
