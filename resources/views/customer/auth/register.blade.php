@@ -147,11 +147,7 @@
                             </p>
 
                             <div class="d-flex justify-content-center mt-4">
-                                <button 
-                                type="submit" 
-                                class="custom-btn fs-4 mb-2">
-                                Sign Up <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
-                                </button>
+                                <button  type="submit"  class="custom-btn fs-4 mb-2"> Sign Up <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt=""> </button>
                             </div>
                             <p style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary">Sign in</a></p>
                         </form>
