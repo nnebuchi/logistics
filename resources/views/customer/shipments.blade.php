@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipment</h5>
+                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping</h5>
                         <div class="d-flex">
                             <a href="{{url('/users')}}" class="btn btn-primary mr-2">
                                 <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
@@ -102,7 +102,7 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var authToken = localStorage.getItem('userToken');
+    var authToken = localStorage.getItem('token');
 
     function fetchWallet(){
         axios.get(`${baseUrl}/api/statistics`)

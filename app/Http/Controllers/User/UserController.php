@@ -40,4 +40,11 @@ class UserController extends Controller
 
         return view('customer.shipments', compact('user'));
     }
+
+    public function showProfile()
+    {
+        $user = User::find(Auth::user()->id);
+
+        return view('customer.profile', compact('user'));
+    }
 }

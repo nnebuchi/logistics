@@ -47,10 +47,7 @@ Route::group([
     Route::get('/', [UserController::class, 'index']);
     Route::get('/shipments', [UserController::class, 'showShipments']);
     Route::get('/wallet', [WalletController::class, 'index']);
+    Route::get('/profile', [UserController::class, 'showProfile']);
     Route::post('/wallet/create-transaction', [WalletController::class, 'createTransaction']);
-
-    Route::get('/admin/transactions', function() {
-        return view('transactions.transactions', ["transactions"=> []]);
-    });
 });
 

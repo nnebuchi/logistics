@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/user/dashboard.css')}}" />
+        <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
         <?php date_default_timezone_set("Africa/Lagos"); ?>
     </head>
     <style>
@@ -51,106 +51,114 @@
                                 <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
                             </a>
                         </div>
-                        <h4>Create Account</h4>
-                        <form id="signup" action="{{url('/register')}}" method="POST">
-                            @csrf
-                            <div class="row">
-                                <div class="col">
-                                    <label for="firstname" class="custom-input-label">First Name</label>
-                                    <div class="d-flex position-relative input-box">
-                                        <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
-                                        <input 
-                                        type="text" 
-                                        id="firstname"
-                                        name="firstname"
-                                        placeholder="First name"
-                                        class="custom-input" />
+                        <div class="row justify-content-center">
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-10">
+                                <h4>Create Account</h4>
+                                <form id="signup" action="{{url('/register')}}" method="POST">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="firstname" class="custom-input-label">First Name</label>
+                                            <div class="d-flex position-relative input-box">
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
+                                                <input 
+                                                type="text" 
+                                                id="firstname"
+                                                name="firstname"
+                                                placeholder="First name"
+                                                class="custom-input" />
+                                            </div>
+                                            <span class="error"> </span>
+                                        </div>
+                                        <div class="col">
+                                            <label for="lastname" class="custom-input-label">Last Name</label>
+                                            <div class="d-flex position-relative input-box">
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
+                                                <input 
+                                                type="text" 
+                                                id="lastname"
+                                                name="lastname"
+                                                placeholder="Last name"
+                                                class="custom-input" />
+                                            </div>
+                                            <span class="error"> </span>
+                                        </div>
                                     </div>
-                                    <span class="error"> </span>
-                                </div>
-                                <div class="col">
-                                    <label for="lastname" class="custom-input-label">Last Name</label>
-                                    <div class="d-flex position-relative input-box">
-                                        <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
-                                        <input 
-                                        type="text" 
-                                        id="lastname"
-                                        name="lastname"
-                                        placeholder="Last name"
-                                        class="custom-input" />
+                                    <div class="row mt-3">
+                                        <div class="col">
+                                            <label for="phone" class="custom-input-label">Phone Number</label>
+                                            <div class="d-flex position-relative input-box">
+                                                <select id="countrySelect" class="country_code">
+                                                    
+                                                </select>
+                                                <input 
+                                                type="tel" 
+                                                id="phone"
+                                                name="phone"
+                                                placeholder="Phone Number"
+                                                class="custom-input" />
+                                            </div>
+                                            <span class="error"> </span>
+                                        </div>
+                                        <div class="col">
+                                            <label for="email" class="custom-input-label">Email</label>
+                                            <div class="d-flex position-relative input-box">
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
+                                                <input 
+                                                type="email" 
+                                                id="email"
+                                                name="email"
+                                                placeholder="Email"
+                                                class="custom-input" />
+                                            </div>
+                                            <span class="error"> </span>
+                                        </div>
                                     </div>
-                                    <span class="error"> </span>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col">
-                                    <label for="phone" class="custom-input-label">Phone Number</label>
-                                    <div class="d-flex position-relative input-box">
-                                        <select id="countrySelect" class="country_code">
-                                            
-                                        </select>
-                                        <input 
-                                        type="tel" 
-                                        id="phone"
-                                        name="phone"
-                                        placeholder="Phone Number"
-                                        class="custom-input" />
+                                    <div class="mt-3">
+                                            <label for="account_type" class="custom-input-label">Account Type</label>
+                                            <div class="select-box">
+                                                <select
+                                                id="account_type"
+                                                name="account_type"
+                                                class="custom-select">
+                                                <option value="">--Select one---</option>
+                                                @foreach($accounts as $account)
+                                                <option value="{{$account->name}}">{{$account->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            </div>
+                                            <span class="error"> </span>
+                                        </div>
+                                    <div class="mt-3">
+                                        <label for="password" class="custom-input-label">Password</label>
+                                        <div class="d-flex position-relative input-box">
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0"><ion-icon class="show-hide" name="lock-closed-outline"></ion-icon></div>
+                                            <input 
+                                            type="password" 
+                                            id="password"
+                                            name="password"
+                                            placeholder="Enter Password" 
+                                            class="custom-input" />
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0"><ion-icon class="show-hide" name="eye-outline"></ion-icon></div>
+                                        </div>
+                                        <span class="error"></span>
                                     </div>
-                                    <span class="error"> </span>
-                                </div>
-                                <div class="col">
-                                    <label for="email" class="custom-input-label">Email</label>
-                                    <div class="d-flex position-relative input-box">
-                                        <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
-                                        <input 
-                                        type="email" 
-                                        id="email"
-                                        name="email"
-                                        placeholder="Email"
-                                        class="custom-input" />
-                                    </div>
-                                    <span class="error"> </span>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                    <label for="account_type" class="custom-input-label">Account Type</label>
-                                    <div class="select-box">
-                                        <select
-                                        id="account_type"
-                                        name="account_type"
-                                        class="custom-select">
-                                        <option value="">--Select one---</option>
-                                        @foreach($accounts as $account)
-                                        <option value="{{$account->name}}">{{$account->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    </div>
-                                    <span class="error"> </span>
-                                </div>
-                            <div class="mt-3">
-                                <label for="password" class="custom-input-label">Password</label>
-                                <div class="d-flex position-relative input-box">
-                                    <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0"><ion-icon class="show-hide" name="lock-closed-outline"></ion-icon></div>
-                                    <input 
-                                    type="password" 
-                                    id="password"
-                                    name="password"
-                                    placeholder="Enter Password" 
-                                    class="custom-input" />
-                                    <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0"><ion-icon class="show-hide" name="eye-outline"></ion-icon></div>
-                                </div>
-                                <span class="error"></span>
-                            </div>
 
-                            <p style="font-size:14px;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 
-                                <a href="" class="custom-text-secondary">terms of acceptable use.</a>
-                            </p>
+                                    <p style="font-size:14px;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 
+                                        <a href="" style="font-weight:600" class="custom-text-secondary">terms of acceptable use.</a>
+                                    </p>
 
-                            <div class="d-flex justify-content-center mt-4">
-                                <button  type="submit"  class="custom-btn fs-4 mb-2"> Sign Up <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt=""> </button>
+                                    <div class="d-flex justify-content-center mt-4">
+                                        <button 
+                                        type="submit" 
+                                        class="custom-btn fs-4 mb-2">
+                                        Sign Up <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        </button>
+                                    </div>
+                                    <h6 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary">Sign in</a></h6>
+                                </form>
                             </div>
-                            <p style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary">Sign in</a></p>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -166,7 +174,7 @@
         $('#signup').on("submit", function (event) {
             event.preventDefault();
             let btn = $(this).find("button[type='submit']");
-            btn.html(`<img src="/assets/images/loader.gif" id="loader-gif">`);
+            btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
             btn.attr("disabled", true);
             const form = event.target;
             const url = form.action;
@@ -181,45 +189,48 @@
 
             $('.error').text('');
             $('.message').text('');
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            };
-            axios.post(url, inputs, config)
-            .then(function(response){
-                let message = response.data.message;
-                $(".message").css("color", "green").text(message);
-                toast(message);
-                btn.attr("disabled", false).text("Sign Up");
-                window.location.href = response.data.results;
-            })
-            .catch(function(error){
-                let errors = error.response.data.error;
-                if(errors.firstname){
-                    $('.error').eq(0).text(errors.firstname);
-                }
-                if(errors.lastname){
-                    $('.error').eq(1).text(errors.lastname);
-                }
-                if(errors.phone){
-                    $('.error').eq(2).text(errors.phone);
-                }
-                if(errors.email){
-                    $('.error').eq(3).text(errors.email);
-                }
-                if(errors.account_type){
-                    $('.error').eq(4).text(errors.account_type);
-                }
-                if(errors.password){
-                    $('.error').eq(5).text(errors.password);
-                }
+            // Append loader immediately
+            setTimeout(() => {
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                };
+                axios.post(url, inputs, config)
+                .then(function(response){
+                    let message = response.data.message;
+                    $(".message").css("color", "green").text(message);
+                    toast(message);
+                    btn.attr("disabled", false).text("Sign Up");
+                    window.location.href = response.data.results;
+                })
+                .catch(function(error){
+                    let errors = error.response.data.error;
+                    if(errors.firstname){
+                        $('.error').eq(0).text(errors.firstname);
+                    }
+                    if(errors.lastname){
+                        $('.error').eq(1).text(errors.lastname);
+                    }
+                    if(errors.phone){
+                        $('.error').eq(2).text(errors.phone);
+                    }
+                    if(errors.email){
+                        $('.error').eq(3).text(errors.email);
+                    }
+                    if(errors.account_type){
+                        $('.error').eq(4).text(errors.account_type);
+                    }
+                    if(errors.password){
+                        $('.error').eq(5).text(errors.password);
+                    }
 
-                btn.attr("disabled", false).text("Sign Up");
-            });
+                    btn.attr("disabled", false).text("Sign Up");
+                });
+            }, 100); // Delay submission by 100 milliseconds
         });
 
         function toast(message){

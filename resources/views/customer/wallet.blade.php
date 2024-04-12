@@ -167,7 +167,6 @@
 
     function fetchAllTransactions(transactions){
         //let transactions = data.slice(0, 10);
-
         $(".transactions-table tbody").empty();
         transactions.forEach(function(transaction, index){
             $(".transactions-table tbody").append(`
@@ -202,10 +201,14 @@
         })
     };
 
+
     $(".reload-wallet").on("click", function(event){
         event.preventDefault();
-        //$(this).find("img").addClass("reload-wallet-active");
-        fetchWallet();
+        // Append loader immediately
+        //setTimeout(() => {
+            //$(this).find("img").addClass("reload-wallet-active");
+            fetchWallet();
+        //}, 100); // Delay submission by 100 milliseconds
     });
 </script>
 <script src="https://js.paystack.co/v1/inline.js"></script>
