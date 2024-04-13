@@ -89,6 +89,14 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         );
     }
 
+    protected function photo(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => is_null($value) ? "https://hshshshshs.png" : $value,
+            set: fn ($value) => $value
+        );
+    }
+
     public function account()
     {
         return $this->belongsTo(Account::class, "account_id");

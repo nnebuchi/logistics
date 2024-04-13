@@ -52,12 +52,12 @@
                             </a>
                         </div>
                         <div class="row justify-content-center">
-                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-10">
-                                <h4>Create Account</h4>
+                            <div class="col-xl-11 col-lg-11 col-md-12 col-sm-10">
+                                <h4 style="font-weight:700">Create Account</h4>
                                 <form id="signup" action="{{url('/register')}}" method="POST">
                                     @csrf
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="firstname" class="custom-input-label">First Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
@@ -70,7 +70,7 @@
                                             </div>
                                             <span class="error"> </span>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="lastname" class="custom-input-label">Last Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
@@ -85,7 +85,7 @@
                                         </div>
                                     </div>
                                     <div class="row mt-3">
-                                        <div class="col">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="phone" class="custom-input-label">Phone Number</label>
                                             <div class="d-flex position-relative input-box">
                                                 <select id="countrySelect" class="country_code">
@@ -96,11 +96,11 @@
                                                 id="phone"
                                                 name="phone"
                                                 placeholder="Phone Number"
-                                                class="custom-input" />
+                                                class="custom-input pl-2" />
                                             </div>
                                             <span class="error"> </span>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="email" class="custom-input-label">Email</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
@@ -187,6 +187,12 @@
                 account_type: $("#account_type").val()
             };
 
+            $("#firstname").css("borderColor", "transparent");
+            $("#lastname").css("borderColor", "transparent");
+            $("#phone").css("borderColor", "transparent");
+            $("#email").css("borderColor", "transparent");
+            $("#password").css("borderColor", "transparent");
+            $("#account_type").css("borderColor", "transparent");
             $('.error').text('');
             $('.message').text('');
             // Append loader immediately
@@ -211,21 +217,27 @@
                     let errors = error.response.data.error;
                     if(errors.firstname){
                         $('.error').eq(0).text(errors.firstname);
+                        $("#firstname").css("border", "1px solid #FA150A");
                     }
                     if(errors.lastname){
                         $('.error').eq(1).text(errors.lastname);
+                        $("#lastname").css("border", "1px solid #FA150A");
                     }
                     if(errors.phone){
                         $('.error').eq(2).text(errors.phone);
+                        $("#phone").css("border", "1px solid #FA150A");
                     }
                     if(errors.email){
                         $('.error').eq(3).text(errors.email);
+                        $("#email").css("border", "1px solid #FA150A");
                     }
                     if(errors.account_type){
                         $('.error').eq(4).text(errors.account_type);
+                        $("#account_type").css("border", "1px solid #FA150A");
                     }
                     if(errors.password){
                         $('.error').eq(5).text(errors.password);
+                        $("#password").css("border", "1px solid #FA150A");
                     }
 
                     btn.attr("disabled", false).text("Sign Up");

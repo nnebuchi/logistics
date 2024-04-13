@@ -85,6 +85,9 @@ class AuthController extends Controller
     }
 
     public function test(){
+        //return view('customer.auth.email-verification-success');
+        return view('vendor.notifications.verify-email');
+        return view('customer.auth.verify-email');
         return Helper::userPercentageChange();
     }
 

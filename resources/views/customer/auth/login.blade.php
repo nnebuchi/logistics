@@ -36,7 +36,7 @@
                         </div>
                         <div class="d-flex flex-column align-items-center">
                             <img src="{{asset('assets/images/icons/auth/illustration2.svg')}}" width="350" height="300" alt="">
-                            <h5 class="text-white">We got you covered</h5>
+                            <h5 class="text-white mt-5">We got you covered</h5>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="text-white">Privacy Policy</h6>
@@ -44,16 +44,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
-                    <div class="mt-5">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto;">
+                    <div class="h-100 d-flex flex-column justify-content-center w-100">
                         <div class="mb-4 dynamic-logo">
                             <a href="{{url('/')}}" class="">
                                 <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
                             </a>
                         </div>
                         <div class="row justify-content-center">
-                            <div class="col-xl-8 col-lg-10 col-md-12 col-sm-8">
-                                <h4 class="fw-bold">Sign In Here</h4>
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
+                                <h4 style="font-weight:700">Sign In Here</h4>
                                 <form id="login" action="{{url('/login')}}" method="POST">
                                     @csrf
                                     <p class="message text-center"></p>
@@ -89,7 +89,7 @@
                                         <div class="form-check">
                                             <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
                                             <label class="form-check-label text-dark" for="flexCheckChecked">
-                                                Remember this Device
+                                                Remember Me
                                             </label>
                                         </div>
                                         <a class="custom-text-secondary" 
@@ -131,6 +131,8 @@
                 password: $("#password").val()
             };
 
+            $("#email").css("borderColor", "transparent");
+            $("#password").css("borderColor", "transparent");
             $('.error').text('');
             $('.message').text('');
             // Append loader immediately
@@ -157,9 +159,11 @@
                     let errors = error.response.data.error;
                     if(errors.email){
                         $('.error').eq(0).text(errors.email);
+                        $("#email").css("border", "1px solid #FA150A");
                     }
                     if(errors.password){
                         $('.error').eq(1).text(errors.password);
+                        $("#password").css("border", "1px solid #FA150A");
                     }
 
                     switch(error.response.status){
