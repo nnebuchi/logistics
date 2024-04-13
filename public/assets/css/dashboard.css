@@ -84,21 +84,32 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 }
 
 .input-box{
-    border:2px solid transparent;
-    border-radius: 10px;
-    background-color:rgba(247, 157, 29, 0.1);
+    border: 1px solid transparent;
+    outline: none;
+    border-radius: 20px;
 }
 .custom-input{
     padding:10px;
     padding-left: 30px;
-    border-color: transparent;
+    border: none;
+    outline: none;
     background-color: #F79D1D1A;
     width: 100%;
+    border-radius: 20px;
+}
+.custom-input:focus{
+    border: none;
+    background-color: transparent;
+    outline: none;
 }
 .custom-select{
     background-color:rgba(247, 157, 29, 0.1);
-    border-color: transparent;
+    border: none;
     height: 50px;
+    border-radius: 20px;
+}
+.custom-select:focus{
+    outline: 2px solid #F79D1D1A;
 }
 .custom-input::placeholder {
     color: rgba(30, 30, 30, 0.35); 
@@ -116,13 +127,17 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 }
 .icon-box{
     top:0;
-    left:0
+    left:0;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 .country_code{
     border: none;
     width: 80px;
     border-right:1px solid #1E1E1E33;
-    background-color: transparent;
+    background-color: #F79D1D1A;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
     -webkit-appearance: none; /* Hide default arrow in Safari */
     -moz-appearance: none; /* Hide default arrow in Firefox */
     appearance: none; /* Hide default arrow in other browsers */

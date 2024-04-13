@@ -38,14 +38,14 @@
                             <img src="{{asset('assets/images/icons/auth/illustration1.svg')}}" width="350" height="300" alt="">
                             <h5 class="text-white">We have a global reach</h5>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between mb-3">
                             <h6 class="text-white">Privacy Policy</h6>
                             <h6 class="text-white">Terms and Conditions</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
-                    <div class="mt-5">
+                    <div style="margin-top:80px;margin-bottom:60px">
                         <div class="mb-4 dynamic-logo">
                             <a href="{{url('/')}}" class="">
                                 <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
@@ -60,7 +60,7 @@
                                         <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="firstname" class="custom-input-label">First Name</label>
                                             <div class="d-flex position-relative input-box">
-                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
                                                 <input 
                                                 type="text" 
                                                 id="firstname"
@@ -73,7 +73,7 @@
                                         <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="lastname" class="custom-input-label">Last Name</label>
                                             <div class="d-flex position-relative input-box">
-                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="person-outline"></ion-icon></div>
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
                                                 <input 
                                                 type="text" 
                                                 id="lastname"
@@ -95,6 +95,7 @@
                                                 type="tel" 
                                                 id="phone"
                                                 name="phone"
+                                                style="border-radius:0 20px 20px 0"
                                                 placeholder="Phone Number"
                                                 class="custom-input pl-2" />
                                             </div>
@@ -103,7 +104,7 @@
                                         <div class="col-xl-6 col-lg-6 col-md-12">
                                             <label for="email" class="custom-input-label">Email</label>
                                             <div class="d-flex position-relative input-box">
-                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt=""></div>
                                                 <input 
                                                 type="email" 
                                                 id="email"
@@ -132,19 +133,23 @@
                                     <div class="mt-3">
                                         <label for="password" class="custom-input-label">Password</label>
                                         <div class="d-flex position-relative input-box">
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0"><ion-icon class="show-hide" name="lock-closed-outline"></ion-icon></div>
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
+                                                <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
+                                            </div>
                                             <input 
                                             type="password" 
                                             id="password"
                                             name="password"
                                             placeholder="Enter Password" 
                                             class="custom-input" />
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0"><ion-icon class="show-hide" name="eye-outline"></ion-icon></div>
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                                            </div>
                                         </div>
                                         <span class="error"></span>
                                     </div>
 
-                                    <p style="font-size:14px;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 
+                                    <p style="font-size:14px;color:#1E1E1E;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 
                                         <a href="" style="font-weight:600" class="custom-text-secondary">terms of acceptable use.</a>
                                     </p>
 

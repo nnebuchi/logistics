@@ -32,7 +32,7 @@
                             <img src="{{asset('assets/images/icons/auth/illustration3.svg')}}" width="350" height="300" alt="">
                             <h5 class="text-white">Our Prices Are Affordable</h5>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between mb-3">
                             <h6 class="text-white">Privacy Policy</h6>
                             <h6 class="text-white">Terms and Conditions</h6>
                         </div>
