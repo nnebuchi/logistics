@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/user/dashboard.css')}}" />
+        <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
         <?php date_default_timezone_set("Africa/Lagos"); ?>
     </head>
     <body>
@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
-                    <div class="mt-5">
+                    <div class="h-100 d-flex flex-column justify-content-center w-100">
                         <div class="mb-4 dynamic-logo">
                             <a href="{{url('/')}}" class="">
                                 <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
@@ -49,8 +49,7 @@
                             <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="120" height="120" alt="">
                         </div>
                         <p class="text-center mt-2">Your account registration was successful</p>
-                        <h5 class="text-center custom-text-primary" style="font-weight:bold">Please verify your account on your email. 
-Thank you!</h5>
+                        <h5 class="text-center custom-text-primary" style="font-weight:bold">Please verify your account on your email. Thank you!</h5>
                     </div>
                 </div>
             </div>

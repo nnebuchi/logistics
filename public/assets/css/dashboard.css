@@ -132,6 +132,12 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 .country_code::-ms-expand {
     display: none; /* Hide default arrow in IE10+ */
 }
+
+@media (max-width: 992px) {
+    .country_code {
+        width: 120px;
+    }
+}
 .custom-btn{
     padding:7px 40px;
     color: white;

@@ -44,15 +44,15 @@
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
-                    <div class="mt-5">
+                    <div class="h-100 d-flex flex-column justify-content-center w-100">
                         <div class="mb-4 dynamic-logo">
                             <a href="{{url('/')}}" class="">
                                 <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
                             </a>
                         </div>
                         <div class="row justify-content-center">
-                            <div class="col-xl-8 col-lg-10 col-md-12 col-sm-8">
-                                <h4>Reset Password</h4>
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
+                                <h4 style="font-weight:700">Reset Password</h4>
                                 <form id="forgot-pwd" action="{{url('/forgot-password')}}" method="POST">
                                     @csrf
                                     <p class="message text-center"></p>
@@ -102,6 +102,7 @@
             const url = form.action;
             const inputs = { email: $("#email").val() };
 
+            $("#email").css("borderColor", "transparent");
             $('.error').text('');
             $('.message').text('');
             // Append loader immediately
@@ -125,6 +126,7 @@
                     let errors = error.response.data.error;
                     if(errors.email){
                         $('.error').eq(0).text(errors.email);
+                        $("#email").css("border", "1px solid #FA150A");
                     }
         
                     btn.attr("disabled", false).text("Submit");

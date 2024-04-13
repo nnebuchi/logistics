@@ -13,24 +13,27 @@
 
                     <div class="row mt-4">
                         <div class="col-12 d-flex align-items-stretch">
-                            <div class="card w-100">
+                            <div class="card w-100 px-2">
                                 <div class="card-body p-0">
                                     <div class="row justify-content-between">
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pt-3">
                                             <div class="d-flex flex-column align-items-center">        
                                                 <div class="position-relative">
-                                                    <img class="rounded-circle" src="{{asset('assets/images/profile/s5.jpg')}}" width="180" height="180">
-                                                    <div class="position-absolute rounded-circle bg-dark d-flex align-items-center justify-content-center" style="height:40px;width:40px;top:110px;right:-15px">
-                                                        <img src="{{asset('assets/images/profile/s5.jpg')}}" width="20" height="20">
-                                                    </div>
+                                                    <img class="rounded-circle photo" src="{{asset('assets/images/profile/s5.jpg')}}" width="180" height="180">
+                                                    <form id="update-photo" action="/api/v1/events" method="POST" enctype="multipart/form-data">
+                                                        <label type="button" for="image" class="position-absolute rounded-circle d-flex align-items-center justify-content-center" style="height:40px;width:40px;top:110px;right:-15px;background-color:#FEF5E8">
+                                                            <img src="{{asset('assets/images/icons/ph_camera-light.svg')}}" width="20" height="20">
+                                                            <input type="file" class="form-control d-none" name="image" id="image">
+                                                        </label>
+                                                    </form>
                                                 </div>
                                                 <h5 class="mt-3"><?=$user->firstname." ".$user->lastname?></h5>
                                             </div>
                                         </div>
                                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 pt-3 pb-5" style="border-left: 1px solid #1E1E1E33;">
                                             <h5 class="mt-3 fw-semibold">Bio Details</h5>
-                                            <div class="d-flex flex-column flex-md-row pr-3">
-                                                <div class="w-100">
+                                            <div class="d-flex flex-column flex-md-row">
+                                                <div class="w-100 mr-2">
                                                     <label for="email" class="custom-input-label">Address</label>
                                                     <input 
                                                     type="text" 
@@ -41,7 +44,7 @@
                                                     class="custom-input" />
                                                     <span class="error"> </span>
                                                 </div>
-                                                <div class="w-100 mt-md-0 mt-3">
+                                                <div class="w-100 mt-md-0 mt-3 mr-2">
                                                     <label for="email" class="custom-input-label">Phone</label>
                                                     <input 
                                                     type="text" 
@@ -53,8 +56,8 @@
                                                     <span class="error"> </span>
                                                 </div>
                                             </div>
-                                            <div class="d-flex flex-column flex-md-row pr-3 mt-3">
-                                                <div class="w-100 pr-2">
+                                            <div class="d-flex flex-column flex-md-row mt-3">
+                                                <div class="w-100 mr-2">
                                                     <label for="email" class="custom-input-label">Email</label>
                                                     <input 
                                                     type="email" 
@@ -65,7 +68,7 @@
                                                     class="custom-input" readonly/>
                                                     <span class="error"> </span>
                                                 </div>
-                                                <div class="w-100 mt-md-0 mt-3">
+                                                <div class="w-100 mt-md-0 mt-3 mr-2">
                                                     <label for="email" class="custom-input-label">UserType</label>
                                                     <input 
                                                     type="text" 
@@ -119,10 +122,22 @@
     };
     fetchWallet();
 
-    $(".reload-wallet").on("click", function(event){
-        event.preventDefault();
-        let type = $(this).data("type");
-        alert(type);
+    //Preview the images before uploading
+    $("#image").change(function(event){
+        var inputs = event.target.files;
+        var filesAmount = inputs.length;
+        // Loop through each file
+        for(var i = 0; i < filesAmount; i++) {
+            var reader = new FileReader();
+            // Convert each image file to a string
+            reader.readAsDataURL(inputs[i]);
+            // FileReader will emit the load event when the dataURL is ready
+            // Access the string using reader.result inside the callback function
+            reader.onload = function(e){
+                let result = e.target.result;
+                $(".photo").attr("src", result);
+            }
+        }
     });
 </script>
 @include("customer.layouts.footer")
