@@ -6,12 +6,12 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Dashboard</h5>
                         <div class="d-flex">
-                            <a href="{{url('/users')}}" class="btn btn-primary mr-2">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary mr-2">
+                                <img src="{{asset('assets/images/icons/plus.svg')}}" class="mr-1" width="20" height="20" />
                                 Book Shipment
                             </a>
-                            <a href="{{url('/users')}}" class="btn btn-primary">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary">
+                                <img src="{{asset('assets/images/icons/track.svg')}}" class="mr-1" width="20" height="20" />
                                 Track Shipment
                             </a>
                         </div>
@@ -167,9 +167,9 @@
     fetchWallet();
 
     const status = {
-        pending: "bg-warning",
-        delivered: "bg-success",
-        failed: "bg-danger"
+        pending: "custom-bg-warning",
+        delivered: "custom-bg-success",
+        failed: "custom-bg-danger"
     };
 
     const rowColors = {
@@ -216,7 +216,7 @@
                         </td>
                         <td class="border-bottom-0">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="py-2 badge rounded-3 fw-semibold ${status[shipment.status]}">
+                                <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
                                 ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                                 </span>
                             </div>

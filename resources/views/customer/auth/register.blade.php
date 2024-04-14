@@ -95,7 +95,7 @@
                                                 type="tel" 
                                                 id="phone"
                                                 name="phone"
-                                                style="border-radius:0 20px 20px 0"
+                                                style="border-radius:0 15px 15px 0"
                                                 placeholder="Phone Number"
                                                 class="custom-input pl-2" />
                                             </div>

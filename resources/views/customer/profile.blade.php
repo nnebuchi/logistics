@@ -87,6 +87,64 @@
                         </div>
                     </div>
 
+                    <div class="row mt-4">
+                        <div class="col-12 d-flex align-items-stretch">
+                            <div class="card w-100 px-2 pb-5 pt-3">
+                                <div class="card-body p-0">
+                                    <h4 style="font-weight:700" class="text-center">KYC</h4>
+                                    <div class="row justify-content-around">
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
+                                            <h5 style="color:#1E1E1E80">Utility Bill</h5>
+                                            <div class="w-100 d-flex align-items-center justify-content-center kyc-docs">
+                                                <label for="" class="d-flex align-items-center bg-white px-3 py-2 fw-bold kyc-label" type="button">
+                                                    Upload File 
+                                                    <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
+                                                </label>
+                                                <input type="file" class="form-control d-none" name="image" id="image">
+                                            </div>
+                                            <p style="color:#F79D1D;font-size:12px;font-weight:500">Not later than 3 months</p>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
+                                            <h5 style="color:#1E1E1E80">Government ID</h5>
+                                            <div class="w-100 d-flex align-items-center justify-content-center kyc-docs">
+                                                <label for="" class="d-flex align-items-center bg-white px-3 py-2 fw-bold kyc-label" type="button">
+                                                    Upload File 
+                                                    <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
+                                                </label>
+                                                <input type="file" class="form-control d-none" name="image" id="image">
+                                            </div>
+                                            <p style="color:#F79D1D;font-size:12px;font-weight:500">Front and Back upload of ID Card such as: National ID, Voter’s Card, Driver’s License and International Passport.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row justify-content-around">
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
+                                            <h5 style="color:#1E1E1E80">ID Number</h5>
+                                            <div class="w-100">
+                                                <input 
+                                                type="text" 
+                                                id=""
+                                                name=""
+                                                placeholder="Enter ID number of uploaded ID card"
+                                                class="custom-input" />
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
+                                            <h5 style="color:#1E1E1E80">Business CAC(for businesses only)</h5>
+                                            <div class="w-100 d-flex align-items-center justify-content-center kyc-docs">
+                                                <label for="" class="d-flex align-items-center bg-white px-3 py-2 fw-bold kyc-label" type="button">
+                                                    Upload File 
+                                                    <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
+                                                </label>
+                                                <input type="file" class="form-control d-none" name="image" id="image">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     @include('customer.modals.broadcast-modal')
                     @include('customer.modals.change-password-modal')
                 </div>

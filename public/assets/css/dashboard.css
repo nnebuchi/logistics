@@ -86,7 +86,7 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 .input-box{
     border: 1px solid transparent;
     outline: none;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 .custom-input{
     padding:10px;
@@ -95,7 +95,7 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
     outline: none;
     background-color: #F79D1D1A;
     width: 100%;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 .custom-input:focus{
     border: none;
@@ -106,7 +106,7 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
     background-color:rgba(247, 157, 29, 0.1);
     border: none;
     height: 50px;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 .custom-select:focus{
     outline: 2px solid #F79D1D1A;
@@ -128,16 +128,16 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 .icon-box{
     top:0;
     left:0;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
 .country_code{
     border: none;
     width: 80px;
     border-right:1px solid #1E1E1E33;
     background-color: #F79D1D1A;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
     -webkit-appearance: none; /* Hide default arrow in Safari */
     -moz-appearance: none; /* Hide default arrow in Firefox */
     appearance: none; /* Hide default arrow in other browsers */
@@ -561,4 +561,29 @@ select#trx-status option {
     .welcome-text{
         display: none;
     }
+}
+
+.kyc-docs{
+    height:161px;
+    background-color:#FEF5E8;
+    border:2px dashed #F79D1D;
+    border-radius:15px;
+}
+.kyc-label{
+    color:#233E83;
+    font-size:16px;
+    border-radius:15px;
+}
+
+.custom-bg-success{
+    background-color: #CFF7E4;
+    color: #128807;
+}
+.custom-bg-warning{
+    background-color: #F79D1D33;
+    color: #F79D1D;
+}
+.custom-bg-danger{
+    background-color:#FED0CF;
+    color: #FA150A;
 }
