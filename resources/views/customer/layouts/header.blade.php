@@ -13,6 +13,7 @@
 		<link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
 		<link rel="stylesheet" href="{{asset('assets/libs/magnificpopup/magnific-popup.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 		<link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/css/main.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />

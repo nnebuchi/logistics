@@ -9,14 +9,13 @@
 
 		<meta name="theme-color" content="" />
   		<meta name="apple-mobile-web-app-status-bar-style" content="" />
-		<title>Ziga-Afrika Logistics</title>
+		<title>Dinma - Health Care App</title>
 		<link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
 		<link rel="stylesheet" href="{{asset('assets/libs/magnificpopup/magnific-popup.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 		<link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-		<link rel="stylesheet" href="{{asset('assets/css/main.css')}}" />
-		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
+		<link rel="stylesheet" href="{{asset('assets/css/admin/main.css')}}" />
+		<link rel="stylesheet" href="{{asset('assets/css/admin/dashboard.css')}}" />
 		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 		<?php date_default_timezone_set("Africa/Lagos"); ?>
 	</head>
@@ -27,10 +26,10 @@
 			<!-- Sidebar Start -->
 			<aside class="left-sidebar">
 				<!-- Sidebar scroll-->
-				<div style="background-image: linear-gradient(to right, #4F659C, #233E83);">
+				<div>
 					<div class="brand-logo d-flex align-items-center justify-content-between">
 						<a href="{{url('/')}}" class="text-nowrap logo-img">
-							<img src="{{asset('assets/images/logos/ziga-blue2.svg')}}" width="180" alt="" />
+							<img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="" />
 						</a>
 						<div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
 							<i class="ti ti-x fs-8"></i>
@@ -46,7 +45,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/circle-gauge.svg')}}" />
+										<img class="" src="{{asset('assets/images/icons/dashboard.svg')}}" />
 									</span>
 									<span class="hide-menu">Dashboard</span>
 								</a>
@@ -56,27 +55,51 @@
 								<span class="hide-menu">UI COMPONENTS</span>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/shipments')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/users')}}" aria-expanded="false">
 									<span>
-										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+									</span>
+									<span class="hide-menu">Customers</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/doctors')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/cross.svg')}}" />
 									</span>
 									<span class="hide-menu">Shipping</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/wallet')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/bookings')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/wallet.svg')}}" />
+										<img class="" src="{{asset('assets/images/icons/calendar-clock.svg')}}" />
 									</span>
-									<span class="hide-menu">Wallet</span>
+									<span class="hide-menu">Rates</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/profile')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/transactions')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img class="" src="{{asset('assets/images/icons/wallet.svg')}}" />
 									</span>
-									<span class="hide-menu">Profile</span>
+									<span class="hide-menu">Transactions</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/plans')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/orders.svg')}}" />
+									</span>
+									<span class="hide-menu">Users</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/subadmins')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/settings.svg')}}" />
+									</span>
+									<span class="hide-menu">Subadmins</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
@@ -88,12 +111,17 @@
 								</a>
 							</li>
 						</ul>
-						<div class="unlimited-access hide-menu mb-7 mt-5">
-							<div class="">
-								<h6 class="fs-2 text-center">Copyright &copy; 2024</h6>
-								<h6 class="fs-2 text-center">Ziga Afrika All Rights Reserved</h6>
-							</div>
-						</div>
+						<!--<div class="unlimited-access hide-menu bg-light-primary position-relative mb-7 mt-5 rounded">-->
+						<!--	<div class="d-flex">-->
+						<!--		<div class="unlimited-access-title me-3">-->
+						<!--			<h6 class="fw-semibold fs-4 mb-6 text-dark w-85">Upgrade to pro</h6>-->
+						<!--			<a href="https://adminmart.com/product/modernize-bootstrap-5-admin-template/" target="_blank" class="btn btn-primary fs-2 fw-semibold lh-sm">Buy Pro</a>-->
+						<!--		</div>-->
+						<!--		<div class="unlimited-access-img">-->
+						<!--			<img src="{{asset('assets/images/backgrounds/rocket.png')}}" alt="" class="img-fluid">-->
+						<!--		</div>-->
+						<!--	</div>-->
+						<!--</div>-->
 						
 					</nav>
 					<!-- End Sidebar navigation -->
@@ -114,26 +142,19 @@
 									<i class="ti ti-menu-2"></i>
 								</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link nav-icon-hover" href="javascript:void(0)">
-									<i class="ti ti-bell-ringing"></i>
-									<div class="notification bg-primary rounded-circle"></div>
-								</a>
-							</li>
+							<!--<li class="nav-item dropdown">-->
+							<!--	<a class="nav-link nav-icon-hover dropdown-toggle" href="javascript:void(0)"   id="drop-notify" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+							<!--		<i class="ti ti-bell-ringing"></i>-->
+							<!--		<div class="notification bg-primary rounded-circle"></div>-->
+							<!--	</a>-->
+							<!--	<div class="dropdown-menu" aria-labelledby="drop-notify">-->
+							<!--		<button class="dropdown-item" type="button">Action</button>-->
+							<!--		<button class="dropdown-item" type="button">Another action</button>-->
+							<!--		<button class="dropdown-item" type="button">Osemeilu Itua just subscribed for a plan</button>-->
+							<!--	</div>-->
+							<!--</li>-->
 						</ul>
-						<div class="d-flex align-items-center justify-content-between w-100">
-							<h5 class="m-0 welcome-text">Welcome <?=$user->firstname?>!👋</h5>
-							<div class="d-flex">
-								<div class="d-flex align-items-center">
-									<img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="" width="35" height="35" class="rounded-circle mr-2">
-									<div class="d-flex flex-column justify-content-center p-0 user-details">
-										<h6 class="m-0 p-0 mb-1"><?=$user->firstname." ".$user->lastname?></h6>
-										<p class="m-0 p-0"><?=$user->email?></p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!--<div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+						<div class="navbar-collapse justify-content-end px-0" id="navbarNav">
 							<ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
 								<li class="nav-item dropdown">
 									<a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
@@ -165,7 +186,7 @@
 									</div>
 								</li>
 							</ul>
-						</div>-->
+						</div>
 					</nav>
 				</header>
 				<!--  Header End -->

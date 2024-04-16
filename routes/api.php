@@ -8,7 +8,7 @@ use App\Http\Controllers\User\TransactionController;
 
 Route::get('/', function () {
     return [
-        'app' => 'Ziga-Afrika API',
+        'app' => 'Ziga Afrika API',
         'version' => '1.0.0'
     ];
 });
@@ -19,9 +19,23 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-        Route::get('/user/wallet', [WalletController::class, 'getWallet']);
-        Route::get('/user/dashboard-data', [UserController::class, 'getDashboardData']);
-        Route::get('/transactions', [TransactionController::class, 'filter']);
+        Route::get('/shippings', [ShippingController::class, 'getShippings']);
+        Route::get('/transactions', [TransactionController::class, 'getTransactions']);
+
+        //users endpoint
+        Route::group([
+            'prefix' => 'user'
+        ], function () {
+            Route::get('/', [UserController::class, 'getUser']);
+            Route::post('/', [UserController::class, 'updateProfile']);
+            Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
+            Route::get('/{userId}/shippings', [ShippingController::class, 'getUserShippings']);
+            Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
+
+            //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
+            //Route::post('/{userId}/send-ios-notifications', [UserController::class, 'sendIosPushNotifications']);
+            Route::get('/notifications', [UserController::class, 'fetchNotifications']);
+        });
     });
 });
 

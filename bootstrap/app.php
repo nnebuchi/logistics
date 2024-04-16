@@ -13,7 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'ziga.admin.auth' => \App\Http\Middleware\ZigaAuthenticate::class,
+            'ziga.admin' => \App\Http\Middleware\CheckIfIsAdmin::class,
+            'ziga.admin.guest' => \App\Http\Middleware\ZigaAdminGuestMiddleware::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

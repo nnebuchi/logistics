@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function show()
+    public function index()
     {
-        $user = User::find(Auth::user()->id);
+        //$user = Admin::find(Auth::user()->id);
         
-        return view('admin.dashboard', compact('user'));
+        $user = User::find(7);
+        return view('admin.index', compact('user'));
     }
 }

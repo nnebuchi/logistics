@@ -39,6 +39,7 @@ class AuthService
             
             event(new Registered($user));
 
+            //Auth::guard("web")->login($user, true);
             Auth::login($user, true);
 
             return $user;
@@ -63,6 +64,7 @@ class AuthService
         $this->deleteToken($user);
         $user->refresh();
         
+        //Auth::guard("web")->login($user, true);
         Auth::login($user, true);
         $user = Auth::user();
         $token = $this->generateToken($user);
@@ -82,6 +84,7 @@ class AuthService
         //delete all previous user token
         $this->deleteToken(auth()->user());
 
+        //Auth::guard("user")->logout();
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

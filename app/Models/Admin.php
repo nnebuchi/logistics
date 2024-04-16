@@ -4,41 +4,33 @@ namespace App\Models;
 
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
+class Admin extends Authenticatable implements CanResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $guard = "admin";
+
     protected $fillable = [
-        'firstname',
-        'lastname',
         'phone',
         'email',
         'password',
-        'account_id',
-        'email_verified_at',
-        'photo',
-        'address',
-        'is_verified'
+        'firstname',
+        'lastname'
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
         'created_at',
-        'updated_at',
-        'account_id'
+        'updated_at'
     ];
-
-    protected $with = ["account", "profile"];
 
     protected function casts(): array
     {
@@ -50,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 
     /**
      * Send a password reset notification to the user.
+     * 
      * @param string $token
     */
     public function sendPasswordResetNotification($token): void
@@ -63,7 +56,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     {
         return Attribute::make(
             get: fn ($value) => $value,
-            set: fn ($value) => ucwords(strtolower($value))
+            set: fn ($value) => ucwords(strtolower($value)),
         );
     }
 
@@ -71,7 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     {
         return Attribute::make(
             get: fn ($value) => $value,
-            set: fn ($value) => ucwords(strtolower($value))
+            set: fn ($value) => ucwords(strtolower($value)),
         );
     }
 
@@ -81,37 +74,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             get: fn ($value) => $value,
             set: fn ($value) => strtolower($value),
         );
-    }
-
-    protected function photo(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => is_null($value) ? "https://hshshshshs.png" : $value,
-            set: fn ($value) => $value
-        );
-    }
-
-    protected function isVerified(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => ($value == 0) ? false : true,
-            set: fn ($value) => $value
-        );
-    }
-
-    public function account()
-    {
-        return $this->belongsTo(Account::class, "account_id");
-    }
-
-    public function wallet()
-    {
-        return $this->hasOne(Wallet::class, "user_id");
-    }
-
-    public function profile()
-    {
-        return $this->hasOne(UserProfile::class, "user_id");
     }
 
 }

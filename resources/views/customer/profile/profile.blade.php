@@ -5,21 +5,57 @@
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Profile</h5>
-                        <div class="fw-semibold bg-white py-2 px-4 rounded-pill d-flex align-items-center">
-                            <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="30" height="30" class="mr-2" />
-                            KYC Completed!
-                        </div>
+                        <?php 
+                            if($user->is_verified):
+                        ?>    
+                            <div class="fw-semibold bg-white py-2 px-4 rounded-pill d-flex align-items-center">
+                                <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="30" height="30" class="mr-2" />
+                                KYC Completed!
+                            </div>
+                        <?php 
+                            else: 
+                        ?>
+                            <div class="fw-semibold bg-white py-2 px-4 rounded-pill d-flex align-items-center">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mr-2" style="background-color:#FB04044D;height:30px;width:30px">
+                                    <img src="{{asset('assets/images/icons/auth/warning-icon.svg')}}" width="25" height="25" />
+                                </div>
+                                Update KYC!
+                            </div>
+                        <?php 
+                            endif;
+                        ?>
                     </div>
 
-                    <div class="row mt-4">
+                    <div class="d-flex mt-4">
+                        <a class="w-50 border-0 custom-tab-btn custom-tab-btn-active" 
+                            style="border-radius:15px 0px 0px 15px;"
+                            data-bs-toggle="collapse" 
+                            href="#collapseExample1" 
+                            role="button" 
+                            aria-expanded="false" 
+                            aria-controls="collapseExample1">
+                            Bio Details
+                        </a>
+                        <button 
+                            class="w-50 border-0 custom-tab-btn" 
+                            style="border-radius:0px 15px 15px 0px;"
+                            type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#collapseExample2" 
+                            aria-expanded="false" 
+                            aria-controls="collapseExample2">
+                            Know Your Customer(KYC)
+                        </button>
+                    </div>
+
+                    <div class="row mt-4 collapse show" id="collapseExample1">
                         <div class="col-12 d-flex align-items-stretch">
-                            <div class="card w-100 px-2">
+                            <div class="card w-100 px-3">
                                 <div class="card-body p-0">
                                     <div class="row justify-content-between">
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pt-3">
                                             <div class="d-flex flex-column align-items-center">        
                                                 <div class="position-relative">
-                                                    <img class="rounded-circle photo" src="{{asset('assets/images/profile/s5.jpg')}}" width="180" height="180">
+                                                    <img class="rounded-circle photo" src="<?=$user?->photo?>" width="180" height="180">
                                                     <form id="update-photo" action="/api/v1/events" method="POST" enctype="multipart/form-data">
                                                         <label type="button" for="image" class="position-absolute rounded-circle d-flex align-items-center justify-content-center" style="height:40px;width:40px;top:110px;right:-15px;background-color:#FEF5E8">
                                                             <img src="{{asset('assets/images/icons/ph_camera-light.svg')}}" width="20" height="20">
@@ -87,59 +123,48 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4">
+                    <div class="row mt-4 collapse" id="collapseExample2">
                         <div class="col-12 d-flex align-items-stretch">
-                            <div class="card w-100 px-2 pb-5 pt-3">
+                            <div class="card w-100 px-3 pb-5 pt-3">
                                 <div class="card-body p-0">
                                     <h4 style="font-weight:700" class="text-center">KYC</h4>
-                                    <div class="row justify-content-around">
-                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
-                                            <h5 style="color:#1E1E1E80">Utility Bill</h5>
-                                            <div class="w-100 d-flex align-items-center justify-content-center kyc-docs">
-                                                <label for="" class="d-flex align-items-center bg-white px-3 py-2 fw-bold kyc-label" type="button">
-                                                    Upload File 
-                                                    <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
-                                                </label>
-                                                <input type="file" class="form-control d-none" name="image" id="image">
+                                    <form id="update-kyc" action="/api/v1/" method="POST" enctype="multipart/form-data">
+                                        <div class="row justify-content-around">
+                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
+                                                <h5 style="color:#1E1E1E80">Utility Bill</h5>
+                                                @include('customer.profile.components.utility')
                                             </div>
-                                            <p style="color:#F79D1D;font-size:12px;font-weight:500">Not later than 3 months</p>
-                                        </div>
-                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
-                                            <h5 style="color:#1E1E1E80">Government ID</h5>
-                                            <div class="w-100 d-flex align-items-center justify-content-center kyc-docs">
-                                                <label for="" class="d-flex align-items-center bg-white px-3 py-2 fw-bold kyc-label" type="button">
-                                                    Upload File 
-                                                    <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
-                                                </label>
-                                                <input type="file" class="form-control d-none" name="image" id="image">
+                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
+                                                <h5 style="color:#1E1E1E80">Government ID</h5>
+                                                @include('customer.profile.components.govt_id')
                                             </div>
-                                            <p style="color:#F79D1D;font-size:12px;font-weight:500">Front and Back upload of ID Card such as: National ID, Voter’s Card, Driver’s License and International Passport.</p>
                                         </div>
-                                    </div>
 
-                                    <div class="row justify-content-around">
-                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
-                                            <h5 style="color:#1E1E1E80">ID Number</h5>
-                                            <div class="w-100">
-                                                <input 
-                                                type="text" 
-                                                id=""
-                                                name=""
-                                                placeholder="Enter ID number of uploaded ID card"
-                                                class="custom-input" />
+                                        <div class="row justify-content-around">
+                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
+                                                <h5 style="color:#1E1E1E80">ID Number</h5>
+                                                <div class="w-100">
+                                                    <input 
+                                                    type="text" 
+                                                    id="id_number"
+                                                    name="id_number"
+                                                    value="<?=$user?->profile->id_number?>"
+                                                    placeholder="Enter ID number of uploaded ID card"
+                                                    class="custom-input" />
+                                                </div>
                                             </div>
+                                            <?php 
+                                                if($user->account->name != "personal"):
+                                            ?>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
+                                                    <h5 style="color:#1E1E1E80">Business CAC(for businesses only)</h5>
+                                                    @include('customer.profile.components.business_cac')
+                                                </div>
+                                                <?php
+                                                endif;
+                                            ?>
                                         </div>
-                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
-                                            <h5 style="color:#1E1E1E80">Business CAC(for businesses only)</h5>
-                                            <div class="w-100 d-flex align-items-center justify-content-center kyc-docs">
-                                                <label for="" class="d-flex align-items-center bg-white px-3 py-2 fw-bold kyc-label" type="button">
-                                                    Upload File 
-                                                    <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
-                                                </label>
-                                                <input type="file" class="form-control d-none" name="image" id="image">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -166,22 +191,29 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var authToken = localStorage.getItem('token');
-
-    function fetchWallet(){
-        axios.get(`${baseUrl}/api/statistics`)
-        axios.get(`${baseUrl}/api`)
-        .then((res) => {
-            let data = res.data.results;
-            $(".balance").eq(0).text("₦"+parseInt(75000).toLocaleString());
-            $(".balance").eq(1).text("₦"+parseInt(350000).toLocaleString());
-            $(".balance").eq(2).text("₦"+parseInt(325000).toLocaleString());
-        });
-    };
-    fetchWallet();
+    var userToken = localStorage.getItem('token');
 
     //Preview the images before uploading
     $("#image").change(function(event){
+        let payload = {
+            photo: $(this)[0].files[0]
+        };
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "multipart/form-data",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.post(`${baseUrl}/api/v1/user`, payload, config)
+        .then((res) => {
+            let data = res.data.results;
+            $(".photo").attr("src", data.photo);
+        });
+    });
+
+    //Preview the images before uploading
+    $("#utility_bill").change(function(event){
         var inputs = event.target.files;
         var filesAmount = inputs.length;
         // Loop through each file
@@ -193,9 +225,21 @@
             // Access the string using reader.result inside the callback function
             reader.onload = function(e){
                 let result = e.target.result;
-                $(".photo").attr("src", result);
+                $(".utility-img").attr("src", result);
             }
         }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('.collapse').on('show.bs.collapse', function () {
+            $('.collapse').not(this).collapse('hide');
+        });
+
+        $('.custom-tab-btn').on('click', function () {
+            $(".custom-tab-btn").removeClass("custom-tab-btn-active");
+            $(this).addClass("custom-tab-btn-active");
+        });
     });
 </script>
 @include("customer.layouts.footer")
