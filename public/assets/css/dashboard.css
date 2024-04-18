@@ -155,10 +155,10 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
     }
 }
 .custom-btn{
-    padding:7px 40px;
+    padding:7px 25px;
     color: white;
     border:1px solid transparent;
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: var(--bs-primary);
 }
 .custom-btn:hover{
@@ -615,4 +615,21 @@ select#trx-status option {
 .custom-tab-btn-active:active, .custom-tab-btn-active:hover{
     text-decoration: none;
     color: white;
+}
+
+.user-card{
+    display: flex;
+    align-items: center;
+}
+.user-avatar{
+    width:30px;
+    height:30px;
+    border-radius: 30px;
+    margin-right: 5px;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+}
+.user-avatar img{
+    border-radius: 30px;
 }

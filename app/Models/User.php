@@ -12,10 +12,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'firstname',
@@ -35,6 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'remember_token',
         'created_at',
         'updated_at',
+        'deleted_at',
         'account_id'
     ];
 
@@ -80,14 +82,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return Attribute::make(
             get: fn ($value) => $value,
             set: fn ($value) => strtolower($value),
-        );
-    }
-
-    protected function photo(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => is_null($value) ? "https://hshshshshs.png" : $value,
-            set: fn ($value) => $value
         );
     }
 

@@ -19,6 +19,8 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+        Route::post("/change-password", [UserController::class, "changePassword"]);
+        
         Route::get('/shippings', [ShippingController::class, 'getShippings']);
         Route::get('/transactions', [TransactionController::class, 'getTransactions']);
 

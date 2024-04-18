@@ -12,20 +12,6 @@ use Carbon\Carbon;
 
 class UserService
 {
-    public function createUser($data)
-    {
-        $user = User::create([
-            'firstname' => $data['firstname'],
-            'lastname' => $data['lastname'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'password' => $data['password'],
-            'account_id' => 1
-        ]);
-
-        return $user;
-    }
-
     public function getUser()
     {
         $user = User::find(Auth::user()->id);
@@ -65,6 +51,29 @@ class UserService
         $userProfile->save();
 
         return ResponseFormatter::success("Profile Updated", $user->fresh(), 200);
+    }
+
+    public function changePassword($data)
+    {
+        $user = User::find(auth()->user()->id);
+        try{
+            if((Hash::check($data["current_password"], $user->password)) == false):
+                $message = "Check your old password.";
+            elseif((Hash::check($data["password"], $user->password)) == true):
+                $message = "Please enter a password which is not similar to your current password.";
+            else:
+                $user->password = $data["password"];
+                $user->save();
+
+                $message = "Your password has been changed successfully";
+                return ResponseFormatter::success($message, null);
+            endif;
+        }catch(\Exception $e){
+            $error_message = $e->getMessage();
+            return ResponseFormatter::error($error_message);
+        }
+        
+        return ResponseFormatter::error($message, 400);
     }
 
 }

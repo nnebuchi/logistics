@@ -29,7 +29,7 @@
 				<!-- Sidebar scroll-->
 				<div style="background-image: linear-gradient(to right, #4F659C, #233E83);">
 					<div class="brand-logo d-flex align-items-center justify-content-between">
-						<a href="{{url('/')}}" class="text-nowrap logo-img">
+						<a href="{{url('/admin')}}" class="text-nowrap logo-img">
 							<img src="{{asset('assets/images/logos/ziga-blue2.svg')}}" width="180" alt="" />
 						</a>
 						<div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -44,7 +44,7 @@
 								<span class="hide-menu">Home</span>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/circle-gauge.svg')}}" />
 									</span>
@@ -56,19 +56,19 @@
 								<span class="hide-menu">UI COMPONENTS</span>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/shipments')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/users')}}" aria-expanded="false">
 									<span>
 										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
-									<span class="hide-menu">Shipping</span>
+									<span class="hide-menu">Customers</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/wallet')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/transactions')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/wallet.svg')}}" />
 									</span>
-									<span class="hide-menu">Wallet</span>
+									<span class="hide-menu">Transactions</span>
 								</a>
 							</li>
 							<li class="sidebar-item">

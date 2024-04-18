@@ -19,13 +19,16 @@ class ZigaAuthenticate
     {
         if (!$request->expectsJson()) {
             // Check if the user is authenticated with the admin guard
-            if ($request->routeIs('admin.*') && !Auth::guard('admin')->check()) {
+            if ($request->routeIs('admin/*') && !Auth::guard('admin')->check()) {
                 return redirect("/admin/login"); // Redirect to the admin login page
             } else {
                 return redirect("/login"); // Redirect to the default login page
             }
         }
 
-        return null;
+        return response()->json([
+            'message' => "Unauthenticated",
+            'error' => true
+        ], 401);
     }
 }

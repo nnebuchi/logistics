@@ -54,17 +54,27 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => ['ziga.admin.guest']
+    //'middleware' => ['ziga.admin.guest'],
+    'middleware' => 'guest:admin'
 ], function () {
     Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name("admin.login");
-    Route::post('/admin/login', [AdminAuthController::class, 'login']);
 });
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
 
 Route::group([
-    'middleware' => ['ziga.admin.auth', 'verified', 'ziga.admin']
+    'middleware' => [
+        'auth:admin'
+        //'ziga.admin.auth', 
+        //'verified', 
+        //'ziga.admin'
+    ]
 ], function () {
-    //Route::get('/logout', [AdminAuthController::class, 'logOut']);
+    Route::get('/admin/logout', [AdminAuthController::class, 'logOut']);
 
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/users', 
+    [AdminDashboardController::class, 'showUsers'])->name('admin.users');
+    Route::get('/admin/transactions', 
+    [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
 });
 

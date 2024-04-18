@@ -54,7 +54,7 @@
                         <div class="row justify-content-center">
                             <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
                                 <h4 style="font-weight:700">Sign In Here</h4>
-                                <form id="login" action="{{url('/login')}}" method="POST">
+                                <form id="login" action="{{url('/admin/login')}}" method="POST">
                                     @csrf
                                     <p class="message text-center"></p>
                                     <div class="">

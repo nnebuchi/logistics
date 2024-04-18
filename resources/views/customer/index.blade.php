@@ -18,7 +18,7 @@
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-xl-4 col-lg-4 col-md-4" style="height:161px">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
                                     <div class="mb-2 reload-wallet" type="button" data-type="balance">
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
                                     <div class="mb-2 reload-wallet" type="button" data-type="all-funding">

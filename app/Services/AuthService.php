@@ -36,6 +36,7 @@ class AuthService
             ]);    
 
             $user->wallet()->create();
+            //$user->profile()->create();
             
             event(new Registered($user));
 

@@ -16,10 +16,11 @@ class CheckIfIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user) {
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()) {
             return $next($request);
         }
 
-        //abort(403, 'Unauthorized');
+        // Redirect to admin login page
+        return redirect('/admin/login');
     }
 }

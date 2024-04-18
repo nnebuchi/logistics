@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Util\ResponseFormatter;
 use App\Services\UserService;
+use App\Http\Requests\ChangePassword;
 
 class UserController extends Controller
 {
@@ -67,6 +68,11 @@ class UserController extends Controller
         endif;
 
         return $this->userService->updateProfile($request);
+    }
+
+    public function changePassword(ChangePassword $request)
+    {
+        return $this->userService->changePassword($request->validated());
     }
 
 }

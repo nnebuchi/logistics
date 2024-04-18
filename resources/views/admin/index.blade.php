@@ -18,6 +18,33 @@
                     </div>
 
                     <div class="row mt-3">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
+                            <div class="bg-primary p-3">
+                                <span class="text-primary text-white">Total Customers</span>
+                                <h3 class="text-white" id="transactions">12</h3>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 mt-3 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0">
+                            <div class="bg-secondary p-3">
+                                <span class="text-primary">Doctors</span>
+                                <h3 id="doctors">234</h3>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 mt-3 mt-xl-0 mt-lg-0 mt-md-0">
+                            <div class="bg-secondary p-3">
+                                <span class="text-primary">Users</span>
+                                <h3 id="users">345</h3>
+                            </div>
+                        </div>
+                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 mt-3 mt-xl-0 mt-lg-0 mt-md-0">
+                            <div class="bg-secondary p-3">
+                                <span class="text-primary">Children</span>
+                                <h3 id="children">45</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--<div class="row mt-3">
                         <div class="col-xl-4 col-lg-4 col-md-4" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
@@ -62,65 +89,61 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="row mt-5">
-                        <div class="col-12 d-flex align-items-stretch">
+                        <!-- Start Of Data Table -->
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-semibold">Transaction History</span>
+                                <span class="fw-bolder">view</span>
+                            </div>
+                            <table class="transactions-table table table-bordered table-responsive bg-white text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- End Of Data Table -->
+                        <!-- Start Of Chart -->
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mt-xl-0 mt-lg-0 mt-md-0 mt-3 mt-sm-3">
                             <div class="card w-100">
-                                <div class="card-body p-0">
-                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
-                                        <h5 class="card-title fw-semibold">Recent Shippings</h5>
-                                        <div class="d-flex flex-wrap">
-                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="today">
-                                                Today
-                                            </button>
-                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="week">
-                                                This Week
-                                            </button>
-                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="month">
-                                                This Month
-                                            </button>
-                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="year">
-                                                This Year
-                                            </button>
-                                            <a class="btn" href="/">
-                                                See All
-                                                <img src="{{asset('assets/images/icons/move-right.svg')}}" />
-                                            </a>
-                                        </div>
+                                <div class="card-body">
+                                    <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
+                                      <div class="mb-3 mb-sm-0">
+                                        <span class="card-title fw-semibold">Total Transactions</span>
+                                        <h3 class="fw-semibold text-primary" id="chart-transactions"></h3>
+                                      </div>
+                                      <div>
+                                        <select class="form-select" name="month">
+                                            <option value="0">January</option>
+                                            <option value="1">February</option>
+                                            <option value="2">March</option>
+                                            <option value="3">April</option>
+                                            <option value="4">May</option>
+                                            <option value="5">June</option>
+                                            <option value="6">July</option>
+                                            <option value="7">August</option>
+                                            <option value="8">September</option>
+                                            <option value="9">October</option>
+                                            <option value="10">November</option>
+                                            <option value="11">December</option>
+                                        </select>
+                                      </div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="shipments-table table text-nowrap mb-0 align-middle">
-                                            <thead class="text-dark fs-4">
-                                                <tr>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">S/N</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Shipping ID</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Date</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Pick Up</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Destination</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Status</h6>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>   
-                                                                      
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <div id="chart"></div>
                                 </div>
                             </div>
                         </div>
+                        <!-- End Of Chart -->
                     </div>
 
                     @include('customer.modals.broadcast-modal')
@@ -146,7 +169,7 @@
     let baseUrl = $("meta[name='base-url']").attr("content");
     var userToken = localStorage.getItem('token');
 
-    function fetchWallet(){
+    function fetchStats(){
         const config = {
             headers: {
                 Accept: "application/json",
@@ -154,7 +177,7 @@
                 Authorization: "Bearer "+ userToken
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/wallet`, config)
+        axios.get(`${baseUrl}/api/v1/`, config)
         .then((res) => {
             let results = res.data.results;
             $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
@@ -164,128 +187,88 @@
             //$(".balance").eq(2).text("₦"+parseInt(325000).toLocaleString());
         });
     };
-    fetchWallet();
+    fetchStats();
 
     const status = {
         pending: "custom-bg-warning",
-        delivered: "custom-bg-success",
+        success: "custom-bg-success",
         failed: "custom-bg-danger"
     };
 
     const rowColors = {
         pending: "#ffffff",
-        delivered: "#233E830D",
-        failed: "#233E830D"
+        success: "#233E830D",
+        failed: "#ffffff"
     };
 
-    function fetchShipments(){
-        axios.get(`${baseUrl}/api`)
-        //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings`, config)
-        .then((res) => {
-            //let shipments = res.data.results;
-            let shipments = [
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"}
-            ].slice(0, 10);
+    function getRandomColor(){
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
 
-            $(".shipments-table tbody").empty();
-            appendShipments(shipments);
-        });
-    };
-    fetchShipments();
-
-    function appendShipments(shipments){
-        shipments.forEach(function(shipment, index){
-            $(".shipments-table tbody").append(`
-                <tr style="background-color:${rowColors[shipment.status]}">
-                    <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${index + 1}.</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal mb-1">154JKL-MNY</span>                        
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">12/03/24</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">15 Peter Odili Road, Port Harcourt</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">12 Aminu Kano Road, Kano</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
-                            ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
-                            </span>
-                        </div>
-                    </td>
-                </tr> 
-            `);
-        })
+        //Convert the RGB components to headecimal format
+        const colorHex = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
+        return colorHex;
     }
 
-    $(".reload-wallet").on("click", function(event){
-        event.preventDefault();
-        let type = $(this).data("type");
-        const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+    const getInitials = (name) => {
+        let fullname = name.split(" ");
+        let initials = "";
+        for(let i=0; i<fullname.length; i++){
+            initials += fullname[i].charAt(0);
+            if (i === 1) {
+                break; // Break the loop after extracting the second initial
             }
-        };
-        axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/wallet`, config)
-        .then((res) => {
-            let results = res.data.results;
-            switch(type){
-                case "balance":
-                    $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
-                    $(".balance").eq(0).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
-                break;
-                case "all-funding":
-                    $(".balance").eq(1).text("₦"+parseInt(results?.totalCredit).toLocaleString());
-                    $(".balance").eq(1).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
-                break;   
-            }
-        });
-    });
+        }
+        return initials;
+    }
 
-    $(".period").on("click", function(event){
-        event.preventDefault();
-        $(".period").prop("disabled", true);
-        let text = $(this).text();
-        let value = $(this).data("value");
-        $(this).html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
-        $(".period").removeClass("btn-light-active");
-        $(this).addClass("btn-light-active");
-        // After completing your action, enable all elements with class "period" again
-        setTimeout(() => {
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer "+ userToken
-                }
-            };
-            axios.get(`${baseUrl}/api`, config)
-            //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings?period=${value}`, config)
-            .then((res) => {
-                //let shipments = res.data.results;
-                let shipments = [
-                    {id: 1, status: "pending"},
-                    {id: 1, status: "delivered"}
-                ].slice(0, 10);
+    function fetchAllTransactions(data){
+        let transactions = data.slice(0, 5);
 
-                $(this).text(text);
-                $(".period").prop("disabled", false); 
-                $(".shipments-table tbody").empty();
-                appendShipments(shipments);
-            });
-        }, 2000);
-    });
+        $(".transactions-table tbody").empty();
+        transactions.forEach(function(transaction, index){
+            let name = transaction.wallet.user.firstname+" "+transaction.wallet.user.lastname;
+            const userCard = (transaction.wallet.user.photo == null ) ? `
+                <td scope="row">
+                    <div class="user-card">
+                        <div class="user-avatar ${status[transaction.status]}">
+                            <span>${getInitials(name)}</span>
+                        </div>
+                        <div class="user-name">
+                            <span class="fw-normal">
+                            ${name}
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            ` : `
+                <td scope="row">
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            <img src="${transaction.wallet.user.photo}" class="w-100 h-100">
+                        </div>
+                        <div class="user-name">
+                            <span class="fw-normal">${name}</span>                        
+                        </div>
+                    </div> 
+                </td>
+            `;
+
+            $(".transactions-table tbody").append(`
+                <tr style="background-color:${rowColors[transaction.status]}">
+                    ${userCard}
+                    <td scope="row">₦${transaction.amount.toLocaleString()}</td>
+                    <td scope="row">${transaction.created_at}</td>
+                    <td scope="row">
+                        <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
+                        ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                        </span>
+                    </td>
+                </tr>  
+            `);
+        })
+    };
+    fetchAllTransactions(@json($transactions));
 </script>
 @include("admin.layouts.footer")
