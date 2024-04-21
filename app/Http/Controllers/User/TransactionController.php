@@ -17,7 +17,7 @@ class TransactionController extends Controller
     {
         $user = User::find(Auth::user()->id);
         $wallet = $user->wallet;
-        $query = Transaction::where('wallet_id', $wallet->id);
+        $query = Transaction::where('wallet_id', $wallet->id)->orderByDesc("created_at");
 
         // Filter transactions by type
         if ($request->has('type')) {
@@ -49,10 +49,4 @@ class TransactionController extends Controller
         return ResponseFormatter::success("Filtered Trx:", $transactions, 200); 
     }
 
-    public function getTransactions(Request $request)
-    {
-        $transactions = Transaction::all();
-
-        return ResponseFormatter::success("Transactions:", $transactions, 200); 
-    }
 }

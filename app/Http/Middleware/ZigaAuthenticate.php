@@ -7,28 +7,15 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Middleware\Authenticate;
 
-class ZigaAuthenticate
+class ZigaAuthenticate extends Authenticate
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     /**
+     * Get the path the user should be redirected to when they are not authenticated.
      */
-    public function handle(Request $request, Closure $next)
+    protected function redirectTo(Request $request): ?string
     {
-        if (!$request->expectsJson()) {
-            // Check if the user is authenticated with the admin guard
-            if ($request->routeIs('admin/*') && !Auth::guard('admin')->check()) {
-                return redirect("/admin/login"); // Redirect to the admin login page
-            } else {
-                return redirect("/login"); // Redirect to the default login page
-            }
-        }
-
-        return response()->json([
-            'message' => "Unauthenticated",
-            'error' => true
-        ], 401);
+        return $request->expectsJson() ? null : route('admin.login');
     }
 }

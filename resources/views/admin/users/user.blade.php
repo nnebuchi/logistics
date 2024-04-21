@@ -29,10 +29,7 @@
                                                         <h6 class="fw-semibold mb-0">S/N</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Name</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Email</h6>
+                                                        <h6 class="fw-semibold mb-0">Name&Email</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Phone</h6>
@@ -44,10 +41,13 @@
                                                         <h6 class="fw-semibold mb-0">photo</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">View</h6>
+                                                        <h6 class="fw-semibold mb-0">Edit</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Status</h6>
+                                                    </th>
+                                                    <th class="border-bottom-0">
+                                                        <h6 class="fw-semibold mb-0">Fund</h6>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -55,14 +55,31 @@
                                                                       
                                             </tbody>
                                         </table>
+                                        <!--  Pagination Starts -->
+                                        <div class="d-flex justify-content-end my-2 pr-2">
+                                            <button class="btn btn-primary mr-2 paginate" data-page="" type="button">
+                                                Prev
+                                            </button>
+                                            <button class="btn btn-primary paginate" data-page="" type="button">
+                                                Next
+                                            </button>
+                                        </div>
+                                        <div class="my-2 pl-2">
+                                                Showing
+                                                <span class="entries fw-semibold">. </span> to
+                                                <span class="entries fw-semibold">. </span> of
+                                                <span class="entries fw-semibold">. </span>
+                                                transactions
+                                            </div>
+                                        <!--  Pagination Ends -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    @include('customer.modals.broadcast-modal')
-                    @include('customer.modals.change-password-modal')
+                    @include('admin.modals.user-modal')
+                    @include('admin.modals.payment-modal')
                 </div>
             </div>
             <!--  End of Row 1 -->
@@ -118,125 +135,240 @@
 
     const rowColors = {failed: "#ffffff", success: "#233E830D", pending: "#ffffff"};
 
-    $('.users-table').DataTable({
-        data: @json($users),
-        columns: [
-            { 
-                data: null,
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row, meta){
-                    let serial = meta.row + meta.settings._iDisplayStart + 1;
-                    return serial;
-                }
-            },
-            { 
-                data: null,
-                render: function(data, type, row){
-                    let photo = data["photo"];
-                    let name = data["firstname"]+ " "+data["lastname"]
-                    return name;
-                }
-            },
-            { data: "email"},
-            { data: "phone"},
-            { data: "account.name"},
-            { 
-                data: null,
-                render: function(data, type, row){
-                    let image = data["photo"];
-                    if(image == null){
-                        return "";
-                    }else{
-                        return `<a href=${image} class="rounded-0 photo">
-                            <img src="${image}" style="width:50px;height:30px;" />
-                        </a>`
-                    }
-                }
-            },
-            { 
-                data: null,
-                render: function(data, type, row){
-                    return `<button data-id="${data.id}" 
-                    class="btn btn-light view-user" type="button">View</button>`;
-                    return `
-                    <a class="view-child" data-id="${data['id']}" type="button">
-                        <img src="{{asset('assets/images/icons/eye.svg')}}" />
-                    </a>`;
-                }
-            },
-            { 
-                data: null,
-                render: function(data, type, row){
-                    var verified = data["is_verified"];
-                    if(verified){
-                        return `<img 
-                        src="{{asset('assets/images/icons/auth/success-icon.svg')}}" 
-                        width="20" height="20" />`;
-                    }else{
-                        return `<img 
-                        src="{{asset('assets/images/icons/auth/warning-icon.svg')}}" 
-                        width="20" height="20" class="mr-2" />`;
-                    }
-                }
-            }
-            /*{ 
-                data: null,
-                render: function(data, type, row){
-                    return `
-                    <a class="send-mail" data-id="${data['id']}" type="button">
-                        <img src="{{asset('assets/images/icons/mail.svg')}}" />
-                    </a>`;
-                }
-            },*/
-        ],
-		columnDefs: [{
-			targets: "datatable-nosort",
-			orderable: false,
-		}],
-		"language": {
-			"info": "_START_-_END_ of _TOTAL_ entries",
-			searchPlaceholder: "Search users",
-			paginate: {
-				next: '<ion-icon name="chevron-forward-outline"></ion-icon>',
-                previous: '<ion-icon name="chevron-back-outline"></ion-icon>'   
-			}
-		},
-        "pageLength": 20,
-        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-        //"page": 5,
-        //"pagingType": "full_numbers",
-        "createdRow": function(row, data, index){
-            let verified = data["is_verified"];
-            if(verified){
-               $(row).css("background-color", "#233E830D");
-            }else{
-               //$(row).addClass("bg-white");
-            }
+    function getIndex(per_page, current_page, index)
+    {
+        if(current_page == 1){
+            return index + 1
+        }else{
+            return (per_page * current_page) - per_page + 1 + index
         }
-	});
+    }
 
-    $(document).on("click", ".view-user", function(event){
+    function getUsers(page){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.get(`${baseUrl}/api/v1/users?page=${page}`, config)
+        .then((res) => {
+            let results = res.data.results;
+            let users = results.data;
+        
+            $(".users-table tbody").empty();
+            users.forEach(function(user, index){
+                const status = (user.is_verified) ? `
+                    <td scope="row">
+                        <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="20" height="20" />
+                    </td>
+                ` : `
+                    <td scope="row">
+                        <img src="{{asset('assets/images/icons/auth/warning-icon.svg')}}" width="20" height="20" />
+                    </td>
+                `;
+
+                $(".users-table tbody").append(`
+                    <tr style="background-color:${rowColors[user.is_verified ?? "success"]}">
+                        <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
+                        <td scope="row">
+                            <div>${user.firstname+" "+user.lastname}</div>
+                            <div><b>${user.email}</b></div>
+                        </td>
+                        <td scope="row">${user.phone}</td>
+                        <td scope="row">${user.account.name}</td>
+                        <td scope="row">
+                            ${(user.photo != null) ? `<a href=${user.photo} class="rounded-0 photo">
+                                <img src="${user.photo}" style="width:50px;height:30px;" />
+                            </a>` : ""}
+                        </td>
+                        <td scope="row">
+                            <a class="edit-user" data-id="${user.id}" type="button">
+                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                            </a>
+                        </td>
+                        ${status}
+                        <td scope="row">
+                            <button data-id="${user.id}" 
+                            class="btn btn-light fund-user" type="button">Fund
+                            </button>
+                        </td>
+                    </tr>  
+                `);
+            })
+
+            // Enable or disable the button based on the condition
+            $(".paginate").eq(0).prop('disabled', results.current_page === 1);
+            $(".paginate").eq(1).prop('disabled', results.current_page === results.last_page);
+
+            $(".paginate").eq(0).data("page", results.current_page - 1);
+            $(".paginate").eq(1).data("page", results.current_page + 1);
+
+            $(".entries").eq(0).text((results.current_page - 1) * results.per_page + 1);
+            $(".entries").eq(1).text((results.current_page - 1) * results.per_page + users.length);
+            $(".entries").eq(2).text(results.total);
+        });
+    }
+    getUsers(page = 1);
+
+    function filterTable() {
+        var filterValue = $('#filterInput').val().trim().toLowerCase();
+        //var date = $('#date').val();
+
+        $('.trx-table tbody tr').each(function() {
+            var rowUserEmail = $(this).find('td:eq(1)').text().trim().toLowerCase();
+            var rowTrxReference = $(this).find('td:eq(2)').text().trim().toLowerCase();
+            //var rowDate = $(this).find('td:eq(4)').text(); // Assuming date is in the third column
+
+            var showRow = false;
+            // Show or hide row based on filtering results
+            /*if(date !== '' && rowDate !== date) {
+                showRow = false;
+            }*/
+           
+            if(rowTrxReference.includes(filterValue) || rowUserEmail.includes(filterValue)) {
+                showRow = true;
+            }
+
+            if (showRow) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    // jQuery code for filtering
+    $(document).ready(function() {
+        $('#filterInput').on('input', function() {
+            filterTable();
+        });
+
+        $('.paginate').on('click', function() {
+            let page = $(this).data("page");
+            getUsers(page);
+        });
+    });
+
+
+    $(document).on("click", ".edit-user", function(event){
         event.preventDefault();
         const userId = $(this).data("id");
         console.log("User ID:", userId);
-        alert(userId);
+        $("#userModal").modal("show");
         /*axios.get(`${baseUrl}/api/user/${userId}`)
         .then((res) => {
             let user = res.data.results;
 
             let userData = $(".user-data");
-            userData.eq(0).text(user?.first_name+" "+user?.last_name);
+            userData.eq(0).text(user?.firstname+" "+user?.lastname);
             userData.eq(1).text(user?.email);
             userData.eq(2).text(user?.phone);
-            userData.eq(3).text(user?.dob);
-            userData.eq(4).text(user?.gender);
-            userData.eq(5).text(user?.occupation);
-            userData.eq(6).text(user?.state?.name);
-            userData.eq(7).text(user?.city?.name);
+            userData.eq(3).text(user?.profile?.id_number);
             $('#userModal .avatar').attr("src", imageUrl+user?.profile_photo);
             $("#userModal").modal("show");
         });*/
     });
+
+    $("#userModal .close").on("click", function(){
+        $("#userModal").modal("hide");
+    });
+    $('#userModal').on('hidden.bs.modal', function (e) {
+        $("#userModal").modal("hide");
+    })
+
+    $(document).on("click", ".fund-user", function(event){
+        event.preventDefault();
+        const userId = $(this).data("id");
+        $("#paymentForm #userId").val(userId);
+        $("#paymentModal").modal("show");
+    });
+    $("#paymentModal .close").on("click", function(){
+        $("#paymentModal").modal("hide");
+    });
+    $('#paymentModal').on('hidden.bs.modal', function (e) {
+        $("#paymentModal").modal("hide");
+    })
+
+    $('#paymentForm #amount').on('input', function() {
+        var $submitButton = $('#paymentForm #submitBtn');  // Cache the submit button
+        var inputValue = $(this).val(); // Get the input value
+        var sanitizedValue = inputValue.replace(/\D/g, '');  // Remove any non-numeric characters
+        // Update the input value with the sanitized value
+        $(this).val(sanitizedValue);
+
+        // Check if the sanitized value is greater than 2000
+        if (parseInt(sanitizedValue) > 0) {
+            $submitButton.prop('disabled', false); //If the value is greater than 2000, enable the button
+        } else {
+            $submitButton.prop('disabled', true); //If the value is not greater than 2000, disable the button
+        }
+    });
+</script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+    var paymentForm = document.getElementById('paymentForm');
+    paymentForm.addEventListener('submit', payWithPaystack, false);
+
+    async function payWithPaystack(e) {
+        e.preventDefault();
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        const inputs = {amount: $('#paymentForm #amount').val()}
+        let userId = $("#paymentForm #userId").val();
+        try {
+            const response = await axios.post(`${baseUrl}/api/v1/user/${userId}/transaction`, inputs, config);
+            let results = response.data.results;
+            let handler = PaystackPop.setup({
+                key: results.key, 
+                email: results.email,
+                amount: results.amount * 100, 
+                currency: 'NGN', // Use GHS for Ghana Cedis or USD for US Dollars
+                ref: results.reference,
+                //channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
+                onClose: function(){
+                    offModal(); // Hide the modal
+                    axios.get(
+                        `${baseUrl}/api/wallet-funding/callback?reference=`+results.reference, 
+                        inputs, 
+                        config
+                    ).then((res) => {
+                        let data = res.data;
+                        fetchWallet();
+                    });
+                },
+                callback: function(response){
+                    offModal();  // Hide the modal
+                    axios.get(
+                        `${baseUrl}/api/wallet-funding/callback?reference=`+response.reference, 
+                        inputs, 
+                        config
+                    ).then((res) => {
+                        let data = res.data;
+                        fetchWallet();
+                    });
+                }
+            });
+
+            handler.openIframe();
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+
+    function offModal(){
+        // Select the modal element
+        var myModal = document.getElementById('paymentModal');
+        myModal.classList.remove('show');
+        myModal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        $('.modal-backdrop').remove();  // Remove the backdrop
+    }
 </script>
 @include("admin.layouts.footer")

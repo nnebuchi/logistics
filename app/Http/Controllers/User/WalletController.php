@@ -64,7 +64,7 @@ class WalletController extends Controller
 
     public function createTransaction(Request $request)
     {
-        $user = User::find(Auth::user()->id);
+        $user = User::find($request["userId"]);
         $wallet = $user->wallet;
         $transaction = $this->storeTransaction($wallet->id, $request->amount);
 

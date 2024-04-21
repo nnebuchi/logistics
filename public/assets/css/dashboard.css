@@ -633,3 +633,7 @@ select#trx-status option {
 .user-avatar img{
     border-radius: 30px;
 }
+
+table td, table th {
+    text-align: center;
+}

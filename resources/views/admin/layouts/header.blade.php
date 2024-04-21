@@ -72,15 +72,15 @@
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/profile')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/rates')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
-									<span class="hide-menu">Profile</span>
+									<span class="hide-menu">Rates</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/logout')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/logout')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/logout.svg')}}" />
 									</span>

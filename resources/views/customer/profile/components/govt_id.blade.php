@@ -5,7 +5,7 @@
         <img src="<?=$user->profile->valid_govt_id?>"
         class="w-100" 
         height="161" 
-        style="border-radius:15px;">
+        style="border-radius:15px;object-fit:cover;">
         <div class="d-flex justify-content-between mt-3">
             <button 
             disabled

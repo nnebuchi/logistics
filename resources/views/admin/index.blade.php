@@ -21,75 +21,29 @@
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
                             <div class="bg-primary p-3">
                                 <span class="text-primary text-white">Total Customers</span>
-                                <h3 class="text-white" id="transactions">12</h3>
+                                <h3 class="text-white stats"></h3>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 mt-3 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0">
                             <div class="bg-secondary p-3">
-                                <span class="text-primary">Doctors</span>
-                                <h3 id="doctors">234</h3>
+                                <span class="text-primary">Customers (<span class="stat-percent fs-3 fw-semibold"> </span> <span class="fs-2">vs</span> last week)</span>
+                                <h3 class="stats"></h3>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 mt-3 mt-xl-0 mt-lg-0 mt-md-0">
                             <div class="bg-secondary p-3">
-                                <span class="text-primary">Users</span>
-                                <h3 id="users">345</h3>
+                                <span class="text-primary">Transactions (<span class="stat-percent fs-3 fw-semibold"> </span> <span class="fs-2">vs</span> last week)</span>
+                                <h3 class="stats"></h3>
                             </div>
                         </div>
                          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 mt-3 mt-xl-0 mt-lg-0 mt-md-0">
                             <div class="bg-secondary p-3">
-                                <span class="text-primary">Children</span>
-                                <h3 id="children">45</h3>
+                                <span class="text-primary">Transactions (<span class="stat-percent fs-3 fw-semibold"> </span> <span class="fs-2">vs</span> last month)</span>
+                                <h3 class="stats"></h3>
                             </div>
                         </div>
                     </div>
 
-                    <!--<div class="row mt-3">
-                        <div class="col-xl-4 col-lg-4 col-md-4" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <div class="mb-2 reload-wallet" type="button" data-type="balance">
-                                        <img src="{{asset('assets/images/icons/reload.svg')}}">
-                                    </div>
-                                    <span>Curent Wallet Balance</span>
-                                    <h2 class="balance"></h2>
-                                    <span class="text-sec"></span>
-                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
-                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
-                                    </div>
-                                </div>
-                                <div class=" pr-2">
-                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <div class="mb-2 reload-wallet" type="button" data-type="all-funding">
-                                        <img src="{{asset('assets/images/icons/reload.svg')}}">
-                                    </div>
-                                    <span>All-time Funding</span>
-                                    <h2 class="balance"></h2>
-                                    <span class="text-sec"></span>
-                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
-                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
-                                    </div>
-                                </div>
-                                <div class=" pr-2">
-                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <span>Wallet Account Details</span>
-                                    <h2 class="balance"></h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>-->
 
                     <div class="row mt-5">
                         <!-- Start Of Data Table -->
@@ -177,14 +131,16 @@
                 Authorization: "Bearer "+ userToken
             }
         };
-        axios.get(`${baseUrl}/api/v1/`, config)
+        axios.get(`${baseUrl}/api/v1/statistics`, config)
         .then((res) => {
             let results = res.data.results;
-            $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
-            $(".balance").eq(0).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
-            $(".balance").eq(1).text("₦"+parseInt(results?.totalCredit).toLocaleString());
-            $(".balance").eq(1).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
-            //$(".balance").eq(2).text("₦"+parseInt(325000).toLocaleString());
+            $(".stats").eq(0).text(results?.customers_count);
+            $(".stats").eq(1).text(results?.customers_last_week[0]);
+            $(".stats").eq(2).text("₦"+parseInt(results?.transactions_cost_last_week[0]).toLocaleString());
+            $(".stats").eq(3).text("₦"+parseInt(results?.transactions_cost_last_month[0]).toLocaleString());
+            $(".stat-percent").eq(0).text("+"+results?.customers_last_week[1].toFixed(0)+"%").css("color", "#128807");
+            $(".stat-percent").eq(1).text("+"+results?.transactions_cost_last_week[1].toFixed(0)+"%").css("color", "#128807");
+            $(".stat-percent").eq(2).text("+"+results?.transactions_cost_last_month[1].toFixed(0)+"%").css("color", "#128807");
         });
     };
     fetchStats();
@@ -258,7 +214,7 @@
             $(".transactions-table tbody").append(`
                 <tr style="background-color:${rowColors[transaction.status]}">
                     ${userCard}
-                    <td scope="row">₦${transaction.amount.toLocaleString()}</td>
+                    <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
                     <td scope="row">${transaction.created_at}</td>
                     <td scope="row">
                         <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">

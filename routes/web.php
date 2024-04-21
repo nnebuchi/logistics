@@ -50,7 +50,6 @@ Route::group([
     Route::get('/shipments', [UserController::class, 'showShipments']);
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);
-    Route::post('/wallet/create-transaction', [WalletController::class, 'createTransaction']);
 });
 
 Route::group([
@@ -63,10 +62,8 @@ Route::post('/admin/login', [AdminAuthController::class, 'login']);
 
 Route::group([
     'middleware' => [
-        'auth:admin'
-        //'ziga.admin.auth', 
-        //'verified', 
-        //'ziga.admin'
+        'ziga.admin.auth:admin', 
+        'verified'
     ]
 ], function () {
     Route::get('/admin/logout', [AdminAuthController::class, 'logOut']);
@@ -74,7 +71,8 @@ Route::group([
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/users', 
     [AdminDashboardController::class, 'showUsers'])->name('admin.users');
+    Route::get('/admin/rates', 
+    [AdminDashboardController::class, 'showRates'])->name('admin.rates');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
 });
-

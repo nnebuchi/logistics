@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\TransactionController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::get('/', function () {
     return [
@@ -22,7 +23,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post("/change-password", [UserController::class, "changePassword"]);
         
         Route::get('/shippings', [ShippingController::class, 'getShippings']);
-        Route::get('/transactions', [TransactionController::class, 'getTransactions']);
+        Route::get('/users', [AdminDashboardController::class, 'getUsers']);
+        Route::get('/transactions', [AdminDashboardController::class, 'getTransactions']);
+        Route::get('/statistics', [AdminDashboardController::class, 'fetchStatistics']);
 
         //users endpoint
         Route::group([
@@ -33,6 +36,7 @@ Route::group(['prefix' => 'v1'], function () {
             Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
             Route::get('/{userId}/shippings', [ShippingController::class, 'getUserShippings']);
             Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
+            Route::post('/{userId}/transaction', [WalletController::class, 'createTransaction']);
 
             //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
             //Route::post('/{userId}/send-ios-notifications', [UserController::class, 'sendIosPushNotifications']);

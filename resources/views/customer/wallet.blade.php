@@ -210,29 +210,27 @@
             $(".transactions-table tbody").append(`
                 <tr style="background-color:${rowColors[transaction?.status]}">
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${index + 1}.</span>
+                        <span class="fw-normal">${index + 1}.</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-1">${transaction?.reference}</span>                        
+                        <span class="fw-normal">${transaction?.reference}</span>                        
                     </td>
                     <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">₦${transaction?.amount}</span>
+                        <span class="fw-normal"><b>₦</b>${transaction?.amount}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">${transaction?.created_at}</span>
+                        <span class="fw-normal">${transaction?.created_at}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${transaction?.purpose}</span>
+                        <span class="fw-normal">${transaction?.purpose}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${transaction?.type}</span>
+                        <span class="fw-normal">${transaction?.type}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
+                        <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
                             ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                            </span>
-                        </div>
+                        </span>
                     </td>
                 </tr> 
             `);
@@ -260,13 +258,12 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                "X-Requested-With": "XMLHttpRequest"
+                Authorization: "Bearer "+ userToken
             }
         };
         const inputs = {amount: $('#paymentForm #amount').val()}
         try {
-            const response = await axios.post(`${baseUrl}/wallet/create-transaction`, inputs, config);
+            const response = await axios.post(`${baseUrl}/api/v1/user/${<?=$user->id?>}/transaction`, inputs, config);
             let results = response.data.results;
             let handler = PaystackPop.setup({
                 key: results.key, 

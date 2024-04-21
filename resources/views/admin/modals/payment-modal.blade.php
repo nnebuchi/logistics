@@ -22,6 +22,7 @@
                         placeholder="E.g 5000">
                         <span class="error"> </span>
                     </div>
+                    <input type="hidden" id="userId" value="">
                     <div class="mt-2 d-flex justify-content-center">
                         <button 
                             disabled
