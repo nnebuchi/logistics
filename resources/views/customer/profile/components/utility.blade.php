@@ -1,5 +1,5 @@
 <?php 
-    if($user->profile->utility_bill):
+    if($user?->profile?->utility_bill):
 ?>        
     <div class="">
         <img src="<?=$user->profile->utility_bill?>"

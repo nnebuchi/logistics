@@ -1,5 +1,5 @@
 <?php 
-    if($user->profile->valid_govt_id):
+    if($user?->profile?->valid_govt_id):
 ?>        
     <div class="">
         <img src="<?=$user->profile->valid_govt_id?>"

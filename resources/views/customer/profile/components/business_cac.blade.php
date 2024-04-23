@@ -1,5 +1,5 @@
 <?php 
-    if($user->profile->business_cac):
+    if($user?->profile?->business_cac):
 ?>        
     <div class="">
         <img src="<?=$user->profile->business_cac?>"
@@ -14,7 +14,7 @@
                 Update
             </button>
             <button 
-            data-src="<?=$user->profile->business_cac?>"
+            data-src="<?=$user?->profile?->business_cac?>"
             class="custom-btn"
             type="button">
                 View File

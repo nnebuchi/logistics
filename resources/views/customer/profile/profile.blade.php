@@ -176,11 +176,11 @@
                                                     type="text" 
                                                     id="id_number"
                                                     name="id_number"
-                                                    value="<?=$user?->profile->id_number?>"
+                                                    value="<?=$user?->profile?->id_number?>"
                                                     placeholder="Enter ID number of uploaded ID card"
                                                     class="custom-input" />
                                                 </div>
-                                                <?php if(is_null($user?->profile->id_number)):?>
+                                                <?php if(is_null($user?->profile?->id_number)):?>
                                                 <button 
                                                     class="custom-btn mt-3"
                                                     id="save_id_number"
