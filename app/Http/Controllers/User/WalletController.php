@@ -25,9 +25,12 @@ class WalletController extends Controller
         $user = User::find(Auth::user()->id);
         $wallet = $user->wallet;
         $transactions = $wallet->transactions()->orderBy('created_at', 'desc')->get();
+        $totalCredit = $wallet->transactions()
+        ->where(['type' => 'Credit', 'status' => 'success'])->sum('amount');
         
         $data = [
             "wallet" => $wallet,
+            "totalCredit" => $totalCredit,
             "transactions" => $transactions,
         ];
         return ResponseFormatter::success("Wallet Data:", $data, 200); 
@@ -61,7 +64,7 @@ class WalletController extends Controller
 
     public function createTransaction(Request $request)
     {
-        $user = User::find(Auth::user()->id);
+        $user = User::find($request["userId"]);
         $wallet = $user->wallet;
         $transaction = $this->storeTransaction($wallet->id, $request->amount);
 

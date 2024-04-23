@@ -1,172 +1,223 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <base href="{{url('')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <meta name="csrf-token" content="{{csrf_token()}}">
+    <head>
+        <meta charset="utf-8">
+        <base href="{{url('')}}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <meta name="csrf-token" content="{{csrf_token()}}">
 
-    <meta name="theme-color" content="" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="" />
-    <title>Ziga Afrika Dashboard</title>
-    <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
-    <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
-    <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
-    <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-    <link rel="stylesheet" href="{{asset('assets/css/admin/main.css')}}" />
-    <link rel="stylesheet" href="{{asset('assets/css/admin/dashboard.css')}}" />
-    <?php date_default_timezone_set("Africa/Lagos"); ?>
-  </head>
-<body>
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-    <div
-      class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
-      <div class="d-flex align-items-center justify-content-center w-100">
-        <div class="row justify-content-center w-100">
-          <div class="col-md-8 col-lg-6 col-xxl-3">
-            <div class="card mb-0">
-              <div class="card-body">
-                <a href="{{url('/')}}" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                  <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
-                </a>
-                <p class="text-center">Welcome Admin.</p>
-                <span class="message d-block" style="text-align:center"> </span>
-                <form action="{{url('/login')}}" method="POST" id="login">
-                  @csrf
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email">
-                    <span class="error"></span>
-                  </div>
-    
-                  <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="d-flex position-relative">
-                        <input type="password" name="password" class="form-control" id="password">
-                        <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0"><ion-icon class="show-hide" name="eye-outline"></ion-icon></div>
-                    </div>
-                    <span class="error"></span>
-                  </div>
+        <meta name="theme-color" content="" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="" />
+        <title>Ziga Afrika Dashboard</title>
+        <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
+        <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
+        <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
+        <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
+        <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
+        <?php date_default_timezone_set("Africa/Lagos"); ?>
+    </head>
+    <style>
+        .error{
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+    <body>
 
-                  <div class="d-flex align-items-center justify-content-between mb-4">
-                    <div class="form-check">
-                      <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
-                      <label class="form-check-label text-dark" for="flexCheckChecked">
-                        Remember this Device
-                      </label>
+    <section class="d-flex" style="height:100vh;width:100%">
+        <div class="container-fluid w-100 h-100 px-0" style="position:absolute;top:0;left:0">
+            <div class="row w-100 h-100 mx-0" style="background-color:#4f659c">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 pt-3 h-100 box1">
+                    <div class="h-100 d-flex flex-column justify-content-between">
+                        <div class="">
+                            <a href="{{url('/')}}" class="">
+                                <img src="{{asset('assets/images/logos/ziga-blue2.svg')}}" width="180" alt="">
+                            </a>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <img src="{{asset('assets/images/icons/auth/illustration2.svg')}}" width="350" height="300" alt="">
+                            <h5 class="text-white mt-5">We got you covered</h5>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6 class="text-white">Privacy Policy</h6>
+                            <h6 class="text-white">Terms and Conditions</h6>
+                        </div>
                     </div>
-                    <a class="text-primary fw-bold" href="{{url('/forgot-password')}}">Forgot Password ?</a>
-                  </div>
-                  <button type="submit" 
-                  class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</button>
-                </form>
-              </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto;">
+                    <div class="h-100 d-flex flex-column justify-content-center w-100">
+                        <div class="mb-4 dynamic-logo">
+                            <a href="{{url('/')}}" class="">
+                                <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
+                            </a>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
+                                <h4 style="font-weight:700">Sign In Here</h4>
+                                <form id="login" action="{{url('/admin/login')}}" method="POST">
+                                    @csrf
+                                    <p class="message text-center"></p>
+                                    <div class="">
+                                        <label for="email" class="custom-input-label">Email</label>
+                                        <div class="d-flex position-relative input-box">
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box">
+                                                <img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt="">
+                                            </div>
+                                            <input 
+                                            type="email" 
+                                            id="email"
+                                            name="email"
+                                            placeholder="Email"
+                                            class="custom-input" />
+                                        </div>
+                                        <span class="error"> </span>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label for="password" class="custom-input-label">Password</label>
+                                        <div class="d-flex position-relative input-box">
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
+                                                <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
+                                            </div>
+                                            <input 
+                                            type="password" 
+                                            id="password"
+                                            name="password"
+                                            placeholder="Enter Password" 
+                                            class="custom-input" />
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                                            </div>
+                                        </div>
+                                        <span class="error"></span>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
+                                            <label class="form-check-label text-dark" for="flexCheckChecked">
+                                                Remember Me
+                                            </label>
+                                        </div>
+                                        <a class="custom-text-secondary" 
+                                        href="{{url('/forgot-password')}}" style="font-weight: 600">Forgot Password ?</a>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center mt-4">
+                                        <button 
+                                        type="submit" 
+                                        class="custom-btn fs-4 mb-2">
+                                        Log In <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        </button>
+                                    </div>
+                                    <h5 style="font-size:14px;" class="mt-2 text-center">Don't have an account? <a href="{{url('/register')}}" class="custom-text-secondary fw-bold">Sign Up</a></h5>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <script src="{{asset('assets/libs/jquery/dist/jquery.min.js')}}"></script>
-  <script src="{{asset('assets/libs/axios/axios.js')}}"></script>
-  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-  <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
-  <script>
-      $('#login').on("submit", function (event) {
-        event.preventDefault();
-        let btn = $(this).find("button[type='submit']");
-        btn.html(`<img src="{{asset('assets/images/loader.gif')}}" style="width:20px;height:20px;">`);
-        btn.attr("disabled", true);
-        const form = event.target;
-        const url = form.action;
-        const inputs = {
-          email: $("#email").val(),
-          password: $("#password").val(),
-          usertype: "admin"
-        };
+    </section>
 
-        $('.error').text('');
-        $('.message').text('');
-        const config = {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-            "X-Requested-With": "XMLHttpRequest"
-          }
-        };
-        axios.post(url, inputs, config)
-        .then(function(response){
-          let message = response.data.message;
-          $(".message").css("color", "green");
-          $(".message").text(message);
-          toast(message);
-          btn.attr("disabled", false);
-          btn.text("Sign In");
-          // Add User Auth Bearer Token To Local Storage
-          localStorage.setItem('adminToken', response.data.results.user.token);
-          window.location.href = response.data.results.redirect;
-        })
-        .catch(function(error){
-          let errors = error.response.data.error;
-          if(errors.email){
-            $('.error').eq(0).text(errors.email);
-          }
-          if(errors.password){
-            $('.error').eq(1).text(errors.password);
-          }
+    <script src="{{asset('assets/libs/jquery/dist/jquery.min.js')}}"></script>
+    <script src="{{asset('assets/libs/axios/axios.js')}}"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
+    <script>
+        $('#login').on("submit", function (event) {
+            event.preventDefault();
+            let btn = $(this).find("button[type='submit']");
+            btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
+            btn.attr("disabled", true);
+            const form = event.target;
+            const url = form.action;
+            const inputs = {
+                email: $("#email").val(),
+                password: $("#password").val()
+            };
 
-          switch(error.response.status){
-            case 400:
-              $(".message").text(error.response.data.message)
-            break;
-            case 401:
-              $(".message").text(error.response.data.message);
-            break;
-          }
-          btn.attr("disabled", false);
-          btn.text("Sign In");
-        });
-      });
+            $("#email").css("borderColor", "transparent");
+            $("#password").css("borderColor", "transparent");
+            $('.error').text('');
+            $('.message').text('');
+            // Append loader immediately
+            setTimeout(() => {
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                };
+                axios.post(url, inputs, config)
+                .then(function(response){
+                    let message = response.data.message;
+                    $(".message").css("color", "green").text(message);
+                    toast(message);
+                    btn.attr("disabled", false).text("Sign In");
+                    // Add User Auth Bearer Token To Local Storage
+                    localStorage.setItem('token', response.data.results.user.token);
+                    window.location.href = response.data.results.redirect;
+                })
+                .catch(function(error){
+                    let errors = error.response.data.error;
+                    if(errors.email){
+                        $('.error').eq(0).text(errors.email);
+                        $("#email").css("border", "1px solid #FA150A");
+                    }
+                    if(errors.password){
+                        $('.error').eq(1).text(errors.password);
+                        $("#password").css("border", "1px solid #FA150A");
+                    }
 
-      function toast(message){
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'center',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer)
-              toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          background: "#d8383e",
-          color: "#ffffff"
+                    switch(error.response.status){
+                        case 400:
+                            $(".message").css("color", "red").text(error.response.data.message)
+                        break;
+                        case 401:
+                            $(".message").css("color", "red").text(error.response.data.message);
+                        break;
+                    }
+                    btn.attr("disabled", false).text("Sign In");
+                });
+            }, 100); // Delay submission by 100 milliseconds
         });
-          
-        Toast.fire({
-          icon: 'success',
-          title: message
+
+        function toast(message){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'center',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                },
+                background: "#233E83",
+                color: "#ffffff"
+            });
+            
+            Toast.fire({
+                icon: 'success',
+                title: message
+            });
+        }
+    </script>
+    <script>
+        $(".show-hide").click(function (event) {
+            let icon = $(this);
+            var input = $("#password");
+            if(input.attr("type") === "password"){
+                input.attr("type", "text");
+                icon.attr("name", "eye-off-outline");
+            }else{
+                input.attr("type", "password");
+                icon.attr("name", "eye-outline");
+            }
         });
-      }
-  </script>
-  <script>
-    $(document).ready(function () {
-      $(".show-hide").click(function (event) {
-          let icon = $(this);
-          var input = $("#password");
-          if(input.attr("type") === "password"){
-              input.attr("type", "text");
-              icon.attr("name", "eye-off-outline");
-          }else{
-              input.attr("type", "password");
-              icon.attr("name", "eye-outline");
-          }
-      });
-    });
-  </script>
-</body>
+    </script>
+    </body>
 </html>

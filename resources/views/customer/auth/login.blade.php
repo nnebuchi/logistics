@@ -38,7 +38,7 @@
                             <img src="{{asset('assets/images/icons/auth/illustration2.svg')}}" width="350" height="300" alt="">
                             <h5 class="text-white mt-5">We got you covered</h5>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between mb-3">
                             <h6 class="text-white">Privacy Policy</h6>
                             <h6 class="text-white">Terms and Conditions</h6>
                         </div>
@@ -60,7 +60,9 @@
                                     <div class="">
                                         <label for="email" class="custom-input-label">Email</label>
                                         <div class="d-flex position-relative input-box">
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><ion-icon class="show-hide" name="mail-outline"></ion-icon></div>
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box">
+                                                <img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt="">
+                                            </div>
                                             <input 
                                             type="email" 
                                             id="email"
@@ -73,14 +75,18 @@
                                     <div class="mt-3">
                                         <label for="password" class="custom-input-label">Password</label>
                                         <div class="d-flex position-relative input-box">
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0"><ion-icon class="show-hide" name="lock-closed-outline"></ion-icon></div>
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
+                                                <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
+                                            </div>
                                             <input 
                                             type="password" 
                                             id="password"
                                             name="password"
                                             placeholder="Enter Password" 
                                             class="custom-input" />
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0"><ion-icon class="show-hide" name="eye-outline"></ion-icon></div>
+                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                                            </div>
                                         </div>
                                         <span class="error"></span>
                                     </div>

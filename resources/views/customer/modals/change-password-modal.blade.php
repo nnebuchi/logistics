@@ -9,22 +9,59 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="change-password" action="{{url('/api/v1/auth/change-password')}}" method="POST">
+                <form id="change-password" action="{{url('/api/v1/change-password')}}" method="POST">
                     <span class="message d-block" style="text-align:center"> </span>
                     <div class="">
-                        <input class="w-100 form-control rounded-0" name="current_password" placeholder="Current Password">
-                        <span class="error"> </span>
+                        <label for="password" class="custom-input-label">Enter Current Password</label>
+                        <div class="d-flex position-relative input-box">
+                            <input 
+                            type="password" 
+                            id="current_password"
+                            name="current_password"
+                            placeholder="Enter Current Password" 
+                            class="custom-input" />
+                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                            </div>
+                        </div>
+                        <span class="error"></span>
                     </div>
-                    <div class="mt-2">
-                        <input class="w-100 form-control rounded-0" name="password" placeholder="New Password">
-                        <span class="error"> </span>
+                    <div class="mt-1">
+                        <label for="password" class="custom-input-label">Enter New Password</label>
+                        <div class="d-flex position-relative input-box">
+                            <input 
+                            type="password" 
+                            id="password"
+                            name="password"
+                            placeholder="Enter New Password" 
+                            class="custom-input" />
+                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                            </div>
+                        </div>
+                        <span class="error"></span>
                     </div>
-                    <div class="mt-2">
-                        <input class="w-100 form-control rounded-0" name="confirm_password" placeholder="Confirm New Password">
-                        <span class="error"> </span>
+                    <div class="mt-1">
+                        <label for="password" class="custom-input-label">Confirm New Password</label>
+                        <div class="d-flex position-relative input-box">
+                            <input 
+                            type="password" 
+                            id="confirm_password"
+                            name="confirm_password"
+                            placeholder="Confirm New Password" 
+                            class="custom-input" />
+                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                            </div>
+                        </div>
+                        <span class="error"></span>
                     </div>
-                    <div class="mt-2">
-                        <button type="submit" class="btn btn-primary rounded-0 w-100 fw-bolder">Submit</button>
+
+                    <div class="d-flex justify-content-center mt-4">
+                        <button type="submit" class="custom-btn fw-bold">
+                            Change Password
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                        </button>
                     </div>
                 </form>
             </div>

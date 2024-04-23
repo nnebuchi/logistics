@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-semibold" id="paymentModalLabel">Fund Your Wallet</h5>
+                <h5 class="modal-title fw-bold" id="paymentModalLabel">Fund Your Wallet</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -16,7 +16,7 @@
                         <input 
                         min="0"
                         type="number"
-                        class="w-100 form-control" 
+                        class="w-100 custom-input" 
                         name="amount"
                         id="amount" 
                         placeholder="E.g 5000">

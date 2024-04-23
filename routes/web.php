@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\WalletController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/reset-password/{email}/{token}', [AuthController::class, 'showPasswordResetForm'])->name('password.reset');
@@ -48,6 +50,29 @@ Route::group([
     Route::get('/shipments', [UserController::class, 'showShipments']);
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);
-    Route::post('/wallet/create-transaction', [WalletController::class, 'createTransaction']);
 });
 
+Route::group([
+    //'middleware' => ['ziga.admin.guest'],
+    'middleware' => 'guest:admin'
+], function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name("admin.login");
+});
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
+
+Route::group([
+    'middleware' => [
+        'ziga.admin.auth:admin', 
+        'verified'
+    ]
+], function () {
+    Route::get('/admin/logout', [AdminAuthController::class, 'logOut']);
+
+    Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/users', 
+    [AdminDashboardController::class, 'showUsers'])->name('admin.users');
+    Route::get('/admin/rates', 
+    [AdminDashboardController::class, 'showRates'])->name('admin.rates');
+    Route::get('/admin/transactions', 
+    [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
+});

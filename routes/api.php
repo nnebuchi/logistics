@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\TransactionController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::get('/', function () {
     return [
-        'app' => 'Ziga-Afrika API',
+        'app' => 'Ziga Afrika API',
         'version' => '1.0.0'
     ];
 });
@@ -19,9 +20,28 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-        Route::get('/user/wallet', [WalletController::class, 'getWallet']);
-        Route::get('/user/dashboard-data', [UserController::class, 'getDashboardData']);
-        Route::get('/transactions', [TransactionController::class, 'filter']);
+        Route::post("/change-password", [UserController::class, "changePassword"]);
+        
+        Route::get('/shippings', [ShippingController::class, 'getShippings']);
+        Route::get('/users', [AdminDashboardController::class, 'getUsers']);
+        Route::get('/transactions', [AdminDashboardController::class, 'getTransactions']);
+        Route::get('/statistics', [AdminDashboardController::class, 'fetchStatistics']);
+
+        //users endpoint
+        Route::group([
+            'prefix' => 'user'
+        ], function () {
+            Route::get('/', [UserController::class, 'getUser']);
+            Route::post('/', [UserController::class, 'updateProfile']);
+            Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
+            Route::get('/{userId}/shippings', [ShippingController::class, 'getUserShippings']);
+            Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
+            Route::post('/{userId}/transaction', [WalletController::class, 'createTransaction']);
+
+            //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
+            //Route::post('/{userId}/send-ios-notifications', [UserController::class, 'sendIosPushNotifications']);
+            Route::get('/notifications', [UserController::class, 'fetchNotifications']);
+        });
     });
 });
 
