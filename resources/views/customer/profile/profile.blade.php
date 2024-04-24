@@ -58,7 +58,7 @@
                                                     if($user->photo):
                                                 ?>        
                                                     <div class="position-relative">
-                                                        <img class="rounded-circle photo" src="<?=$user?->photo?>" width="180" height="180">
+                                                        <img style="object-fit:cover;" class="rounded-circle photo" src="<?=$user?->photo?>" width="180" height="180">
                                                         <form id="update-photo" action="/api/v1/events" method="POST" enctype="multipart/form-data">
                                                             <label type="button" for="image" class="position-absolute rounded-circle d-flex align-items-center justify-content-center" style="height:40px;width:40px;top:110px;right:-15px;background-color:#FEF5E8">
                                                                 <img src="{{asset('assets/images/icons/ph_camera-light.svg')}}" width="20" height="20">
@@ -169,6 +169,16 @@
                                         </div>
 
                                         <div class="row justify-content-around">
+                                            <?php 
+                                                if($user->account->name != "personal"):
+                                            ?>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
+                                                    <h5 style="color:#1E1E1E80">Business CAC(for businesses only)</h5>
+                                                    @include('customer.profile.components.business_cac')
+                                                </div>
+                                                <?php
+                                                endif;
+                                            ?>
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
                                                 <h5 style="color:#1E1E1E80">ID Number</h5>
                                                 <div class="w-100">
@@ -196,16 +206,6 @@
                                                     </button>
                                                 <?php endif ?>
                                             </div>
-                                            <?php 
-                                                if($user->account->name != "personal"):
-                                            ?>
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
-                                                    <h5 style="color:#1E1E1E80">Business CAC(for businesses only)</h5>
-                                                    @include('customer.profile.components.business_cac')
-                                                </div>
-                                                <?php
-                                                endif;
-                                            ?>
                                         </div>
                                     </form>
                                 </div>
@@ -245,10 +245,11 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "multipart/form-data",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.post(`${baseUrl}/api/v1/user`, payload, config)
+        axios.post(`${baseUrl}/user`, payload, config)
         .then((res) => {
             let data = res.data.results;
             $(".photo").attr("src", data.photo);
@@ -272,7 +273,7 @@
                     <img src=${e.target.result} 
                     height="250" 
                     class="w-50 kyc-img-preview" 
-                    style="border:1px solid #233E8366;border-radius:20px">
+                    style="border:1px solid #233E8366;border-radius:20px;object-fit:cover;">
                 `);
                 $("#imagePreviewModal").modal("show");
                 $(".upload-kyc-btn").data("imgEl", "utility_bill");
@@ -299,7 +300,7 @@
                     <img src=${e.target.result} 
                     height="250" 
                     class="w-50 kyc-img-preview" 
-                    style="border:1px solid #233E8366;border-radius:20px">
+                    style="border:1px solid #233E8366;border-radius:20px;object-fit:cover;">
                 `);
             }
         }
@@ -324,7 +325,7 @@
                     <img src=${e.target.result} 
                     height="250" 
                     class="w-50 kyc-img-preview" 
-                    style="border:1px solid #233E8366;border-radius:20px">
+                    style="border:1px solid #233E8366;border-radius:20px;object-fit:cover;">
                 `);
             }
         }
@@ -344,10 +345,11 @@
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "multipart/form-data",
-                    Authorization: "Bearer "+ userToken
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             };
-            axios.post(`${baseUrl}/api/v1/user`, payload, config)
+            axios.post(`${baseUrl}/user`, payload, config)
             .then((res) => {
                 let data = res.data.results;
                 console.log(data);
@@ -370,11 +372,12 @@
             const config = {
                 headers: {
                     Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer "+ userToken
+                    "Content-Type": "multipart/form-data",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             };
-            axios.post(`${baseUrl}/api/v1/user`, payload, config)
+            axios.post(`${baseUrl}/user`, payload, config)
             .then((res) => {
                 let data = res.data.results;
                 console.log(data);
@@ -441,7 +444,8 @@
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer "+userToken
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             };
             axios.post(url, inputs, config)

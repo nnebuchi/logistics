@@ -50,6 +50,11 @@ class UserController extends Controller
         return ResponseFormatter::success('Notifications', $notifications, 200);
     }
 
+    public function getUser(){
+        $user = User::find(Auth::user()->id);
+        return ResponseFormatter::success('User', $user, 200);
+    }
+
     public function updateProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [

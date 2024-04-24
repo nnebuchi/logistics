@@ -120,7 +120,8 @@
                     let message = response.data.message;
                     $(".message").css("color", "green").text(message);
                     toast(message);
-                    btn.attr("disabled", false).text("Submit");
+                    btn.attr("disabled", false)
+                    .html("Submit <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
                 })
                 .catch(function(error){
                     let errors = error.response.data.error;
@@ -129,7 +130,8 @@
                         $("#email").css("border", "1px solid #FA150A");
                     }
         
-                    btn.attr("disabled", false).text("Submit");
+                    btn.attr("disabled", false)
+                    .html("Submit <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
                 });
             }, 100); // Delay submission by 100 milliseconds
         });

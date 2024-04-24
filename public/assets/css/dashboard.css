@@ -263,6 +263,7 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 span.error, span.message{
     color:red;
     font-weight:bold;
+    font-size: 14px;
 }
 
 .search-input-box{
@@ -635,5 +636,7 @@ select#trx-status option {
 }
 
 table td, table th {
-    text-align: center;
+    /*text-align: center;*/
+    width: 80px;
 }
+

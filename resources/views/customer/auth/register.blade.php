@@ -215,7 +215,8 @@
                     let message = response.data.message;
                     $(".message").css("color", "green").text(message);
                     toast(message);
-                    btn.attr("disabled", false).text("Sign Up");
+                    btn.attr("disabled", false)
+                    .html("Sign Up <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
                     window.location.href = response.data.results;
                 })
                 .catch(function(error){
@@ -245,7 +246,8 @@
                         $("#password").css("border", "1px solid #FA150A");
                     }
 
-                    btn.attr("disabled", false).text("Sign Up");
+                    btn.attr("disabled", false)
+                    .html("Sign Up <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
                 });
             }, 100); // Delay submission by 100 milliseconds
         });

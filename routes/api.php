@@ -20,7 +20,6 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-        Route::post("/change-password", [UserController::class, "changePassword"]);
         
         Route::get('/shippings', [ShippingController::class, 'getShippings']);
         Route::get('/users', [AdminDashboardController::class, 'getUsers']);
@@ -31,16 +30,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::group([
             'prefix' => 'user'
         ], function () {
-            Route::get('/', [UserController::class, 'getUser']);
-            Route::post('/', [UserController::class, 'updateProfile']);
-            Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
             Route::get('/{userId}/shippings', [ShippingController::class, 'getUserShippings']);
-            Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
-            Route::post('/{userId}/transaction', [WalletController::class, 'createTransaction']);
-
-            //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
-            //Route::post('/{userId}/send-ios-notifications', [UserController::class, 'sendIosPushNotifications']);
-            Route::get('/notifications', [UserController::class, 'fetchNotifications']);
         });
     });
 });
@@ -55,5 +45,5 @@ Route::group([
     //'prefix' => 'payout',
     'middleware' => ['paystack.verify']
 ], function () {
-    Route::post("/card-subscription/webhook", [WalletController::class, "subscriptionWebhook"]);
+    Route::post("/payment/webhook", [WalletController::class, "paymentWebhook"]);
 });

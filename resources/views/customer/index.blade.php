@@ -151,10 +151,11 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/wallet`, config)
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
         .then((res) => {
             let results = res.data.results;
             $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
@@ -179,6 +180,14 @@
     };
 
     function fetchShipments(){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
         axios.get(`${baseUrl}/api`)
         //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings`, config)
         .then((res) => {
@@ -233,10 +242,11 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/wallet`, config)
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
         .then((res) => {
             let results = res.data.results;
             switch(type){
@@ -266,7 +276,8 @@
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    Authorization: "Bearer "+ userToken
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             };
             axios.get(`${baseUrl}/api`, config)

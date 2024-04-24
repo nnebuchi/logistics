@@ -84,6 +84,18 @@ axios.get('your_api_endpoint')
             }
         }
 	});*/
+
+  <td scope="row">
+                            <div>${user.firstname+" "+user.lastname}</div>
+                            <div><b>${user.email}</b></div>
+                        </td>
+
+
+                        <td scope="row">
+                            ${(user.photo != null) ? `<a href=${user.photo} class="rounded-0 photo">
+                                <img src="${user.photo}" style="width:50px;height:30px;" />
+                            </a>` : ""}
+                        </td>
     
 
 

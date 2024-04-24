@@ -6,13 +6,13 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Dashboard</h5>
                         <div class="d-flex">
-                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary mr-2">
-                                <img src="{{asset('assets/images/icons/plus.svg')}}" class="mr-1" width="20" height="20" />
-                                Book Shipment
-                            </a>
-                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary">
-                                <img src="{{asset('assets/images/icons/track.svg')}}" class="mr-1" width="20" height="20" />
-                                Track Shipment
+                            <button class="btn btn-dark mr-2 rounded-0" type="button" data-toggle="modal" data-target="#broadcastModal">
+                                <img src="{{asset('assets/images/icons/broadcast-light.svg')}}">
+                                Send Broadcast
+                            </button>
+                            <a href="{{url('/users')}}" class="btn btn-primary rounded-0">
+                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                                Customers
                             </a>
                         </div>
                     </div>
@@ -145,6 +145,48 @@
     };
     fetchStats();
 
+    $("#broadcastModal #searchUser").on("keyup", function() {
+        var searchTerm = $(this).val().toLowerCase();
+        var matchFound = false;
+        $("#recipient option").each(function(index, element) {
+            var optionText = $(this).text().toLowerCase();
+            if (optionText.indexOf(searchTerm) !== -1) {
+                $(this).show();
+                if (!matchFound) {
+                    $("#recipient").val($(this).val()); // Select the first match
+                    matchFound = true;
+                }
+            } else {
+                $(this).hide();
+            }
+        });
+
+        // Reset selection if no match is found
+        if(!matchFound) {
+            $("#recipient").val('');
+        }
+    });
+
+    function fetchAllCustomers(){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.get(`${baseUrl}/api/v1/users`, config)
+        .then((res) => {
+            let users = res.data.results.data;
+            users.forEach(function(user, index){
+                $("select[name='recipient']").append(`
+                    <option value=${user.id}>${user.firstname+" "+user.lastname}</option>
+                `);
+            });
+        });
+    };
+    fetchAllCustomers();
+
     const status = {
         pending: "custom-bg-warning",
         success: "custom-bg-success",
@@ -226,5 +268,51 @@
         })
     };
     fetchAllTransactions(@json($transactions));
+
+    $("#send").on("click", function(event){
+        event.preventDefault();
+        let url = $(this).data("url");
+        let btn = $(this);
+        btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
+        btn.attr("disabled", true);
+        let inputs = {
+            recipient: $("#broadcastModal select[name='recipient']").val(),
+            title: $("#broadcastModal input[name='title']").val(),
+            message: $("#broadcastModal textarea[name='message']").val()
+        }
+        alert(JSON.stringify(inputs));
+        let errorEl = $('#broadcastModal .error');
+        errorEl.text('');
+        $('#broadcastModal .message').text('');
+        
+        // Append loader immediately
+        setTimeout(() => {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer "+ userToken
+                }
+            };
+            axios.post(url, inputs, config)
+            .then(function(response){
+                let message = response.data.message;
+                $("#broadcastModal .message").css("color", "green").text(message);
+                btn.attr("disabled", true).text("Notifications sent");
+            })
+            .catch(function(error){
+                let errors = error.response.data.error;
+                if(errors.title){
+                    errorEl.eq(0).text(errors.title);
+                }
+                if(errors.message){
+                    errorEl.eq(1).text(errors.message);
+                }
+
+                btn.attr("disabled", false).text("Send Now");
+            });
+        }, 100); // Delay submission by 100 milliseconds
+    });
+
 </script>
 @include("admin.layouts.footer")

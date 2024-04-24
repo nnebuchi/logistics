@@ -182,12 +182,14 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/wallet`, config)
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
         .then((res) => {
             let data = res.data.results;
+            console.log(data);
             $(".balance").eq(0).text("₦"+parseInt(data.wallet?.balance).toLocaleString());
             $(".balance").eq(0).next("span.text-sec").text("Last updated: "+data?.wallet.updated_at);
             fetchAllTransactions(data?.transactions);
@@ -258,12 +260,13 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
         const inputs = {amount: $('#paymentForm #amount').val()}
         try {
-            const response = await axios.post(`${baseUrl}/api/v1/user/${<?=$user->id?>}/transaction`, inputs, config);
+            const response = await axios.post(`${baseUrl}/user/${<?=$user->id?>}/transaction`, inputs, config);
             let results = response.data.results;
             let handler = PaystackPop.setup({
                 key: results.key, 
@@ -335,12 +338,12 @@
                 let startDate = $("#startDate").val();
                 let endDate = $("#endDate").val();
                 $(".trx-filter div span").text("Date");
-                filterTrx(`${baseUrl}/api/v1/user/${<?=$user->id?>}/transactions?${key}=${true}&startDate=${startDate}&endDate=${endDate}`)
+                filterTrx(`${baseUrl}/user/${<?=$user->id?>}/transactions?${key}=${true}&startDate=${startDate}&endDate=${endDate}`)
                 break;
             default:
                 var value = $(this).data("value");
                 $(".trx-filter div span").text(value);
-                filterTrx(`${baseUrl}/api/v1/user/${<?=$user->id?>}/transactions?${key}=${value}`)
+                filterTrx(`${baseUrl}/user/${<?=$user->id?>}/transactions?${key}=${value}`)
         }
         //$(".dropdown-menu").removeClass("show");  //Hide the dropdown menu
         /**/
@@ -351,7 +354,8 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
         axios.get(url, config)

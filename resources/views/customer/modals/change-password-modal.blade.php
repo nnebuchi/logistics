@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="change-password" action="{{url('/api/v1/change-password')}}" method="POST">
+                <form id="change-password" action="{{url('/change-password')}}" method="POST">
                     <span class="message d-block" style="text-align:center"> </span>
                     <div class="">
                         <label for="password" class="custom-input-label">Enter Current Password</label>

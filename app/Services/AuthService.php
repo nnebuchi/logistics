@@ -36,11 +36,10 @@ class AuthService
             ]);    
 
             $user->wallet()->create();
-            //$user->profile()->create();
+            $user->profile()->create();
             
             event(new Registered($user));
 
-            //Auth::guard("web")->login($user, true);
             Auth::login($user, true);
 
             return $user;

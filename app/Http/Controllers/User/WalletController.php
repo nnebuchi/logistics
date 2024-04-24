@@ -104,6 +104,16 @@ class WalletController extends Controller
                     "error" => false
                 ]);
             elseif($paymentData["data"]["status"] == "abandoned"):
+                $transaction->status = "pending";
+                $transaction->verified = true;
+                $transaction->save();
+
+                return response()->json([
+                    'message' => 'Funding abandoned!',
+                    "results" => null,
+                    "error" => false
+                ]);
+            elseif($paymentData["data"]["status"] == "failed"):
                 $transaction->status = "failed";
                 $transaction->verified = true;
                 $transaction->save();
@@ -114,6 +124,22 @@ class WalletController extends Controller
                     "error" => false
                 ]);
             endif;
+        endif;
+    }
+
+    public function paymentWebhook($payload)
+    {
+        http_response_code(200);
+
+        $transaction = Transaction::where(['reference' => $payload["data"]["reference"]])->first();
+        if(!$transaction) exit();
+        if($transaction->verified) exit();
+
+        $wallet = $transaction->wallet;
+
+        if($payload["data"]["status"] == "success"):
+            $payment = new Paystack;
+            $paymentData = $payment->getPaymentData($reference);
         endif;
     }
 }

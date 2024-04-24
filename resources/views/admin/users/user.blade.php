@@ -26,28 +26,28 @@
                                             <thead class="text-dark fs-4">
                                                 <tr>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">S/N</h6>
+                                                        <h6 class="fw-semibold">S/N</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Name&Email</h6>
+                                                        <h6 class="fw-semibold">User</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Phone</h6>
+                                                        <h6 class="fw-semibold">Phone</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Account</h6>
+                                                        <h6 class="fw-semibold">Account</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">photo</h6>
+                                                        <h6 class="fw-semibold">Edit</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Edit</h6>
+                                                        <h6 class="fw-semibold">Status</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Status</h6>
+                                                        <h6 class="fw-semibold">Fund</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Fund</h6>
+                                                        <h6 class="fw-semibold">...</h6>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -168,21 +168,39 @@
                         <img src="{{asset('assets/images/icons/auth/warning-icon.svg')}}" width="20" height="20" />
                     </td>
                 `;
+                const userCard = (user.photo == null ) ? `
+                <td scope="row">
+                    <div class="user-card">
+                        <div class="user-avatar" style='background-color:${getRandomColor()}'>
+                            <span>${getInitials(user.firstname+" "+user.lastname)}</span>
+                        </div>
+                        <div class="">
+                            <div><b>${user.firstname+" "+user.lastname}</b></div>
+                            <div style="font-size:13px;">${user.email}</div>
+                        </div>
+                    </div>
+                </td>
+                ` : `
+                    <td scope="row">
+                        <div class="user-card">
+                            <div class="user-avatar">
+                                <img src="${user.photo}" class="w-100 h-100">
+                            </div>
+                            <div class="">
+                                <div><b>${user.firstname+" "+user.lastname}</b></div>
+                                <div style="font-size:13px;">${user.email}</div>                       
+                            </div>
+                        </div> 
+                    </td>
+                `;
+
 
                 $(".users-table tbody").append(`
                     <tr style="background-color:${rowColors[user.is_verified ?? "success"]}">
                         <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
-                        <td scope="row">
-                            <div>${user.firstname+" "+user.lastname}</div>
-                            <div><b>${user.email}</b></div>
-                        </td>
+                        ${userCard}
                         <td scope="row">${user.phone}</td>
                         <td scope="row">${user.account.name}</td>
-                        <td scope="row">
-                            ${(user.photo != null) ? `<a href=${user.photo} class="rounded-0 photo">
-                                <img src="${user.photo}" style="width:50px;height:30px;" />
-                            </a>` : ""}
-                        </td>
                         <td scope="row">
                             <a class="edit-user" data-id="${user.id}" type="button">
                                 <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
@@ -190,10 +208,12 @@
                         </td>
                         ${status}
                         <td scope="row">
-                            <button data-id="${user.id}" 
+                            <button data-id="${user.id}" data-email="${user.email}" 
+                            data-name="${user.firstname+" "+user.lastname}" 
                             class="btn btn-light fund-user" type="button">Fund
                             </button>
                         </td>
+                        <td scope="row">...</td>
                     </tr>  
                 `);
             })
@@ -281,6 +301,10 @@
     $(document).on("click", ".fund-user", function(event){
         event.preventDefault();
         const userId = $(this).data("id");
+        const email = $(this).data("email");
+        const name = $(this).data("name");
+        $("#paymentForm .name").html("<b>"+name+"</b>");
+        $("#paymentForm .email").html("<b>"+email+"</b>");
         $("#paymentForm #userId").val(userId);
         $("#paymentModal").modal("show");
     });
@@ -340,7 +364,7 @@
                         config
                     ).then((res) => {
                         let data = res.data;
-                        fetchWallet();
+                        alert(data.message);
                     });
                 },
                 callback: function(response){
@@ -351,7 +375,7 @@
                         config
                     ).then((res) => {
                         let data = res.data;
-                        fetchWallet();
+                        alert(data.message);
                     });
                 }
             });

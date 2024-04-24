@@ -156,7 +156,8 @@
                     let message = response.data.message;
                     $(".message").css("color", "green").text(message);
                     toast(message);
-                    btn.attr("disabled", false).text("Sign In");
+                    btn.attr("disabled", false)
+                    .html("Log In <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
                     // Add User Auth Bearer Token To Local Storage
                     localStorage.setItem('token', response.data.results.user.token);
                     window.location.href = response.data.results.redirect;
@@ -180,7 +181,9 @@
                             $(".message").css("color", "red").text(error.response.data.message);
                         break;
                     }
-                    btn.attr("disabled", false).text("Sign In");
+
+                    btn.attr("disabled", false)
+                    .html("Log In <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
                 });
             }, 100); // Delay submission by 100 milliseconds
         });

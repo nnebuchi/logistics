@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="paymentModalLabel">Fund Your Wallet</h5>
+                <h5 class="modal-title fw-bold" id="paymentModalLabel">Fund Customer Wallet</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -11,6 +11,10 @@
             <div class="modal-body">
                 <div class="message text-center"> </div>
                 <form id="paymentForm">
+                    <div class="mb-2 text-center">
+                        <div class="name"></div>
+                        <div class="email"></div>
+                    </div>
                     <div class="mb-5">
                         <label for="amount" class="fw-semibold">Enter Amount</label>
                         <input 

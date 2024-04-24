@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'ziga.admin.auth' => \App\Http\Middleware\ZigaAuthenticate::class,
             //'ziga.admin' => \App\Http\Middleware\CheckIfIsAdmin::class,
-            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'paystack.verify' => \App\Http\Middleware\VerifyPaystackSignature::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
