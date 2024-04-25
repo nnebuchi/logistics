@@ -43,7 +43,7 @@ class RegisterRequest extends FormRequest
                 AccountType::_BUSINESS,
                 AccountType::_3PL
             )],
-            //'terms' => ['required'],
+            'country' => ['required', 'string']
         ];
     }
 

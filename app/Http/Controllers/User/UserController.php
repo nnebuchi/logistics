@@ -61,7 +61,7 @@ class UserController extends Controller
             'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'id_number' => 'sometimes|string',
             'utility_bill' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'valid_govt_id' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'valid_govt_id.*' => 'sometimes|image|mimes:jpeg,jpg,png,svg|max:2048',
             'business_cac' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 

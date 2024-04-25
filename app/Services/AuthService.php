@@ -32,6 +32,7 @@ class AuthService
                 'email' => $data['email'],
                 'phone' => $data['phone'],
                 'password' => $data['password'],
+                'country' => $data['country'],
                 'account_id' => $account->id
             ]);    
 

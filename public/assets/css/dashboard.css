@@ -640,3 +640,7 @@ table td, table th {
     width: 80px;
 }
 
+
+.progress{
+    background-color:#DFE4F0;height:10px;width:100px;border-radius:10px;
+}

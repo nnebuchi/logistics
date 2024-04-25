@@ -10,30 +10,31 @@
                     <div class="row mt-3">
                         <div class="col d-flex justify-content-center">
                             <div class="d-flex flex-column align-items-center mr-2">
-                                <div class="bg-primary" style="height:10px;width:100px;border-radius:10px;"></div>
+                                <div class="progress bg-primary"></div>
                                 <p class="fw-semibold" style="color:#1E1E1EBF">Sender<p>
                             </div>
                             <div class="d-flex flex-column align-items-center mr-2">
-                                <div class="" style="background-color:#DFE4F0;height:10px;width:100px;border-radius:10px;"></div>
+                                <div class="progress"></div>
                                 <p class="fw-semibold" style="color:#1E1E1EBF">Receiver<p>
                             </div>
                             <div class="d-flex flex-column align-items-center mr-2">
-                                <div class="" style="background-color:#DFE4F0;height:10px;width:100px;border-radius:10px;"></div>
+                                <div class="progress"></div>
                                 <p class="fw-semibold" style="color:#1E1E1EBF">Item Details<p>
                             </div>
                             <div class="d-flex flex-column align-items-center">
-                                <div class="" style="background-color:#DFE4F0;height:10px;width:100px;border-radius:10px;"></div>
+                                <div class="progress"></div>
                                 <p class="fw-semibold" style="color:#1E1E1EBF">Carrier and Cost<p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row mt-3">
+                    <div class="row">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body">
                                     @include('customer.shippings.components.sender')
                                     @include('customer.shippings.components.receiver')
+                                    @include('customer.shippings.components.add-item')
                                 </div>
                             </div>
                         </div>
@@ -60,17 +61,27 @@
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
 
-    const validate = (inputsArray) => {
-        const validationResults = {};
+    const displayError = (formId, index, fieldName, errorMessage) => {
+        $(`#${formId} .error`).eq(index).text(errorMessage);
+        $(`#${formId} input[name='${fieldName}']`).css("border", "1px solid #FA150A");
+    };
+
+    const validate = (formId, inputsArray) => {
+        const errors = {};
     
-        inputsArray.forEach(({ inputName, inputValue, constraints }) => {
-            const { required, min_length, max_length, email, has_special_character, must_have_number, match } = constraints;
-        
+        inputsArray.forEach(({ inputName, inputValue, constraints }, index) => {
+            const { required, string, min_length, max_length, email, phone, has_special_character, must_have_number, match } = constraints;
+            const inputField = $(`#${formId} input[name='${inputName}']`);
+
             const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/;
             const numberRegex = /\d/;
         
             const validationRules = {
+                //required: required ? (typeof inputValue === 'string' && inputValue.trim() !== '') || !inputValue : true,
+                //required: required ? inputValue.trim() !== '' || !inputValue : true,
                 required: required ? !!inputValue : true,
+                string: string ? typeof inputValue === 'string' || !inputValue : true,
+                phone: phone ? /^[0-9]+$/.test(inputValue) || !inputValue : true,
                 min_length: inputValue.length >= min_length || !min_length,
                 max_length: inputValue.length <= max_length || !max_length,
                 email: email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue) || !inputValue : true,
@@ -81,6 +92,8 @@
         
             const errorMessages = {
                 required: inputName+' field is required',
+                string: inputName + ' must be a string',
+                phone: inputName + ' must be a valid phone number',
                 min_length: inputName+` must have at least ${min_length} characters`,
                 max_length: inputName+` must not exceed ${max_length} characters`,
                 email: inputName+' must be a valid email',
@@ -89,75 +102,86 @@
                 match: 'Does not match the specified field',
             };
         
-            const failedRules = Object.entries(validationRules)
+            /*const failedRules = Object.entries(validationRules)
             .filter(([rule, pass]) => !pass)
             .map(([rule]) => errorMessages[rule]);
 
             if (failedRules.length > 0) {
                 validationResults[inputName] = failedRules;
-            }
+            }*/
+            
+            Object.entries(validationRules)
+            .filter(([rule, pass]) => !pass)
+            .forEach(([rule]) => {
+                if (!errors[inputName]) {
+                    errors[inputName] = [];
+                }
+                errors[inputName].push(errorMessages[rule]);
+                displayError(formId, index, inputName, errorMessages[rule]);
+            });
+
         });
     
-        return validationResults;
+        return errors;
     };
 
     $(document).ready(function(){
-        let formData = {};
+        let formData = { "sender": {}, "receiver": {} };
         $(".next").on("click", function(event){
             event.preventDefault();
             let $currentForm = $(this).closest("form");
-            let $nextForm = $currentForm.next("form");
+            let $next = $($(this).data("target"));
+            let type = $(this).data("type");
+            //let $nextForm = $currentForm.next("form");
             //Store form data
             $currentForm.find("input").each(function(){
-                formData[$(this).attr("name")] = $(this).val();
+                formData[type][$(this).attr("name")] = $(this).val();
             });
-            //alert(JSON.stringify(formData));
-            
-            /*const errors = validate([
-                {
-                    inputName: 'firstname', 
-                    inputValue: $("#sender input[name='firstname']").val(),
-                    constraints: {required: true, max_length: 50}
-                },
-                {
-                    inputName: 'lastname', 
-                    inputValue: $("#sender input[name='lastname']").val(),
-                    constraints: {required: true, max_length: 50}
-                },
-                {
-                    inputName: 'email', 
-                    inputValue: $("#sender input[name='email']"),
-                    constraints: {required: true, email: true}
-                },
-                {
-                    inputName: 'phone', 
-                    inputValue: $("#sender input[name='phone']"),
-                    constraints: {required: true}
-                }
-            ]);
-            if(Object.keys(errors).length === 0){
-                alert("hshshsh");
-            }else{
-                if(errors.firstname){
-                    $('#sender .error').eq(0).text(errors.firstname);
-                    $("#sender input[name='firstname']").css("border", "1px solid #FA150A");
-                }
-                if(errors.lastname){
-                    $('#sender .error').eq(1).text(errors.lastname);
-                    $("#sender input[name='lastname']").css("border", "1px solid #FA150A");
-                }
-                if(errors.email){
-                    $('#sender .error').eq(2).text(errors.email);
-                    $("#sender input[name='email']").css("border", "1px solid #FA150A");
-                }
-                if(errors.phone){
-                    $('#sender .error').eq(3).text(errors.phone);
-                    $("#sender input[name='phone']").css("border", "1px solid #FA150A");
-                }
-            }*/
+            let inputs = [];
+            switch(type){
+                case "sender":
+                    inputs = [
+                        { inputName: 'firstname', inputValue: $("#sender input[name='firstname']").val(), constraints: { required: true, max_length: 50 } },
+                        { inputName: 'lastname', inputValue: $("#sender input[name='lastname']").val(), constraints: { required: true, max_length: 50 } },
+                        { inputName: 'email', inputValue: $("#sender input[name='email']").val(), constraints: { required: true, email: true } },
+                        { inputName: 'phone', inputValue: $("#sender input[name='phone']").val(), constraints: { required: true, phone: true } },
+                        { inputName: 'address1', inputValue: $("#sender input[name='address1']").val(), constraints: { required: true } },
+                        { inputName: 'address2', inputValue: $("#sender input[name='address2']").val(), constraints: { required: false } },
+                        { inputName: 'country', inputValue: $("#sender select[name='country']").val(), constraints: { required: true } },
+                        { inputName: 'state', inputValue: $("#sender select[name='state']").val(), constraints: { required: true } },
+                        { inputName: 'city', inputValue: $("#sender select[name='city']").val(), constraints: { required: true } },
+                        { inputName: 'zip_code', inputValue: $("#sender input[name='zip_code']").val(), constraints: { required: true } }
+                    ];
+                break;
+                case "receiver":
+                    inputs = [
+                        { inputName: 'firstname', inputValue: $("#receiver input[name='firstname']").val(), constraints: { required: true, max_length: 50 } },
+                        { inputName: 'lastname', inputValue: $("#receiver input[name='lastname']").val(), constraints: { required: true, max_length: 50 } },
+                        { inputName: 'email', inputValue: $("#receiver input[name='email']").val(), constraints: { required: true, email: true } },
+                        { inputName: 'phone', inputValue: $("#receiver input[name='phone']").val(), constraints: { required: true, phone: true } },
+                        { inputName: 'address1', inputValue: $("#receiver input[name='address1']").val(), constraints: { required: true } },
+                        { inputName: 'address2', inputValue: $("#receiver input[name='address2']").val(), constraints: { required: false } },
+                        { inputName: 'country', inputValue: $("#receiver select[name='country']").val(), constraints: { required: true } },
+                        { inputName: 'state', inputValue: $("#receiver select[name='state']").val(), constraints: { required: true } },
+                        { inputName: 'city', inputValue: $("#receiver select[name='city']").val(), constraints: { required: true } },
+                        { inputName: 'zip_code', inputValue: $("#receiver input[name='zip_code']").val(), constraints: { required: true } }
+                    ];
+                break;
+            }
+            const errors = validate(type, inputs);
+            if (Object.keys(errors).length === 0) {
+                //alert("Sender validation passed!");
+                $currentForm.hide();
+                $next.show();
+                //$(".progress").removeClass("bg-primary");
+                //$(".progress").eq(1).addClass("bg-primary");
+                //alert(JSON.stringify(formData));
+            } else {
+                alert("Sender validation failed!");
+            }
 
-            $currentForm.hide();
-            $nextForm.show();
+            //$currentForm.hide();
+            //$nextForm.show();
             //$("#sender").hide();
             //$("#receiver").show();
         });
@@ -165,15 +189,96 @@
         $(".prev").on("click", function(event){
             event.preventDefault();
             let $currentForm = $(this).closest("form");
-            var $prevForm = $currentForm.prev("form");
+            //var $prevForm = $currentForm.prev("form");
+            let $prev = $($(this).data("target"));
+            let type = $(this).data("type");
             //Retrieve and populate previous form data
-            $prevForm.find("input").each(function(){
+            /*$prevForm.find("input").each(function(){
                 var field = $(this).attr("name");
                 $(this).val(field);
+            });*/
+            $currentForm.hide();
+            $prev.show();
+        });
+
+        function fetchStates(formIdentifier, countryId) {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            };
+            axios.get(`${baseUrl}/states/${countryId}`, config)
+            .then((res) => {
+                let states = res.data.results;
+                // Update the state select input in the specified form
+                $(`${formIdentifier} select[name='state']`).empty(); // Clear previous options
+                states.forEach(state => {
+                    $(`${formIdentifier} select[name='state']`).append(`
+                        <option value="${state.id}">${state.name}</option>`
+                    );
+                });
             });
-            alert(JSON.stringify(formData));
-            //$currentForm.hide();
-            //$nextForm.show();
+        }
+        // Event handler for country select change for sender form
+        $("#sender select[name='country']").on("change", function(event) {
+            event.preventDefault();
+            let countryId = $(this).val();
+            fetchStates("#sender", countryId);
+        });
+        // Event handler for country select change for receiver form
+        $("#receiver select[name='country']").on("change", function(event) {
+            event.preventDefault();
+            let countryId = $(this).val();
+            fetchStates("#receiver", countryId);
+        });
+        // Event handler for country select change for shipping form
+        $("#shipping select[name='country']").on("change", function(event) {
+            event.preventDefault();
+            let countryId = $(this).val();
+            fetchStates("#shipping", countryId);
+        });
+
+        function fetchCities(formIdentifier, stateId) {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            };
+            axios.get(`${baseUrl}/cities/${stateId}`, config)
+            .then((res) => {
+                let cities = res.data.results;
+                // Update the state select input in the specified form
+                $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
+                cities.forEach(city => {
+                    $(`${formIdentifier} select[name='city']`).append(`
+                        <option value="${city.id}">${city.name}</option>`
+                    );
+                });
+            });
+        }
+        // Event handler for state select change for sender form
+        $("#sender select[name='state']").on("change", function(event) {
+            event.preventDefault();
+            let stateId = $(this).val();
+            fetchCities("#sender", stateId);
+        });
+        // Event handler for state select change for receiver form
+        $("#receiver select[name='state']").on("change", function(event) {
+            event.preventDefault();
+            let stateId = $(this).val();
+            fetchCities("#receiver", stateId);
+        });
+        // Event handler for state select change for shipping form
+        $("#shipping select[name='state']").on("change", function(event) {
+            event.preventDefault();
+            let stateId = $(this).val();
+            fetchCities("#shipping", stateId);
         });
     });
 </script>

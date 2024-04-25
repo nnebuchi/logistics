@@ -125,7 +125,17 @@
 							<h5 class="m-0 welcome-text">Welcome <?=$user->firstname?>!👋</h5>
 							<div class="d-flex">
 								<div class="d-flex align-items-center">
-									<img src="<?=$user->photo?>" alt="" width="35" height="35" class="rounded-circle mr-2">
+									<?php 
+										if($user->photo):
+									?>        
+										<img src="<?=$user->photo?>" alt="" width="35" height="35" class="rounded-circle mr-2">
+									<?php 
+										else:
+									?>
+										<img src="{{asset('assets/images/icons/profile/user-profile.svg')}}" alt="" width="30" height="30" class="mr-2">
+									<?php
+										endif;
+									?>
 									<div class="d-flex flex-column justify-content-center p-0 user-details">
 										<h6 class="m-0 p-0 mb-1"><?=$user->firstname." ".$user->lastname?></h6>
 										<p class="m-0 p-0"><?=$user->email?></p>
