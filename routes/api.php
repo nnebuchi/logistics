@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\TransactionController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::get('/', function () {
     return [
-        'app' => 'Ziga-Afrika API',
+        'app' => 'Ziga Afrika API',
         'version' => '1.0.0'
     ];
 });
@@ -19,9 +20,18 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-        Route::get('/user/wallet', [WalletController::class, 'getWallet']);
-        Route::get('/user/dashboard-data', [UserController::class, 'getDashboardData']);
-        Route::get('/transactions', [TransactionController::class, 'filter']);
+        
+        Route::get('/shippings', [ShippingController::class, 'getShippings']);
+        Route::get('/users', [AdminDashboardController::class, 'getUsers']);
+        Route::get('/transactions', [AdminDashboardController::class, 'getTransactions']);
+        Route::get('/statistics', [AdminDashboardController::class, 'fetchStatistics']);
+
+        //users endpoint
+        Route::group([
+            'prefix' => 'user'
+        ], function () {
+            Route::get('/{userId}/shippings', [ShippingController::class, 'getUserShippings']);
+        });
     });
 });
 
@@ -35,5 +45,5 @@ Route::group([
     //'prefix' => 'payout',
     'middleware' => ['paystack.verify']
 ], function () {
-    Route::post("/card-subscription/webhook", [WalletController::class, "subscriptionWebhook"]);
+    Route::post("/payment/webhook", [WalletController::class, "paymentWebhook"]);
 });

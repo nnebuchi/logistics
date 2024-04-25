@@ -32,7 +32,11 @@ class RegisterRequest extends FormRequest
             'firstname' => 'required|string|max:100',
             'lastname' => 'required|string|max:100',
             'email' => 'required|email|max:200|unique:users',
-            'phone' => ['required', 'numeric', 'digits_between:6,11', new PhoneVerified],
+            'phone' => [
+                'required',
+                'regex:/^\+(\d{1,4})\d{7,14}$/', 
+                new PhoneVerified
+            ],
             'password'    => ['required', 'string', 'min:8', new HasSpecialCharacter, new ContainsNumber],
             'account_type' => ["required", "string", Rule::in(
                 AccountType::_PERSONAL, 

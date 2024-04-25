@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use App\Models\User;
+use App\Models\Transaction;
 use Carbon\Carbon;
 
 class Helper
@@ -38,65 +39,51 @@ class Helper
         return $id.strtolower($token);
     }
 
-    public static function fetchNewUsersCountInPastWeek()
+    public static function getNewUsersLast7Days()
     {
-        $oneWeekAgo = Carbon::now()->subWeek(); // Calculate the date one week ago
-        // Fetch new users created since one week ago
-        $newUsersCount = User::where('created_at', '>=', $oneWeekAgo)->count();
-        return $newUsersCount;
-    }
+        // Calculate the date 7 days ago from today
+        $startDate = Carbon::now()->subDays(7);
+        //$endDate = Carbon::now();
 
-    public static function fetchNewUsersCountInPastMonth()
-    {
-        $startDate = Carbon::now()->subMonth(); // Get the start date (one month ago)
-        $endDate = Carbon::now(); // Get the end date (now)
-        $newUsersCount = User::whereBetween('created_at', [$startDate, $endDate])->count();
-        return $newUsersCount;
-    }
+        // Fetch the total number of users registered in the last 7 days
+        $newUsersCount = User::whereDate('created_at', '>=', $startDate)->count();
+        //$totalUsers = User::whereBetween('created_at', [$startDate, $endDate])->count();
 
-    public function calculateNewUsersPercentage()
-    {
-        // Get the current date
-        $now = Carbon::now();
-
-        // Get the date one month ago
-        $oneMonthAgo = $now->subMonth();
-
-        // Count the total number of users
         $totalUsers = User::count();
-
-        // Count the number of new users registered in the past month
-        $newUsersCount = User::where('created_at', '>=', $oneMonthAgo)->count();
-
         // Calculate the percentage of new users
         $percentage = ($newUsersCount / $totalUsers) * 100;
 
-        return $percentage;
+        return [$newUsersCount, $percentage];
     }
 
-    public static function userPercentageChange()
+    public static function fetchTransactionsCostInPastWeek()
     {
-        $currentMonth = Carbon::now()->startOfMonth(); // Get the current month
+        // Calculate the start and end dates for the past week
+        $startDate = Carbon::now()->subDays(7);
 
-        // Get the start and end dates of the previous month
-        $previousMonthStart = $currentMonth->copy()->subMonth()->startOfMonth();
-        $previousMonthEnd = $currentMonth->copy()->subMonth()->endOfMonth();
+        // Fetch the total number of users registered between the start and end dates
+        $newTrxCost = Transaction::whereDate('created_at', '>=', $startDate)->sum("amount");
 
-        // Count new users for the current month
-        $currentMonthNewUsers = User::whereDate('created_at', '>=', $currentMonth)->count();
+        $totalTrx = Transaction::all()->sum("amount");
+        // Calculate the percentage of new users
+        $percentage = ($newTrxCost / $totalTrx) * 100;
 
-        // Count new users for the previous month
-        $previousMonthNewUsers = User::whereBetween('created_at', [$previousMonthStart, $previousMonthEnd])->count();
-
-        // Calculate percentage change
-        if ($previousMonthNewUsers != 0) {
-            $percentageChange = (($currentMonthNewUsers - $previousMonthNewUsers) * 100) / $previousMonthNewUsers;
-            $percentageChange = ((30000 - 0) * 100) / 0;
-        } else {
-            // Handle the case when there are no new users in the previous month
-            $percentageChange = 100; // Arbitrary value to indicate a significant increase
-        }
-
-        return $percentageChange;
+        return [$newTrxCost, $percentage];
     }
+
+    public static function fetchTransactionsCostInPastMonth()
+    {
+        // Calculate the start and end dates for the past month
+        $startDate = Carbon::now()->subMonth();
+
+        // Fetch the total number of users registered between the start and end dates
+        $newTrxCost = Transaction::whereDate('created_at', '>=', $startDate)->sum("amount");
+
+        $totalTrx = Transaction::all()->sum("amount");
+        // Calculate the percentage of new users
+        $percentage = ($newTrxCost / $totalTrx) * 100;
+
+        return [$newTrxCost, $percentage];
+    }
+
 }

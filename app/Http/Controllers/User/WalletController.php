@@ -25,9 +25,12 @@ class WalletController extends Controller
         $user = User::find(Auth::user()->id);
         $wallet = $user->wallet;
         $transactions = $wallet->transactions()->orderBy('created_at', 'desc')->get();
+        $totalCredit = $wallet->transactions()
+        ->where(['type' => 'Credit', 'status' => 'success'])->sum('amount');
         
         $data = [
             "wallet" => $wallet,
+            "totalCredit" => $totalCredit,
             "transactions" => $transactions,
         ];
         return ResponseFormatter::success("Wallet Data:", $data, 200); 
@@ -61,7 +64,7 @@ class WalletController extends Controller
 
     public function createTransaction(Request $request)
     {
-        $user = User::find(Auth::user()->id);
+        $user = User::find($request["userId"]);
         $wallet = $user->wallet;
         $transaction = $this->storeTransaction($wallet->id, $request->amount);
 
@@ -101,6 +104,16 @@ class WalletController extends Controller
                     "error" => false
                 ]);
             elseif($paymentData["data"]["status"] == "abandoned"):
+                $transaction->status = "pending";
+                $transaction->verified = true;
+                $transaction->save();
+
+                return response()->json([
+                    'message' => 'Funding abandoned!',
+                    "results" => null,
+                    "error" => false
+                ]);
+            elseif($paymentData["data"]["status"] == "failed"):
                 $transaction->status = "failed";
                 $transaction->verified = true;
                 $transaction->save();
@@ -111,6 +124,22 @@ class WalletController extends Controller
                     "error" => false
                 ]);
             endif;
+        endif;
+    }
+
+    public function paymentWebhook($payload)
+    {
+        http_response_code(200);
+
+        $transaction = Transaction::where(['reference' => $payload["data"]["reference"]])->first();
+        if(!$transaction) exit();
+        if($transaction->verified) exit();
+
+        $wallet = $transaction->wallet;
+
+        if($payload["data"]["status"] == "success"):
+            $payment = new Paystack;
+            $paymentData = $payment->getPaymentData($reference);
         endif;
     }
 }

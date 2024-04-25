@@ -50,33 +50,60 @@
                                 <div class="card-body p-0">
                                     <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
                                         <h5 class="card-title fw-semibold">Transaction History</h5>
-                                        <div class="" style="border:2px solid transparent;">
-                                            <div class="dropdown">
+                                        <div class="d-flex flex-column align-items-center" style="flex:1">
+                                            
+                                            <div class="dropdown trx-filter-box">
                                                 <button class="dropdown-toggle trx-filter d-flex justify-content-between align-items-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <div>
                                                         Filter by: <span></span>
                                                     </div>
                                                     <img src="{{asset('assets/images/icons/reload.svg')}}">
                                                 </button>
-                                                <div class="dropdown-menu trx-filter-dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item" data-key="date" data-value="Date">Date</a>
-                                                    <a class="dropdown-item" data-key="type" data-value="Debit">Debit</a>
-                                                    <a class="dropdown-item" data-key="type" data-value="Credit">Credit</a>
-                                                    <a class="dropdown-item status-dropdown-toggle" data-key="status" data-value="Status">Status</a>
-                                                    <div class="dropdown-menu status-dropdown-menu">
-                                                        <a class="dropdown-item" data-key="status" data-value="Pending">Pending</a>
-                                                        <a class="dropdown-item" data-key="status" data-value="Completed">Completed</a>
-                                                        <a class="dropdown-item" data-key="status" data-value="Failed">Failed</a>
+                                                <div class="dropdown-menu main-menu" aria-labelledby="dropdownMenuButton">
+                                                    <div class="dropdown-submenu dropup">
+                                                        <button class="dropdown-item dropdown-toggle" type="button" id="dropdownSubMenuButton1" aria-haspopup="true" aria-expanded="false">Date</button>
+                                                        <div class="dropdown-menu px-2 py-3" aria-labelledby="dropdownSubMenuButton1">
+                                                            <div class="mb-2">
+                                                                <label for="startDate" class="fw-semibold">Start Date</label>
+                                                                <input 
+                                                                min="0"
+                                                                data-key="date"
+                                                                type="number"
+                                                                class="w-100 custom-input" 
+                                                                name="startDate"
+                                                                id="startDate" placeholder="Select Date and Time">
+                                                            </div>
+                                                            <div class="">
+                                                                <label for="endDate" class="fw-semibold">End Date</label>
+                                                                <input 
+                                                                min="0"
+                                                                data-key="date"
+                                                                type="number"
+                                                                class="w-100 custom-input" 
+                                                                name="endDate"
+                                                                id="endDate" placeholder="Select Date and Time">
+                                                            </div>
+                                                            <button 
+                                                                type="submit" 
+                                                                data-key="date"
+                                                                class="custom-btn fs-4 mt-3 fw-bold w-100 filter-btn">
+                                                                Apply Filter <img src="{{asset('assets/images/icons/filter.svg')}}" width="20" class="ml-1">
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div> 
+                                                    <a class="dropdown-item filter-btn" data-key="type" data-value="Debit">Debit</a>
+                                                    <a class="dropdown-item filter-btn" data-key="type" data-value="Credit">Credit</a>
+                                                    <div class="dropdown-submenu dropdown">
+                                                        <button class="dropdown-item dropdown-toggle" type="button" id="dropdownSubMenuButton2" aria-haspopup="true" aria-expanded="false">Status</button>
+                                                        <div class="dropdown-menu py-0" aria-labelledby="dropdownSubMenuButton2">
+                                                        <a class="dropdown-item filter-btn" data-key="status" data-value="success">Successful</a>
+                                                            <a class="dropdown-item filter-btn" data-key="status" data-value="pending">Pending</a>
+                                                            <a class="dropdown-item filter-btn" data-key="status" data-value="failed">Failed</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="mt-3">
-                                                <select name="status" id="trx-status">
-                                                    <option value="success">Successful</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="failed">Failed</option>
-                                                </select>
-                                            </div>
+
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -134,22 +161,35 @@
 <script src="{{asset('assets/libs/simplebar/dist/simplebar.js')}}"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
     var userToken = localStorage.getItem('token');
+
+    flatpickr('#startDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
+
+    flatpickr('#endDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
 
     function fetchWallet(){
         const config = {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/wallet`, config)
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
         .then((res) => {
             let data = res.data.results;
+            console.log(data);
             $(".balance").eq(0).text("₦"+parseInt(data.wallet?.balance).toLocaleString());
             $(".balance").eq(0).next("span.text-sec").text("Last updated: "+data?.wallet.updated_at);
             fetchAllTransactions(data?.transactions);
@@ -158,9 +198,9 @@
     fetchWallet();
 
     const status = {
-        pending: "bg-warning",
-        success: "bg-success",
-        failed: "bg-danger"
+        pending: "custom-bg-warning",
+        success: "custom-bg-success",
+        failed: "custom-bg-danger"
     };
 
     const rowColors = {failed: "#ffffff", success: "#233E830D", pending: "#ffffff"};
@@ -172,29 +212,27 @@
             $(".transactions-table tbody").append(`
                 <tr style="background-color:${rowColors[transaction?.status]}">
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${index + 1}.</span>
+                        <span class="fw-normal">${index + 1}.</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-1">${transaction?.reference}</span>                        
+                        <span class="fw-normal">${transaction?.reference}</span>                        
                     </td>
                     <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">₦${transaction?.amount}</span>
+                        <span class="fw-normal"><b>₦</b>${transaction?.amount}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">${transaction?.created_at}</span>
+                        <span class="fw-normal">${transaction?.created_at}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${transaction?.purpose}</span>
+                        <span class="fw-normal">${transaction?.purpose}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${transaction?.type}</span>
+                        <span class="fw-normal">${transaction?.type}</span>
                     </td>
                     <td class="border-bottom-0">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="py-2 badge rounded-3 fw-semibold ${status[transaction.status]}">
+                        <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
                             ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                            </span>
-                        </div>
+                        </span>
                     </td>
                 </tr> 
             `);
@@ -228,7 +266,7 @@
         };
         const inputs = {amount: $('#paymentForm #amount').val()}
         try {
-            const response = await axios.post(`${baseUrl}/wallet/create-transaction`, inputs, config);
+            const response = await axios.post(`${baseUrl}/user/${<?=$user->id?>}/transaction`, inputs, config);
             let results = response.data.results;
             let handler = PaystackPop.setup({
                 key: results.key, 
@@ -293,36 +331,59 @@
         }
     });
 
-    $(".trx-filter-dropdown-menu .dropdown-item").click(function(){
-        var value = $(this).data("value");
+    $(".filter-btn").click(function(){
         var key = $(this).data("key");
-        $(".trx-filter div span").text(value);
+        switch(key){
+            case "date":
+                let startDate = $("#startDate").val();
+                let endDate = $("#endDate").val();
+                $(".trx-filter div span").text("Date");
+                filterTrx(`${baseUrl}/user/${<?=$user->id?>}/transactions?${key}=${true}&startDate=${startDate}&endDate=${endDate}`)
+                break;
+            default:
+                var value = $(this).data("value");
+                $(".trx-filter div span").text(value);
+                filterTrx(`${baseUrl}/user/${<?=$user->id?>}/transactions?${key}=${value}`)
+        }
         //$(".dropdown-menu").removeClass("show");  //Hide the dropdown menu
+        /**/
+    })
+
+    function filterTrx(url){
         const config = {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(
-            `${baseUrl}/api/v1/transactions?${key}=${value}`, 
-            config
-        ).then((res) => {
+        axios.get(url, config)
+        .then((res) => {
             let transactions = res.data.results;
             console.log(transactions);
             fetchAllTransactions(transactions);
         });
-    })
+    }
 
-    $(document).ready(function() {
-        $('.dropdown-menu .dropdown-item').click(function(e) {
-            //e.stopPropagation(); // Prevent event from bubbling up to parent dropdown
-        });
-
-        $('.status-dropdown-toggle').click(function() {
-            //$('.status-dropdown-menu').toggle();
-        });
+    // Prevent default behavior of submenu button click
+    document.getElementById('dropdownSubMenuButton1').addEventListener('click', function(event) {
+        event.stopPropagation(); // Stop the click event from propagating
+        event.preventDefault(); // Prevent the default action of the button
+        $(this).next('.dropdown-menu').toggle(); // Toggle the submenu
     });
+
+    document.getElementById('dropdownSubMenuButton2').addEventListener('click', function(event) {
+        event.stopPropagation(); // Stop the click event from propagating
+        event.preventDefault(); // Prevent the default action of the button
+        $(this).next('.dropdown-menu').toggle(); // Toggle the submenu
+    });
+
+    // Close the main dropdown when a submenu item is clicked
+    /*$('.dropdown-submenu .dropdown-item').on('click', function(e) {
+        var $parentDropdown = $(this).closest('.dropdown');
+        $parentDropdown.removeClass('show'); // Close the main dropdown
+        $(this).next('.dropdown-menu').toggle(); // Toggle the submenu
+    });*/
 </script>
 @include("customer.layouts.footer")

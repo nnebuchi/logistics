@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Validator};
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResetPasswordRequest;
-//use App\Http\Requests\ChangePassword;
 use App\Http\Requests\RegisterRequest;
 
 use App\Models\Account;
@@ -85,6 +84,9 @@ class AuthController extends Controller
     }
 
     public function test(){
+        //return view('customer.auth.email-verification-success');
+        //return view('vendor.notifications.verify-email');
+        //return view('customer.auth.verify-email');
         return Helper::userPercentageChange();
     }
 

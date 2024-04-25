@@ -6,19 +6,19 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Dashboard</h5>
                         <div class="d-flex">
-                            <a href="{{url('/users')}}" class="btn btn-primary mr-2">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary mr-2">
+                                <img src="{{asset('assets/images/icons/plus.svg')}}" class="mr-1" width="20" height="20" />
                                 Book Shipment
                             </a>
-                            <a href="{{url('/users')}}" class="btn btn-primary">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary">
+                                <img src="{{asset('assets/images/icons/track.svg')}}" class="mr-1" width="20" height="20" />
                                 Track Shipment
                             </a>
                         </div>
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-xl-4 col-lg-4 col-md-4" style="height:161px">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
                                     <div class="mb-2 reload-wallet" type="button" data-type="balance">
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
                                     <div class="mb-2 reload-wallet" type="button" data-type="all-funding">
@@ -69,20 +69,20 @@
                             <div class="card w-100">
                                 <div class="card-body p-0">
                                     <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
-                                        <h5 class="card-title fw-semibold">Recent Shipments</h5>
+                                        <h5 class="card-title fw-semibold">Recent Shippings</h5>
                                         <div class="d-flex flex-wrap">
-                                            <a class="btn btn-light mr-2 mb-3 period" data-filter="today">
+                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="today">
                                                 Today
-                                            </a>
-                                            <a class="btn btn-light mr-2 mb-3 period" data-filter="week">
+                                            </button>
+                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="week">
                                                 This Week
-                                            </a>
-                                            <a class="btn btn-light mr-2 mb-3 period" data-filter="month">
+                                            </button>
+                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="month">
                                                 This Month
-                                            </a>
-                                            <a class="btn btn-light mr-2 mb-3 period" data-filter="year">
+                                            </button>
+                                            <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="year">
                                                 This Year
-                                            </a>
+                                            </button>
                                             <a class="btn" href="/">
                                                 See All
                                                 <img src="{{asset('assets/images/icons/move-right.svg')}}" />
@@ -151,10 +151,11 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/dashboard-data`, config)
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
         .then((res) => {
             let results = res.data.results;
             $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
@@ -167,9 +168,9 @@
     fetchWallet();
 
     const status = {
-        pending: "bg-warning",
-        delivered: "bg-success",
-        failed: "bg-danger"
+        pending: "custom-bg-warning",
+        delivered: "custom-bg-success",
+        failed: "custom-bg-danger"
     };
 
     const rowColors = {
@@ -178,17 +179,21 @@
         failed: "#233E830D"
     };
 
-    function fetchAllShipments(){
-        //axios.get(`${baseUrl}/api/user/shipments`)
+    function fetchShipments(){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
         axios.get(`${baseUrl}/api`)
+        //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings`, config)
         .then((res) => {
-            //let transactions = res.data.results.slice(0, 10);
+            //let shipments = res.data.results;
             let shipments = [
                 {id: 1, status: "pending"},
-                {id: 1, status: "delivered"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"},
                 {id: 1, status: "delivered"},
                 {id: 1, status: "pending"},
                 {id: 1, status: "pending"},
@@ -196,51 +201,100 @@
             ].slice(0, 10);
 
             $(".shipments-table tbody").empty();
-            shipments.forEach(function(shipment, index){
-                $(".shipments-table tbody").append(`
-                    <tr style="background-color:${rowColors[shipment.status]}">
-                        <td class="border-bottom-0">
-                            <span class="fw-normal mb-0">${index + 1}.</span>
-                        </td>
-                        <td class="border-bottom-0">
-                            <span class="fw-normal mb-1">154JKL-MNY</span>                        
-                        </td>
-                        <td class="border-bottom-0">
-                            <span class="mb-0 fw-normal">12/03/24</span>
-                        </td>
-                        <td class="border-bottom-0">
-                            <span class="mb-0 fw-normal">15 Peter Odili Road, Port Harcourt</span>
-                        </td>
-                        <td class="border-bottom-0">
-                            <span class="fw-normal mb-0">12 Aminu Kano Road, Kano</span>
-                        </td>
-                        <td class="border-bottom-0">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="py-2 badge rounded-3 fw-semibold ${status[shipment.status]}">
-                                ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
-                                </span>
-                            </div>
-                        </td>
-                    </tr> 
-                `);
-            })
+            appendShipments(shipments);
         });
     };
-    fetchAllShipments();
+    fetchShipments();
+
+    function appendShipments(shipments){
+        shipments.forEach(function(shipment, index){
+            $(".shipments-table tbody").append(`
+                <tr style="background-color:${rowColors[shipment.status]}">
+                    <td class="border-bottom-0">
+                        <span class="fw-normal mb-0">${index + 1}.</span>
+                    </td>
+                    <td class="border-bottom-0">
+                        <span class="fw-normal mb-1">154JKL-MNY</span>                        
+                    </td>
+                    <td class="border-bottom-0">
+                        <span class="mb-0 fw-normal">12/03/24</span>
+                    </td>
+                    <td class="border-bottom-0">
+                        <span class="mb-0 fw-normal">15 Peter Odili Road, Port Harcourt</span>
+                    </td>
+                    <td class="border-bottom-0">
+                        <span class="fw-normal mb-0">12 Aminu Kano Road, Kano</span>
+                    </td>
+                    <td class="border-bottom-0">
+                        <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
+                            ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
+                        </span>
+                    </td>
+                </tr> 
+            `);
+        })
+    }
 
     $(".reload-wallet").on("click", function(event){
         event.preventDefault();
         let type = $(this).data("type");
-        alert(type);
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
+        .then((res) => {
+            let results = res.data.results;
+            switch(type){
+                case "balance":
+                    $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
+                    $(".balance").eq(0).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
+                break;
+                case "all-funding":
+                    $(".balance").eq(1).text("₦"+parseInt(results?.totalCredit).toLocaleString());
+                    $(".balance").eq(1).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
+                break;   
+            }
+        });
     });
 
     $(".period").on("click", function(event){
         event.preventDefault();
+        $(".period").prop("disabled", true);
+        let text = $(this).text();
+        let value = $(this).data("value");
         $(this).html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
         $(".period").removeClass("btn-light-active");
         $(this).addClass("btn-light-active");
-        let filter = $(this).data("filter");
-        //$(".shipments-table tbody").empty();
+        // After completing your action, enable all elements with class "period" again
+        setTimeout(() => {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            };
+            axios.get(`${baseUrl}/api`, config)
+            //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings?period=${value}`, config)
+            .then((res) => {
+                //let shipments = res.data.results;
+                let shipments = [
+                    {id: 1, status: "pending"},
+                    {id: 1, status: "delivered"}
+                ].slice(0, 10);
+
+                $(this).text(text);
+                $(".period").prop("disabled", false); 
+                $(".shipments-table tbody").empty();
+                appendShipments(shipments);
+            });
+        }, 2000);
     });
 </script>
 @include("customer.layouts.footer")

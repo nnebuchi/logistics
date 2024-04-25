@@ -12,10 +12,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'firstname',
@@ -26,17 +27,20 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'account_id',
         'email_verified_at',
         'photo',
-        'address'
+        'address',
+        'is_verified'
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at',
+        'account_id'
     ];
 
-    protected $with = ["account"];
+    protected $with = ["account", "profile"];
 
     protected function casts(): array
     {
@@ -61,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     {
         return Attribute::make(
             get: fn ($value) => $value,
-            set: fn ($value) => ucwords($value)
+            set: fn ($value) => ucwords(strtolower($value))
         );
     }
 
@@ -69,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     {
         return Attribute::make(
             get: fn ($value) => $value,
-            set: fn ($value) => ucwords($value)
+            set: fn ($value) => ucwords(strtolower($value))
         );
     }
 
@@ -81,11 +85,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         );
     }
 
-    protected function password(): Attribute
+    protected function isVerified(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value,
-            set: fn ($value) => Hash::make($value)
+            get: fn ($value) => ($value == 0) ? false : true,
+            set: fn ($value) => $value
         );
     }
 
@@ -99,11 +103,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return $this->hasOne(Wallet::class, "user_id");
     }
 
-    /*public function shipments()
+    public function profile()
     {
-        return $this->hasMany(
-            Shipping::class, 
-            "user_id"
-        );
-    }*/
+        return $this->hasOne(UserProfile::class, "user_id");
+    }
+
 }

@@ -13,6 +13,7 @@
 		<link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
 		<link rel="stylesheet" href="{{asset('assets/libs/magnificpopup/magnific-popup.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 		<link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/css/main.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
@@ -55,7 +56,7 @@
 								<span class="hide-menu">UI COMPONENTS</span>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/shipments')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/shippings')}}" aria-expanded="false">
 									<span>
 										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
@@ -124,7 +125,7 @@
 							<h5 class="m-0 welcome-text">Welcome <?=$user->firstname?>!👋</h5>
 							<div class="d-flex">
 								<div class="d-flex align-items-center">
-									<img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="" width="35" height="35" class="rounded-circle mr-2">
+									<img src="<?=$user->photo?>" alt="" width="35" height="35" class="rounded-circle mr-2">
 									<div class="d-flex flex-column justify-content-center p-0 user-details">
 										<h6 class="m-0 p-0 mb-1"><?=$user->firstname." ".$user->lastname?></h6>
 										<p class="m-0 p-0"><?=$user->email?></p>

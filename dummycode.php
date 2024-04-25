@@ -27,6 +27,77 @@ axios.get('your_api_endpoint')
 }
 
 
+/*$('.trx-table').DataTable({
+        data: @json($transactions),
+        columns: [
+            { 
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row, meta){
+                    let serial = meta.row + meta.settings._iDisplayStart + 1;
+                    return serial;
+                }
+            },
+            { 
+                data: null,
+                render: function(data, type, row){
+                    return data.wallet.user.firstname+" "+data.wallet.user.lastname;
+                }
+            },
+            { data: "reference"},
+            { data: "amount"},
+            { data: "created_at"},
+            { data: "purpose"},
+            { data: "type"},
+            { 
+                data: null,
+                render: function(data, type, row){
+                    return `<span class="py-2 badge rounded-2 fw-semibold ${status[data.status]}">
+                    ${data.status.charAt(0).toUpperCase() + data.status.slice(1)}
+                    </span>`
+                }
+            }
+        ],
+		columnDefs: [{
+			targets: "datatable-nosort",
+			orderable: false,
+		}],
+		"language": {
+			"info": "_START_-_END_ of _TOTAL_ entries",
+			searchPlaceholder: "Search users",
+			paginate: {
+				next: '<ion-icon name="chevron-forward-outline"></ion-icon>',
+                previous: '<ion-icon name="chevron-back-outline"></ion-icon>'   
+			}
+		},
+        "pageLength": 20,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        //"page": 5,
+        //"pagingType": "full_numbers",
+        "createdRow": function(row, data, index){
+            let verified = data["is_verified"];
+            if(verified){
+               $(row).css("background-color", "#233E830D");
+            }else{
+               //$(row).addClass("bg-white");
+            }
+        }
+	});*/
+
+  <td scope="row">
+                            <div>${user.firstname+" "+user.lastname}</div>
+                            <div><b>${user.email}</b></div>
+                        </td>
+
+
+                        <td scope="row">
+                            ${(user.photo != null) ? `<a href=${user.photo} class="rounded-0 photo">
+                                <img src="${user.photo}" style="width:50px;height:30px;" />
+                            </a>` : ""}
+                        </td>
+    
+
 
 $('#filter-input').on('input', function() {
   let searchTerm = $(this).val().toLowerCase();
