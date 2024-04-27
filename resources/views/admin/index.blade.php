@@ -193,11 +193,7 @@
         failed: "custom-bg-danger"
     };
 
-    const rowColors = {
-        pending: "#ffffff",
-        success: "#233E830D",
-        failed: "#ffffff"
-    };
+    const rowColors = {failed: "#ffffff", pending: "#233E830D", success: "#ffffff"};
 
     function getRandomColor(){
         const r = Math.floor(Math.random() * 256);

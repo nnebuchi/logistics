@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\User;
+use App\Models\Account;
 use App\Models\Transaction;
 use App\Util\Helper;
 use Illuminate\Support\Facades\Auth;
@@ -24,9 +25,9 @@ class DashboardController extends Controller
     public function showUsers()
     {
         $user = Admin::find(Auth::user()->id);
-        $users = User::all();
+        $accounts = Account::all();
         
-        return view('admin.users.user', compact('users', 'user'));
+        return view('admin.users.user', compact('user', 'accounts'));
     }
 
     public function getUsers(Request $request)
@@ -42,6 +43,16 @@ class DashboardController extends Controller
         return ResponseFormatter::success(
             "Users:", 
             $users
+        );
+    }
+
+    public function getUserData(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        
+        return ResponseFormatter::success(
+            "User Data:", 
+            $user
         );
     }
 

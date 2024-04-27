@@ -53,6 +53,8 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
+    let states = [];
+    let cities = [];
 
     const displayError = (formId, index, fieldName, errorMessage) => {
         $(`#${formId} .error`).eq(index).text(errorMessage);
@@ -205,6 +207,10 @@
                 let states = res.data.results;
                 // Update the state select input in the specified form
                 $(`${formIdentifier} select[name='state']`).empty(); // Clear previous options
+                $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
+                $(`${formIdentifier} select[name='city']`).append(`
+                    <option value="">--Select one---</option>
+                `);
                 states.forEach(state => {
                     $(`${formIdentifier} select[name='state']`).append(`
                         <option value="${state.id}">${state.name}</option>`
@@ -274,6 +280,7 @@
         $("#addItem").on("click", function(event) {
             event.preventDefault();
             let item = {};
+            const action = $(this).data("action");
             let $currentForm = $(this).closest("form");
             $currentForm.find("input, select").each(function(){
                 var fieldName = $(this).attr("name");
@@ -282,7 +289,16 @@
                     item[fieldName] = $(this).val();
                 }
             });
-            formData.items.push(item);
+            switch(action){
+                case "create":
+                    formData.items.push(item);
+                break;
+                case "update":
+                    formData.items[parseInt($(this).data("item"))] = item;
+                    $(this).data("action", "create");
+                    $(this).data("item", "");
+                break;
+            };
             $(".items-table tbody").empty();
             formData.items.forEach((item, index) => {
                 $(".items-table tbody").append(`
@@ -324,6 +340,7 @@
                         }
                     });
                     $("#addItem").data("action", "update");
+                    $("#addItem").data("item", itemId);
                     $form.removeClass("d-none");
                 break;
                 case "delete":
@@ -361,6 +378,17 @@
                 $form.removeClass("d-none");
             }
         });
+
+        $(".radio-group").click(function() {
+            // Remove the 'selected' class from all radio items
+            $(".radio-group").removeClass("selected");
+            
+            // Add the 'selected' class to the clicked radio item
+            $(this).addClass("selected");
+            
+            // Perform any other actions based on the selected item
+        });
+
     });
 
 </script>

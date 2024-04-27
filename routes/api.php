@@ -23,6 +23,7 @@ Route::group(['prefix' => 'v1'], function () {
         
         Route::get('/shippings', [ShippingController::class, 'getShippings']);
         Route::get('/users', [AdminDashboardController::class, 'getUsers']);
+        Route::get('/user/{userId}', [AdminDashboardController::class, 'getUserData']);
         Route::get('/transactions', [AdminDashboardController::class, 'getTransactions']);
         Route::get('/statistics', [AdminDashboardController::class, 'fetchStatistics']);
 

@@ -1,4 +1,4 @@
-<div class="card w-100 step" style="displa:none;" id="shipping">
+<div class="card w-100 step" style="display:none;" id="shipping">
     <div class="card-body">
         <div class="py-2" style="background-color:#E9EFFD;border-radius:10px;">
             <div class="table-responsive">
@@ -131,6 +131,7 @@
                     <button 
                     type="button"
                     id="addItem"
+                    data-item=""
                     data-action="create"
                     data-type="shipping"
                     class="custom-btn fs-4 fw-bold">
