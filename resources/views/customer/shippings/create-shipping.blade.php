@@ -28,19 +28,12 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-12 d-flex align-items-stretch">
-                            <div class="card w-100">
-                                <div class="card-body">
-                                    @include('customer.shippings.components.sender')
-                                    @include('customer.shippings.components.receiver')
-                                    @include('customer.shippings.components.add-item')
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @include('customer.shippings.components.sender')
+                    @include('customer.shippings.components.receiver')
+                    @include('customer.shippings.components.add-item')
+                    @include('customer.shippings.components.add-carrier')
+                    @include('customer.shippings.components.checkout')
 
-                    @include('customer.modals.broadcast-modal')
                 </div>
             </div>
             <!--  End of Row 1 -->
@@ -126,16 +119,20 @@
     };
 
     $(document).ready(function(){
-        let formData = { "sender": {}, "receiver": {} };
+        let formData = { "sender": {}, "receiver": {}, "items": [] };
         $(".next").on("click", function(event){
             event.preventDefault();
-            let $currentForm = $(this).closest("form");
-            let $next = $($(this).data("target"));
             let type = $(this).data("type");
-            //let $nextForm = $currentForm.next("form");
+            var currentStep = $(this).closest(".step");
+            var nextStep = currentStep.next(".step");
             //Store form data
-            $currentForm.find("input").each(function(){
-                formData[type][$(this).attr("name")] = $(this).val();
+            let $currentForm = $(this).closest("form");
+            $currentForm.find("input, select").each(function(){
+                var fieldName = $(this).attr("name");
+                var fieldType = $(this).prop("tagName").toLowerCase();
+                if(fieldType === "input" || fieldType === "select") {
+                    formData[type][fieldName] = $(this).val();
+                }
             });
             let inputs = [];
             switch(type){
@@ -171,34 +168,27 @@
             const errors = validate(type, inputs);
             if (Object.keys(errors).length === 0) {
                 //alert("Sender validation passed!");
-                $currentForm.hide();
-                $next.show();
-                //$(".progress").removeClass("bg-primary");
-                //$(".progress").eq(1).addClass("bg-primary");
+                currentStep.hide();
+                nextStep.show();
+                if(type == "sender"){
+                    $(".progress").removeClass("bg-primary");
+                    $(".progress").eq(1).addClass("bg-primary");
+                }else if(type == "receiver"){
+                    $(".progress").removeClass("bg-primary");
+                    $(".progress").eq(2).addClass("bg-primary");
+                }
                 //alert(JSON.stringify(formData));
             } else {
                 alert("Sender validation failed!");
             }
-
-            //$currentForm.hide();
-            //$nextForm.show();
-            //$("#sender").hide();
-            //$("#receiver").show();
         });
 
         $(".prev").on("click", function(event){
             event.preventDefault();
-            let $currentForm = $(this).closest("form");
-            //var $prevForm = $currentForm.prev("form");
-            let $prev = $($(this).data("target"));
-            let type = $(this).data("type");
-            //Retrieve and populate previous form data
-            /*$prevForm.find("input").each(function(){
-                var field = $(this).attr("name");
-                $(this).val(field);
-            });*/
-            $currentForm.hide();
-            $prev.show();
+            var currentStep = $(this).closest(".step");
+            var prevStep = currentStep.prev(".step");
+            currentStep.hide();
+            prevStep.show();
         });
 
         function fetchStates(formIdentifier, countryId) {
@@ -280,6 +270,98 @@
             let stateId = $(this).val();
             fetchCities("#shipping", stateId);
         });
+
+        $("#addItem").on("click", function(event) {
+            event.preventDefault();
+            let item = {};
+            let $currentForm = $(this).closest("form");
+            $currentForm.find("input, select").each(function(){
+                var fieldName = $(this).attr("name");
+                var fieldType = $(this).prop("tagName").toLowerCase();
+                if(fieldType === "input" || fieldType === "select") {
+                    item[fieldName] = $(this).val();
+                }
+            });
+            formData.items.push(item);
+            $(".items-table tbody").empty();
+            formData.items.forEach((item, index) => {
+                $(".items-table tbody").append(`
+                    <tr style="">
+                        <td scope="row">${item.name}</td>
+                        <td scope="row">${item.quantity}</td>
+                        <td scope="row">${item.weight}kg</td>
+                        <td scope="row"><b>₦</b>${item.name}</td>
+                        <td scope="row">
+                            <a class="update-item" data-id="${index}" data-action="edit" type="button">
+                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                            </a>
+                        </td>
+                        <td scope="row">
+                            <a class="update-item" data-id="${index}" data-action="delete" type="button">
+                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                            </a>
+                        </td>
+                    </tr>  
+                `);
+            });
+            $currentForm[0].reset();
+            $currentForm.addClass("d-none");
+        });
+
+        $(document).on("click", ".update-item", function(event){
+            event.preventDefault();
+            const itemId = $(this).data("id");
+            const action = $(this).data("action");
+            switch(action){
+                case "edit":
+                    let item = formData.items[itemId];
+                    var $form = $("#addItemForm");
+                    $form.find("input, select").each(function(){
+                        let fieldName = $(this).attr("name");  // Get the name attribute of the input/select element
+                        // Check if the current input/select element exists in the item object
+                        if(fieldName && item.hasOwnProperty(fieldName)) {
+                            $(this).val(item[fieldName]);   // Set the value of the input/select element to the corresponding property of the item object
+                        }
+                    });
+                    $("#addItem").data("action", "update");
+                    $form.removeClass("d-none");
+                break;
+                case "delete":
+                    // Delete the object at the specified index
+                    formData.items.splice(itemId, 1);
+                    $(".items-table tbody").empty();
+                    formData.items.forEach((item, index) => {
+                        $(".items-table tbody").append(`
+                            <tr style="">
+                                <td scope="row">${item.name}</td>
+                                <td scope="row">${item.quantity}</td>
+                                <td scope="row">${item.weight}kg</td>
+                                <td scope="row"><b>₦</b>${item.name}</td>
+                                <td scope="row">
+                                    <a class="update-item" data-id="${index}" data-action="edit" type="button">
+                                        <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                    </a>
+                                </td>
+                                <td scope="row">
+                                    <a class="update-item" data-id="${index}" data-action="delete" type="button">
+                                        <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                    </a>
+                                </td>
+                            </tr>  
+                        `);
+                    });
+                break;
+            }
+        });
+
+        $(".openAddItemForm").on("click", function(event) {
+            event.preventDefault();
+            var $form = $("#addItemForm");
+            if($form.hasClass("d-none")){
+                $form.removeClass("d-none");
+            }
+        });
     });
+
 </script>
 @include("customer.layouts.footer")

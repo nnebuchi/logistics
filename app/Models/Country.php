@@ -9,5 +9,11 @@ class Country extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "sortname",
+        "name",
+        "phonecode"
+    ];
+
     public $timestamps = FALSE;
 }

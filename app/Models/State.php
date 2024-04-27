@@ -9,5 +9,12 @@ class State extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "country_id",
+        "name"
+    ];
+
     public $timestamps = FALSE;
+
+    protected $hidden = ['country_id'];
 }
