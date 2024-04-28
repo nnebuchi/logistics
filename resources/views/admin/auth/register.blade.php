@@ -154,10 +154,8 @@
                                     </p>
 
                                     <div class="d-flex justify-content-center mt-4">
-                                        <button 
-                                        type="submit" 
-                                        class="custom-btn fs-4 mb-2">
-                                        Sign Up <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        <button type="submit" class="custom-btn fs-4 mb-2">Sign Up 
+                                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
                                     </div>
                                     <h6 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary">Sign in</a></h6>
@@ -218,29 +216,33 @@
                     btn.attr("disabled", false).text("Sign Up");
                     window.location.href = response.data.results;
                 })
-                .catch(function(error){
-                    let errors = error.response.data.error;
-                    if(errors.firstname){
+                .catch(function(error){ 
+                    console.log(error);
+                    btn.attr("disabled", false).text("Sign Up");
+                   
+                    let errors = error?.response?.data?.error;
+                    console.log(errors);
+                    if(errors?.firstname){
                         $('.error').eq(0).text(errors.firstname);
                         $("#firstname").css("border", "1px solid #FA150A");
                     }
-                    if(errors.lastname){
+                    if(errors?.lastname){
                         $('.error').eq(1).text(errors.lastname);
                         $("#lastname").css("border", "1px solid #FA150A");
                     }
-                    if(errors.phone){
+                    if(errors?.phone){
                         $('.error').eq(2).text(errors.phone);
                         $("#phone").css("border", "1px solid #FA150A");
                     }
-                    if(errors.email){
+                    if(errors?.email){
                         $('.error').eq(3).text(errors.email);
                         $("#email").css("border", "1px solid #FA150A");
                     }
-                    if(errors.account_type){
+                    if(errors?.account_type){
                         $('.error').eq(4).text(errors.account_type);
                         $("#account_type").css("border", "1px solid #FA150A");
                     }
-                    if(errors.password){
+                    if(errors?.password){
                         $('.error').eq(5).text(errors.password);
                         $("#password").css("border", "1px solid #FA150A");
                     }

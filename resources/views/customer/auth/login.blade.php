@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
+        <script src="{{asset('assets/plugins/buchi.js')}}"></script>
         <?php date_default_timezone_set("Africa/Lagos"); ?>
     </head>
     <style>
@@ -78,12 +79,7 @@
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
                                                 <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
                                             </div>
-                                            <input 
-                                            type="password" 
-                                            id="password"
-                                            name="password"
-                                            placeholder="Enter Password" 
-                                            class="custom-input" />
+                                            <input type="password" id="password name="password placeholder="Enter Password" class="custom-input" />
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
                                                 <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
                                             </div>
@@ -103,10 +99,10 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center mt-4">
-                                        <button 
-                                        type="submit" 
-                                        class="custom-btn fs-4 mb-2">
-                                        Log In <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        <button type="button" onclick="validateLoginForm()" class="custom-btn fs-4 mb-2 login-btn
+                                        login-btn">
+                                            Log In 
+                                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
                                     </div>
                                     <h5 style="font-size:14px;" class="mt-2 text-center">Don't have an account? <a href="{{url('/register')}}" class="custom-text-secondary fw-bold">Sign Up</a></h5>
@@ -221,6 +217,40 @@
                 icon.attr("name", "eye-outline");
             }
         });
+    </script>
+    
+    <script>
+        const validateLoginForm = () => {
+            // document.querySelectorAll(".backend-msg").forEach(function(field, index){
+            //     field.innerHTML = '';
+            // })
+            const submitBtn = document.querySelector(".login-btn");
+            const oldBtnHTML = submitBtn.innerHTML;
+            setBtnLoading(submitBtn);
+
+            const validation = runValidation([
+                {
+                    id:"email",
+                    rules: {'required':true, 'email':true}
+                },
+                {
+                    id:'password',
+                    rules:{'required':true}
+                },
+                
+            ]);
+
+            if(validation === true){
+                submitLoginForm();
+                setBtnNotLoading(submitBtn, oldBtnHTML)
+            }else{
+                setBtnNotLoading(submitBtn, oldBtnHTML)
+            }
+        }
+
+        const submitLoginForm = () => {
+            document.querySelector("#login-form").submit();
+        }
     </script>
     </body>
 </html>
