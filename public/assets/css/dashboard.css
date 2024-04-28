@@ -644,3 +644,10 @@ table td, table th {
 .progress{
     background-color:#DFE4F0;height:10px;width:100px;border-radius:10px;
 }
+
+.radio-group {
+    cursor: pointer;
+}
+.radio-group.selected {
+    background-color: #233E830D; /* Example background color for selected item */
+}

@@ -53,6 +53,8 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
+    let states = [];
+    let cities = [];
 
     const displayError = (formId, index, fieldName, errorMessage) => {
         $(`#${formId} .error`).eq(index).text(errorMessage);
@@ -63,26 +65,33 @@
         const errors = {};
     
         inputsArray.forEach(({ inputName, inputValue, constraints }, index) => {
-            const { required, string, min_length, max_length, email, phone, has_special_character, must_have_number, match } = constraints;
+            const { 
+                required, string, min_length, max_length, email, phone, 
+                has_special_character, must_have_number, match, numeric, integer 
+            } = constraints;
             const inputField = $(`#${formId} input[name='${inputName}']`);
 
             const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/;
             const numberRegex = /\d/;
         
             const validationRules = {
-                //required: required ? (typeof inputValue === 'string' && inputValue.trim() !== '') || !inputValue : true,
-                //required: required ? inputValue.trim() !== '' || !inputValue : true,
                 required: required ? !!inputValue : true,
                 string: string ? typeof inputValue === 'string' || !inputValue : true,
-                phone: phone ? /^[0-9]+$/.test(inputValue) || !inputValue : true,
+                phone: phone ? /^\+?[0-9]+$/.test(inputValue) || !inputValue : true,
                 min_length: inputValue.length >= min_length || !min_length,
                 max_length: inputValue.length <= max_length || !max_length,
                 email: email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue) || !inputValue : true,
                 has_special_character: has_special_character ? specialCharsRegex.test(inputValue) || !inputValue : true,
                 must_have_number: must_have_number ? numberRegex.test(inputValue) || !inputValue : true,
                 match: match ? (inputValue === match) || !inputValue : true,
+                numeric: numeric ? !isNaN(parseFloat(inputValue)) && isFinite(inputValue) || !inputValue : true,
+                integer: integer ? Number.isInteger(Number(inputValue)) || !inputValue : true,
             };
-        
+            
+            // If underscore is present, replace it with a space
+            if(inputName.includes("_")){
+                inputName = inputName.replace("_", " ");
+            }
             const errorMessages = {
                 required: inputName+' field is required',
                 string: inputName + ' must be a string',
@@ -93,6 +102,8 @@
                 has_special_character: inputName+' must have special characters',
                 must_have_number: inputName+' must have a number',
                 match: 'Does not match the specified field',
+                numeric: "Please enter a valid number.",
+                integer: "Please enter a valid integer."
             };
         
             /*const failedRules = Object.entries(validationRules)
@@ -100,7 +111,7 @@
             .map(([rule]) => errorMessages[rule]);
 
             if (failedRules.length > 0) {
-                validationResults[inputName] = failedRules;
+                errors[inputName] = failedRules;
             }*/
             
             Object.entries(validationRules)
@@ -112,7 +123,6 @@
                 errors[inputName].push(errorMessages[rule]);
                 displayError(formId, index, inputName, errorMessages[rule]);
             });
-
         });
     
         return errors;
@@ -127,6 +137,8 @@
             var nextStep = currentStep.next(".step");
             //Store form data
             let $currentForm = $(this).closest("form");
+            $(`#${type} .error`).text('');
+            $(`#${type} input`).css("borderColor", "transparent");
             $currentForm.find("input, select").each(function(){
                 var fieldName = $(this).attr("name");
                 var fieldType = $(this).prop("tagName").toLowerCase();
@@ -179,7 +191,7 @@
                 }
                 //alert(JSON.stringify(formData));
             } else {
-                alert("Sender validation failed!");
+                //alert("Sender validation failed!");
             }
         });
 
@@ -205,6 +217,10 @@
                 let states = res.data.results;
                 // Update the state select input in the specified form
                 $(`${formIdentifier} select[name='state']`).empty(); // Clear previous options
+                $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
+                $(`${formIdentifier} select[name='city']`).append(`
+                    <option value="">--Select one---</option>
+                `);
                 states.forEach(state => {
                     $(`${formIdentifier} select[name='state']`).append(`
                         <option value="${state.id}">${state.name}</option>`
@@ -274,6 +290,7 @@
         $("#addItem").on("click", function(event) {
             event.preventDefault();
             let item = {};
+            const action = $(this).data("action");
             let $currentForm = $(this).closest("form");
             $currentForm.find("input, select").each(function(){
                 var fieldName = $(this).attr("name");
@@ -282,30 +299,59 @@
                     item[fieldName] = $(this).val();
                 }
             });
-            formData.items.push(item);
-            $(".items-table tbody").empty();
-            formData.items.forEach((item, index) => {
-                $(".items-table tbody").append(`
-                    <tr style="">
-                        <td scope="row">${item.name}</td>
-                        <td scope="row">${item.quantity}</td>
-                        <td scope="row">${item.weight}kg</td>
-                        <td scope="row"><b>₦</b>${item.name}</td>
-                        <td scope="row">
-                            <a class="update-item" data-id="${index}" data-action="edit" type="button">
-                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                            </a>
-                        </td>
-                        <td scope="row">
-                            <a class="update-item" data-id="${index}" data-action="delete" type="button">
-                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                            </a>
-                        </td>
-                    </tr>  
-                `);
-            });
-            $currentForm[0].reset();
-            $currentForm.addClass("d-none");
+            $(`#shipping .error`).text('');
+            $(`#shipping input`).css("borderColor", "transparent");
+            inputs = [
+                { inputName: 'name', inputValue: $("#shipping input[name='name']").val(), constraints: { required: true } },
+                { inputName: 'category', inputValue: $("#shipping input[name='category']").val(), constraints: { required: true } },
+                { inputName: 'sub_category', inputValue: $("#shipping input[name='sub_category']").val(), constraints: { required: true } },
+                { inputName: 'hs_code', inputValue: $("#shipping input[name='hs_code']").val(), constraints: { required: true } },
+                { inputName: 'weight', inputValue: $("#shipping input[name='weight']").val(), constraints: { required: true, integer: true } },
+                { inputName: 'quantity', inputValue: $("#shipping input[name='quantity']").val(), constraints: { required: true, integer: true } },
+                { inputName: 'country', inputValue: $("#shipping select[name='country']").val(), constraints: { required: true } },
+                { inputName: 'state', inputValue: $("#shipping select[name='state']").val(), constraints: { required: true } },
+                { inputName: 'city', inputValue: $("#shipping select[name='city']").val(), constraints: { required: true } },
+                { inputName: 'zip_code', inputValue: $("#shipping input[name='zip_code']").val(), constraints: { required: true } }
+            ];
+            const errors = validate("shipping", inputs);
+            if (Object.keys(errors).length === 0) {
+                switch(action){
+                    case "create":
+                        formData.items.push(item);
+                    break;
+                    case "update":
+                        formData.items[parseInt($(this).data("item"))] = item;
+                        $(this).data("action", "create");
+                        $(this).data("item", "");
+                    break;
+                };
+                $(".items-table tbody").empty();
+                formData.items.forEach((item, index) => {
+                    $(".items-table tbody").append(`
+                        <tr style="">
+                            <td scope="row">${item.name}</td>
+                            <td scope="row">${item.quantity}</td>
+                            <td scope="row">${item.weight}kg</td>
+                            <td scope="row"><b>₦</b>${item.name}</td>
+                            <td scope="row">
+                                <a class="update-item" data-id="${index}" data-action="edit" type="button">
+                                    <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                </a>
+                            </td>
+                            <td scope="row">
+                                <a class="update-item" data-id="${index}" data-action="delete" type="button">
+                                    <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                </a>
+                            </td>
+                        </tr>  
+                    `);
+                });
+                $currentForm[0].reset();
+                $currentForm.addClass("d-none");
+            } else {
+                //alert("Sender validation failed!");
+            }
+            
         });
 
         $(document).on("click", ".update-item", function(event){
@@ -324,6 +370,7 @@
                         }
                     });
                     $("#addItem").data("action", "update");
+                    $("#addItem").data("item", itemId);
                     $form.removeClass("d-none");
                 break;
                 case "delete":
@@ -361,6 +408,37 @@
                 $form.removeClass("d-none");
             }
         });
+
+        $(".radio-group").click(function() {
+            // Remove the 'selected' class from all radio items
+            $(".radio-group").removeClass("selected");
+            // Add the 'selected' class to the clicked radio item
+            $(this).addClass("selected");
+        });
+
+        $("#step3Btn").click(function(event) {
+            event.preventDefault();
+            var currentStep = $(this).closest(".step");
+            var nextStep = currentStep.next(".step");
+            // Check if any radio button is selected
+            if ($('#optionsBox #html').is(':checked') || $('#optionsBox #css').is(':checked')) {
+                // At least one radio button is checked
+                console.log('At least one radio button is selected.');
+
+                // Identify which radio button is checked
+                if ($('#optionsBox #html').is(':checked')) {
+                    console.log('HTML radio button is selected.');
+                } else {
+                    console.log('CSS radio button is selected.');
+                }
+            } else {
+                // No radio button is selected
+                console.log('No radio button is selected.');
+            }
+            //currentStep.hide();
+            //nextStep.show();
+        });
+
     });
 
 </script>

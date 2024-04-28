@@ -6,11 +6,11 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping</h5>
                         <div class="d-flex">
-                            <a href="{{url('/users')}}" class="btn btn-primary mr-2">
+                            <a href="{{url('/shipping/create')}}" class="btn btn-primary mr-2">
                                 <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
                                 Book Shipment
                             </a>
-                            <a href="{{url('/users')}}" class="btn btn-primary">
+                            <a href="{{url('/shipping')}}" class="btn btn-primary">
                                 <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
                                 Track Shipment
                             </a>
