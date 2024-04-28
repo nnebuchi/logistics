@@ -1,4 +1,4 @@
-<div class="" style="displa:none;" id="carrier">
+<div class="step" style="display:none;" id="carrier">
     <div class="card w-100">
         <div class="card-body">
             <form action="" method="POST">

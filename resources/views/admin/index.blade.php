@@ -100,7 +100,7 @@
                         <!-- End Of Chart -->
                     </div>
 
-                    @include('customer.modals.broadcast-modal')
+                    @include('admin.modals.broadcast-modal')
                     @include('customer.modals.change-password-modal')
                 </div>
             </div>
@@ -154,6 +154,8 @@
                 $(this).show();
                 if (!matchFound) {
                     $("#recipient").val($(this).val()); // Select the first match
+                    var email = $("#recipient").find('option:selected').data('email');
+                    $("#broadcastModal input[name='email']").val(email); 
                     matchFound = true;
                 }
             } else {
@@ -180,7 +182,7 @@
             let users = res.data.results.data;
             users.forEach(function(user, index){
                 $("select[name='recipient']").append(`
-                    <option value=${user.id}>${user.firstname+" "+user.lastname}</option>
+                    <option value=${user.id} data-email=${user.email}>${user.firstname+" "+user.lastname}</option>
                 `);
             });
         });
@@ -271,16 +273,22 @@
         let btn = $(this);
         btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
         btn.attr("disabled", true);
-        let inputs = {
-            recipient: $("#broadcastModal select[name='recipient']").val(),
-            title: $("#broadcastModal input[name='title']").val(),
-            message: $("#broadcastModal textarea[name='message']").val()
-        }
+        let inputs = {};
+        $("#broadcastModal").find("input, select, textarea").each(function(){
+            var fieldName = $(this).attr("name");
+            var fieldType = $(this).prop("tagName").toLowerCase();
+            if(fieldType === "input" || fieldType === "select" || fieldType === "textarea") {
+                if(fieldName != "search" && fieldName != "email"){
+                    inputs[fieldName] = $(this).val();
+                }
+            }
+        });
+
         alert(JSON.stringify(inputs));
         let errorEl = $('#broadcastModal .error');
+        let msg = $('#broadcastModal .message');
         errorEl.text('');
-        $('#broadcastModal .message').text('');
-        
+        msg.text('');
         // Append loader immediately
         setTimeout(() => {
             const config = {
@@ -293,7 +301,7 @@
             axios.post(url, inputs, config)
             .then(function(response){
                 let message = response.data.message;
-                $("#broadcastModal .message").css("color", "green").text(message);
+                msg.css("color", "green").text(message);
                 btn.attr("disabled", true).text("Notifications sent");
             })
             .catch(function(error){
@@ -310,5 +318,10 @@
         }, 100); // Delay submission by 100 milliseconds
     });
 
+    $('#recipient').change(function() {
+        var email = $(this).find('option:selected').data('email');
+
+        $("#broadcastModal input[name='email']").val(email); 
+    });
 </script>
 @include("admin.layouts.footer")

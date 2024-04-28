@@ -32,6 +32,14 @@ class DashboardController extends Controller
 
     public function getUsers(Request $request)
     {
+        // Check if perPage and page parameters are present in the request
+        if(!$request->has("perPage") && !$request->has("page")) {
+            // Fetch all users without pagination
+            $users = User::orderBy("firstname")->get();
+            
+            return ResponseFormatter::success("Users:", ["data" => $users]);
+        }
+    
         $perPage =  $request->query("perPage", 5); // Default per page is 10
         $page = $request->query("page", 1); // Default page is 1
 

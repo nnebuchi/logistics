@@ -65,26 +65,33 @@
         const errors = {};
     
         inputsArray.forEach(({ inputName, inputValue, constraints }, index) => {
-            const { required, string, min_length, max_length, email, phone, has_special_character, must_have_number, match } = constraints;
+            const { 
+                required, string, min_length, max_length, email, phone, 
+                has_special_character, must_have_number, match, numeric, integer 
+            } = constraints;
             const inputField = $(`#${formId} input[name='${inputName}']`);
 
             const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/;
             const numberRegex = /\d/;
         
             const validationRules = {
-                //required: required ? (typeof inputValue === 'string' && inputValue.trim() !== '') || !inputValue : true,
-                //required: required ? inputValue.trim() !== '' || !inputValue : true,
                 required: required ? !!inputValue : true,
                 string: string ? typeof inputValue === 'string' || !inputValue : true,
-                phone: phone ? /^[0-9]+$/.test(inputValue) || !inputValue : true,
+                phone: phone ? /^\+?[0-9]+$/.test(inputValue) || !inputValue : true,
                 min_length: inputValue.length >= min_length || !min_length,
                 max_length: inputValue.length <= max_length || !max_length,
                 email: email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue) || !inputValue : true,
                 has_special_character: has_special_character ? specialCharsRegex.test(inputValue) || !inputValue : true,
                 must_have_number: must_have_number ? numberRegex.test(inputValue) || !inputValue : true,
                 match: match ? (inputValue === match) || !inputValue : true,
+                numeric: numeric ? !isNaN(parseFloat(inputValue)) && isFinite(inputValue) || !inputValue : true,
+                integer: integer ? Number.isInteger(Number(inputValue)) || !inputValue : true,
             };
-        
+            
+            // If underscore is present, replace it with a space
+            if(inputName.includes("_")){
+                inputName = inputName.replace("_", " ");
+            }
             const errorMessages = {
                 required: inputName+' field is required',
                 string: inputName + ' must be a string',
@@ -95,6 +102,8 @@
                 has_special_character: inputName+' must have special characters',
                 must_have_number: inputName+' must have a number',
                 match: 'Does not match the specified field',
+                numeric: "Please enter a valid number.",
+                integer: "Please enter a valid integer."
             };
         
             /*const failedRules = Object.entries(validationRules)
@@ -102,7 +111,7 @@
             .map(([rule]) => errorMessages[rule]);
 
             if (failedRules.length > 0) {
-                validationResults[inputName] = failedRules;
+                errors[inputName] = failedRules;
             }*/
             
             Object.entries(validationRules)
@@ -114,7 +123,6 @@
                 errors[inputName].push(errorMessages[rule]);
                 displayError(formId, index, inputName, errorMessages[rule]);
             });
-
         });
     
         return errors;
@@ -129,6 +137,8 @@
             var nextStep = currentStep.next(".step");
             //Store form data
             let $currentForm = $(this).closest("form");
+            $(`#${type} .error`).text('');
+            $(`#${type} input`).css("borderColor", "transparent");
             $currentForm.find("input, select").each(function(){
                 var fieldName = $(this).attr("name");
                 var fieldType = $(this).prop("tagName").toLowerCase();
@@ -181,7 +191,7 @@
                 }
                 //alert(JSON.stringify(formData));
             } else {
-                alert("Sender validation failed!");
+                //alert("Sender validation failed!");
             }
         });
 
@@ -289,39 +299,59 @@
                     item[fieldName] = $(this).val();
                 }
             });
-            switch(action){
-                case "create":
-                    formData.items.push(item);
-                break;
-                case "update":
-                    formData.items[parseInt($(this).data("item"))] = item;
-                    $(this).data("action", "create");
-                    $(this).data("item", "");
-                break;
-            };
-            $(".items-table tbody").empty();
-            formData.items.forEach((item, index) => {
-                $(".items-table tbody").append(`
-                    <tr style="">
-                        <td scope="row">${item.name}</td>
-                        <td scope="row">${item.quantity}</td>
-                        <td scope="row">${item.weight}kg</td>
-                        <td scope="row"><b>₦</b>${item.name}</td>
-                        <td scope="row">
-                            <a class="update-item" data-id="${index}" data-action="edit" type="button">
-                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                            </a>
-                        </td>
-                        <td scope="row">
-                            <a class="update-item" data-id="${index}" data-action="delete" type="button">
-                                <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                            </a>
-                        </td>
-                    </tr>  
-                `);
-            });
-            $currentForm[0].reset();
-            $currentForm.addClass("d-none");
+            $(`#shipping .error`).text('');
+            $(`#shipping input`).css("borderColor", "transparent");
+            inputs = [
+                { inputName: 'name', inputValue: $("#shipping input[name='name']").val(), constraints: { required: true } },
+                { inputName: 'category', inputValue: $("#shipping input[name='category']").val(), constraints: { required: true } },
+                { inputName: 'sub_category', inputValue: $("#shipping input[name='sub_category']").val(), constraints: { required: true } },
+                { inputName: 'hs_code', inputValue: $("#shipping input[name='hs_code']").val(), constraints: { required: true } },
+                { inputName: 'weight', inputValue: $("#shipping input[name='weight']").val(), constraints: { required: true, integer: true } },
+                { inputName: 'quantity', inputValue: $("#shipping input[name='quantity']").val(), constraints: { required: true, integer: true } },
+                { inputName: 'country', inputValue: $("#shipping select[name='country']").val(), constraints: { required: true } },
+                { inputName: 'state', inputValue: $("#shipping select[name='state']").val(), constraints: { required: true } },
+                { inputName: 'city', inputValue: $("#shipping select[name='city']").val(), constraints: { required: true } },
+                { inputName: 'zip_code', inputValue: $("#shipping input[name='zip_code']").val(), constraints: { required: true } }
+            ];
+            const errors = validate("shipping", inputs);
+            if (Object.keys(errors).length === 0) {
+                switch(action){
+                    case "create":
+                        formData.items.push(item);
+                    break;
+                    case "update":
+                        formData.items[parseInt($(this).data("item"))] = item;
+                        $(this).data("action", "create");
+                        $(this).data("item", "");
+                    break;
+                };
+                $(".items-table tbody").empty();
+                formData.items.forEach((item, index) => {
+                    $(".items-table tbody").append(`
+                        <tr style="">
+                            <td scope="row">${item.name}</td>
+                            <td scope="row">${item.quantity}</td>
+                            <td scope="row">${item.weight}kg</td>
+                            <td scope="row"><b>₦</b>${item.name}</td>
+                            <td scope="row">
+                                <a class="update-item" data-id="${index}" data-action="edit" type="button">
+                                    <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                </a>
+                            </td>
+                            <td scope="row">
+                                <a class="update-item" data-id="${index}" data-action="delete" type="button">
+                                    <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                </a>
+                            </td>
+                        </tr>  
+                    `);
+                });
+                $currentForm[0].reset();
+                $currentForm.addClass("d-none");
+            } else {
+                //alert("Sender validation failed!");
+            }
+            
         });
 
         $(document).on("click", ".update-item", function(event){
@@ -382,11 +412,31 @@
         $(".radio-group").click(function() {
             // Remove the 'selected' class from all radio items
             $(".radio-group").removeClass("selected");
-            
             // Add the 'selected' class to the clicked radio item
             $(this).addClass("selected");
-            
-            // Perform any other actions based on the selected item
+        });
+
+        $("#step3Btn").click(function(event) {
+            event.preventDefault();
+            var currentStep = $(this).closest(".step");
+            var nextStep = currentStep.next(".step");
+            // Check if any radio button is selected
+            if ($('#optionsBox #html').is(':checked') || $('#optionsBox #css').is(':checked')) {
+                // At least one radio button is checked
+                console.log('At least one radio button is selected.');
+
+                // Identify which radio button is checked
+                if ($('#optionsBox #html').is(':checked')) {
+                    console.log('HTML radio button is selected.');
+                } else {
+                    console.log('CSS radio button is selected.');
+                }
+            } else {
+                // No radio button is selected
+                console.log('No radio button is selected.');
+            }
+            //currentStep.hide();
+            //nextStep.show();
         });
 
     });
