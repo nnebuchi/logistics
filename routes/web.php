@@ -18,7 +18,7 @@ Route::group(['middleware' => ['guest']], function () {
     Route::get('/register', [AuthController::class, 'showSignupForm'])->name("signup");
 });
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('user-signin');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
@@ -47,13 +47,16 @@ Route::get('/test', [AuthController::class, 'test']);
 Route::group([
     'middleware' => ['auth', 'verified']
 ], function () {
-    Route::get('/', [UserController::class, 'index']);
+    Route::get('/', [UserController::class, 'index'])->name('dashboard');
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
     Route::post('/shipping/create', [UserController::class, 'showShipments']);
     Route::get('/shippings', [ShippingController::class, 'showShippings']);
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);
     Route::get('/logout', [AuthController::class, 'logOut']);
+
+    Route::get('/cities/{stateId}', [ShippingController::class, 'getCities']);
+    Route::get('/states/{countryId}', [ShippingController::class, 'getStates']);
 
     Route::post("/change-password", [UserController::class, "changePassword"]);
     //users endpoint

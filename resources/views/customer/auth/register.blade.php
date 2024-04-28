@@ -1,29 +1,4 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <base href="{{url('')}}">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-        <meta name="csrf-token" content="{{csrf_token()}}">
-
-        <meta name="theme-color" content="" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="" />
-        <title>Ziga Afrika Dashboard</title>
-        <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
-        <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
-        <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
-        <?php date_default_timezone_set("Africa/Lagos"); ?>
-    </head>
-    <style>
-        .error{
-            color: red;
-            font-size: 14px;
-        }
-    </style>
-    <body>
-
+@include("customer.auth.layouts.header")
     <section class="d-flex" style="height:100vh;width:100%">
         <div class="container-fluid w-100 h-100 px-0" style="position:absolute;top:0;left:0">
             <div class="row w-100 h-100 mx-0" style="background-color:#4f659c">
@@ -148,6 +123,7 @@
                                         </div>
                                         <span class="error"></span>
                                     </div>
+                                    <input type="hidden" id="country" value="">
 
                                     <p style="font-size:14px;color:#1E1E1E;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 
                                         <a href="" style="font-weight:600" class="custom-text-secondary">terms of acceptable use.</a>
@@ -189,6 +165,7 @@
                 email: $("#email").val(),
                 phone: $("#phone").val(),
                 password: $("#password").val(),
+                country: $("#country").val(),
                 account_type: $("#account_type").val()
             };
 
@@ -288,9 +265,14 @@
     
         document.getElementById('countrySelect').addEventListener('change', function() {
             var countryCode = this.value;
+            //var countryText = this.options[this.selectedIndex].text; // Get the selected text
+            var selectedOption = this.options[this.selectedIndex];
+            var optionInfo = selectedOption.getAttribute('data-country');
+
             var phoneNumberInput = document.getElementById('phone');
             phoneNumberInput.value = countryCode;
             phoneNumberInput.focus(); // Optionally, focus on the input field after selecting the country
+            document.getElementById("country").value = optionInfo; // Set the country text in the input field with id "country"
         });
     </script>
     <script>
@@ -313,11 +295,11 @@
                 let append = "";
                 if(country.idd.root){
                     append = (country.name.common == "Nigeria") ? `
-                        <option selected value="${country.idd.root.concat(country.idd.suffixes[0])}">
+                        <option data-country="${country.name.common}" selected value="${country.idd.root.concat(country.idd.suffixes[0])}">
                             ${country.name.common} (${country.idd.root.concat(country.idd.suffixes[0])})
                         </option>
                     ` : `
-                        <option value="${country.idd.root.concat(country.idd.suffixes[0])}">
+                        <option data-country="${country.name.common}" value="${country.idd.root.concat(country.idd.suffixes[0])}">
                             ${country.name.common} (${country.idd.root.concat(country.idd.suffixes[0])})
                         </option>
                     `;
@@ -325,6 +307,7 @@
                 if(country.name.common == "Nigeria"){
                     var phoneNumberInput = document.getElementById('phone');
                     phoneNumberInput.value = country.idd.root.concat(country.idd.suffixes[0]);
+                    $("#country").val(country.name.common)
                 }
                 
                 $("#countrySelect").append(`

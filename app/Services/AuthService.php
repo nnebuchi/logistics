@@ -32,6 +32,7 @@ class AuthService
                 'email' => $data['email'],
                 'phone' => $data['phone'],
                 'password' => $data['password'],
+                'country' => $data['country'],
                 'account_id' => $account->id
             ]);    
 
@@ -65,18 +66,22 @@ class AuthService
         $user->refresh();
         
         //Auth::guard("web")->login($user, true);
+        
         Auth::login($user, true);
         $user = Auth::user();
         $token = $this->generateToken($user);
         $user->token = $token;
 
         unset($user->tokens);
+        return redirect()->route('dashboard');
+        
+        
 
-        $message = 'Login successfully';
-        return ResponseFormatter::success(
-            $message, 
-            ["user" => $user, "redirect" => url('')]
-        );
+        // $message = 'Login successfully';
+        // return ResponseFormatter::success(
+        //     $message, 
+        //     ["user" => $user, "redirect" => url('')]
+        // );
     }
 
     public function logOut(Request $request)

@@ -23,17 +23,26 @@ class UserService
     {
         $user = User::find(Auth::user()->id);
         $userProfile = $user->profile;
-        
+        $valid_govt_id = [];
         $images = ["photo", "utility_bill", "valid_govt_id", "business_cac"];
         foreach($images as $image):
             if($data->hasFile($image)):
-                $photo = $data->file($image);
-                $url = cloudinary()
-                ->upload($photo->getRealPath())->getSecurePath();
-                if($image == "photo"):
-                    $user->{$image} = $url;
+                if(is_array($data->file($image))):
+                    foreach($data->file($image) as $validId):
+                        $url = cloudinary()
+                        ->upload($validId->getRealPath())->getSecurePath();
+                        array_push($valid_govt_id, $url);
+                    endforeach;
+                    $userProfile->{$image} = json_encode($valid_govt_id);
                 else:
-                    $userProfile->{$image} = $url;
+                    $photo = $data->file($image);
+                    $url = cloudinary()
+                    ->upload($photo->getRealPath())->getSecurePath();
+                    if($image == "photo"):
+                        $user->{$image} = $url;
+                    else:
+                        $userProfile->{$image} = $url;
+                    endif;
                 endif;
             endif;
         endforeach;

@@ -1,29 +1,4 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <base href="{{url('')}}">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-        <meta name="csrf-token" content="{{csrf_token()}}">
-
-        <meta name="theme-color" content="" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="" />
-        <title>Ziga Afrika Dashboard</title>
-        <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
-        <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
-        <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
-        <?php date_default_timezone_set("Africa/Lagos"); ?>
-    </head>
-    <style>
-        .error{
-            color: red;
-            font-size: 14px;
-        }
-    </style>
-    <body>
-
+@include("admin.auth.layouts.header")
     <section class="d-flex" style="height:100vh;width:100%">
         <div class="container-fluid w-100 h-100 px-0" style="position:absolute;top:0;left:0">
             <div class="row w-100 h-100 mx-0" style="background-color:#4f659c">
@@ -154,10 +129,8 @@
                                     </p>
 
                                     <div class="d-flex justify-content-center mt-4">
-                                        <button 
-                                        type="submit" 
-                                        class="custom-btn fs-4 mb-2">
-                                        Sign Up <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        <button type="submit" class="custom-btn fs-4 mb-2">Sign Up 
+                                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
                                     </div>
                                     <h6 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary">Sign in</a></h6>
@@ -218,29 +191,33 @@
                     btn.attr("disabled", false).text("Sign Up");
                     window.location.href = response.data.results;
                 })
-                .catch(function(error){
-                    let errors = error.response.data.error;
-                    if(errors.firstname){
+                .catch(function(error){ 
+                    console.log(error);
+                    btn.attr("disabled", false).text("Sign Up");
+                   
+                    let errors = error?.response?.data?.error;
+                    console.log(errors);
+                    if(errors?.firstname){
                         $('.error').eq(0).text(errors.firstname);
                         $("#firstname").css("border", "1px solid #FA150A");
                     }
-                    if(errors.lastname){
+                    if(errors?.lastname){
                         $('.error').eq(1).text(errors.lastname);
                         $("#lastname").css("border", "1px solid #FA150A");
                     }
-                    if(errors.phone){
+                    if(errors?.phone){
                         $('.error').eq(2).text(errors.phone);
                         $("#phone").css("border", "1px solid #FA150A");
                     }
-                    if(errors.email){
+                    if(errors?.email){
                         $('.error').eq(3).text(errors.email);
                         $("#email").css("border", "1px solid #FA150A");
                     }
-                    if(errors.account_type){
+                    if(errors?.account_type){
                         $('.error').eq(4).text(errors.account_type);
                         $("#account_type").css("border", "1px solid #FA150A");
                     }
-                    if(errors.password){
+                    if(errors?.password){
                         $('.error').eq(5).text(errors.password);
                         $("#password").css("border", "1px solid #FA150A");
                     }
