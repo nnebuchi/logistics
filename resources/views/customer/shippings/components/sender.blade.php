@@ -1,4 +1,4 @@
-<div class="card w-100 step" style="display:none;" id="sender">
+<div class="card w-100 step" style="displa:none;" id="sender">
     <div class="card-body">
         <form action="" method="POST">
             <div class="row justify-content-center">
