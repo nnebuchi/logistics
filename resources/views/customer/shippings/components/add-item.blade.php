@@ -1,4 +1,4 @@
-<div class="step" style="displa:none;" id="shipping">
+<div class="step" style="display:none;" id="shipping">
     <div class="card w-100">
         <div class="card-body">
             <div class="" style="background-color:#E9EFFD;border-radius:10px;">

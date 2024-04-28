@@ -421,7 +421,7 @@
             var currentStep = $(this).closest(".step");
             var nextStep = currentStep.next(".step");
             // Check if any radio button is selected
-            if ($('#optionsBox #html').is(':checked') || $('#optionsBox #css').is(':checked')) {
+            /*if ($('#optionsBox #html').is(':checked') || $('#optionsBox #css').is(':checked')) {
                 // At least one radio button is checked
                 console.log('At least one radio button is selected.');
 
@@ -434,9 +434,26 @@
             } else {
                 // No radio button is selected
                 console.log('No radio button is selected.');
-            }
-            //currentStep.hide();
-            //nextStep.show();
+            }*/
+            currentStep.hide();
+            nextStep.show();
+        });
+
+        $("#step4Btn").click(function(event) {
+            event.preventDefault();
+            var currentStep = $(this).closest(".step");
+            var nextStep = currentStep.next(".step");
+            
+            $('#checkout').find(".sender span").eq(0).text(formData.sender.firstname+" "+formData.sender.lastname);
+            $('#checkout').find(".sender span").eq(1).text(formData.sender.address1);
+            $('#checkout').find(".sender span").eq(2).text(formData.sender.phone);
+            $('#checkout').find(".sender span").eq(3).text(formData.sender.email);
+            $('#checkout').find(".receiver span").eq(0).text(formData.receiver.firstname+" "+formData.receiver.lastname);
+            $('#checkout').find(".receiver span").eq(1).text(formData.receiver.address1);
+            $('#checkout').find(".receiver span").eq(2).text(formData.receiver.phone);
+            $('#checkout').find(".receiver span").eq(3).text(formData.receiver.email);
+            currentStep.hide();
+            nextStep.show();
         });
 
     });

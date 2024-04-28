@@ -67,7 +67,7 @@
         <div class="">
             <button 
                 type="button"
-                id=""
+                id="step4Btn"
                 class="custom-btn fs-4 fw-bold">
             Proceed to payment
             <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
