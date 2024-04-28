@@ -2,7 +2,7 @@
     if($user?->profile?->valid_govt_id):
 ?>        
     <div class="">
-        <img src="<?=$user->profile->valid_govt_id?>"
+        <img src="<?=$user->profile->valid_govt_id[0]?>"
         class="w-100" 
         height="161" 
         style="border-radius:15px;object-fit:cover;">
@@ -14,7 +14,7 @@
                 Update
             </button>
             <button 
-            data-src="<?=$user->profile->valid_govt_id?>"
+            data-src="<?=$user->profile->valid_govt_id[0]?>"
             class="custom-btn"
             type="button">
                 View File

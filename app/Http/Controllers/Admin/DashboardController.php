@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\User;
+use App\Models\Account;
 use App\Models\Transaction;
 use App\Util\Helper;
 use Illuminate\Support\Facades\Auth;
@@ -24,13 +25,21 @@ class DashboardController extends Controller
     public function showUsers()
     {
         $user = Admin::find(Auth::user()->id);
-        $users = User::all();
+        $accounts = Account::all();
         
-        return view('admin.users.user', compact('users', 'user'));
+        return view('admin.users.user', compact('user', 'accounts'));
     }
 
     public function getUsers(Request $request)
     {
+        // Check if perPage and page parameters are present in the request
+        if(!$request->has("perPage") && !$request->has("page")) {
+            // Fetch all users without pagination
+            $users = User::orderBy("firstname")->get();
+            
+            return ResponseFormatter::success("Users:", ["data" => $users]);
+        }
+    
         $perPage =  $request->query("perPage", 5); // Default per page is 10
         $page = $request->query("page", 1); // Default page is 1
 
@@ -42,6 +51,16 @@ class DashboardController extends Controller
         return ResponseFormatter::success(
             "Users:", 
             $users
+        );
+    }
+
+    public function getUserData(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        
+        return ResponseFormatter::success(
+            "User Data:", 
+            $user
         );
     }
 

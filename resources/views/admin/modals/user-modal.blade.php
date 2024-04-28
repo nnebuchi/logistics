@@ -8,27 +8,39 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="table-bordered text-nowrap w-100 px-2">
-                    <div class="d-flex justify-content-between">
-                        <span>Name</span>
-                        <span class="user-data"> </span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Email</span>
-                        <span class="user-data"> </span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Phone</span>
-                        <span class="user-data"> </span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Address</span>
-                        <span class="user-data"> </span>
-                    </div>
+                <div class="">
+                    <img src="" class="avatar rounded-circle" width="50" height="50">
                 </div>
-                <div class="d-flex justify-content-between mt-2 verification-box">
+                <div class="mt-2">
+                    <input type="text"
+                    placeholder="firstname" class="w-100 form-control rounded-0">
+                </div>
+                <div class="mt-2">
+                    <input type="text"
+                    placeholder="lastname" class="w-100 form-control rounded-0">
+                </div>
+                <div class="mt-2">
+                    <input type="text"
+                    placeholder="email" readonly class="w-100 form-control rounded-0">
+                </div>
+                <div class="mt-2">
+                    <input type="text"
+                    placeholder="phone" readonly class="w-100 form-control rounded-0">
+                </div>
+                <div class="mt-2">
+                    <input type="text"
+                    placeholder="country" class="w-100 form-control rounded-0">
+                </div>
+                <div class="mt-2">
+                    <select class="w-100 form-control rounded-0" name="account">
+                        @foreach($accounts as $account)
+                            <option value="{{$account->id}}">{{$account->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <!--<div class="d-flex justify-content-between mt-2 verification-box">
                     
-                </div>
+                </div>-->
             </div>
         </div>
     </div>

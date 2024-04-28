@@ -148,6 +148,7 @@
                                         </div>
                                         <span class="error"></span>
                                     </div>
+                                    <input type="hidden" id="country" value="">
 
                                     <p style="font-size:14px;color:#1E1E1E;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 
                                         <a href="" style="font-weight:600" class="custom-text-secondary">terms of acceptable use.</a>
@@ -189,6 +190,7 @@
                 email: $("#email").val(),
                 phone: $("#phone").val(),
                 password: $("#password").val(),
+                country: $("#country").val(),
                 account_type: $("#account_type").val()
             };
 
@@ -288,9 +290,14 @@
     
         document.getElementById('countrySelect').addEventListener('change', function() {
             var countryCode = this.value;
+            //var countryText = this.options[this.selectedIndex].text; // Get the selected text
+            var selectedOption = this.options[this.selectedIndex];
+            var optionInfo = selectedOption.getAttribute('data-country');
+
             var phoneNumberInput = document.getElementById('phone');
             phoneNumberInput.value = countryCode;
             phoneNumberInput.focus(); // Optionally, focus on the input field after selecting the country
+            document.getElementById("country").value = optionInfo; // Set the country text in the input field with id "country"
         });
     </script>
     <script>
@@ -313,11 +320,11 @@
                 let append = "";
                 if(country.idd.root){
                     append = (country.name.common == "Nigeria") ? `
-                        <option selected value="${country.idd.root.concat(country.idd.suffixes[0])}">
+                        <option data-country="${country.name.common}" selected value="${country.idd.root.concat(country.idd.suffixes[0])}">
                             ${country.name.common} (${country.idd.root.concat(country.idd.suffixes[0])})
                         </option>
                     ` : `
-                        <option value="${country.idd.root.concat(country.idd.suffixes[0])}">
+                        <option data-country="${country.name.common}" value="${country.idd.root.concat(country.idd.suffixes[0])}">
                             ${country.name.common} (${country.idd.root.concat(country.idd.suffixes[0])})
                         </option>
                     `;
@@ -325,6 +332,7 @@
                 if(country.name.common == "Nigeria"){
                     var phoneNumberInput = document.getElementById('phone');
                     phoneNumberInput.value = country.idd.root.concat(country.idd.suffixes[0]);
+                    $("#country").val(country.name.common)
                 }
                 
                 $("#countrySelect").append(`

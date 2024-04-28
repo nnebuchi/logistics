@@ -17,12 +17,12 @@
                         </div>-->
                     </div>
 
-                    <div class="row mt-5">
+                    <div class="row mt-3">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
                                     <div class="table-responsive">
-                                        <table data-order="false" class="users-table table text-nowrap mb-0 align-middle">
+                                        <table data-order="false" class="users-table table table-borderless text-nowrap mb-0 align-middle">
                                             <thead class="text-dark fs-4">
                                                 <tr>
                                                     <th class="border-bottom-0">
@@ -36,6 +36,9 @@
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold">Account</h6>
+                                                    </th>
+                                                    <th class="border-bottom-0">
+                                                        <h6 class="fw-semibold">Country</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold">Edit</h6>
@@ -194,13 +197,13 @@
                     </td>
                 `;
 
-
                 $(".users-table tbody").append(`
                     <tr style="background-color:${rowColors[user.is_verified ?? "success"]}">
                         <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
                         ${userCard}
                         <td scope="row">${user.phone}</td>
                         <td scope="row">${user.account.name}</td>
+                        <td scope="row">${user.country != null ? user.country: "" }</td>
                         <td scope="row">
                             <a class="edit-user" data-id="${user.id}" type="button">
                                 <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
@@ -275,20 +278,27 @@
     $(document).on("click", ".edit-user", function(event){
         event.preventDefault();
         const userId = $(this).data("id");
-        console.log("User ID:", userId);
-        $("#userModal").modal("show");
-        /*axios.get(`${baseUrl}/api/user/${userId}`)
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.get(`${baseUrl}/api/v1/user/${userId}`, config)
         .then((res) => {
             let user = res.data.results;
 
-            let userData = $(".user-data");
-            userData.eq(0).text(user?.firstname+" "+user?.lastname);
-            userData.eq(1).text(user?.email);
-            userData.eq(2).text(user?.phone);
-            userData.eq(3).text(user?.profile?.id_number);
-            $('#userModal .avatar').attr("src", imageUrl+user?.profile_photo);
+            let userData = $("#userModal input");
+            userData.eq(0).val(user?.firstname);
+            userData.eq(1).val(user?.lastname);
+            userData.eq(2).val(user?.email);
+            userData.eq(3).val(user?.phone);
+            userData.eq(4).val(user?.country);
+            $("#userModal select[name='account']").val(user?.account.id);
+            $('#userModal .avatar').attr("src", user?.photo);
             $("#userModal").modal("show");
-        });*/
+        });
     });
 
     $("#userModal .close").on("click", function(){

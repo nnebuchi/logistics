@@ -120,3 +120,36 @@ $('#all-button').on('click', function() {
   $('#filter-input').val('');
 });
 
+
+const displayError = (index, fieldName, errorMessage) => {
+    $(`#sender .error`).eq(index).text(errorMessage);
+    $(`#sender input[name='${fieldName}']`).css("border", "1px solid #FA150A");
+};
+
+const errors = validate([
+    { inputName: 'firstname', inputValue: $("#sender input[name='firstname']").val(), constraints: { required: true, max_length: 50 } },
+    { inputName: 'lastname', inputValue: $("#sender input[name='lastname']").val(), constraints: { required: true, max_length: 50 } },
+    { inputName: 'email', inputValue: $("#sender input[name='email']").val(), constraints: { required: true, email: true } },
+    { inputName: 'phone', inputValue: $("#sender input[name='phone']").val(), constraints: { required: true, phone: true } },
+    { inputName: 'address1', inputValue: $("#sender input[name='address1']").val(), constraints: { required: true } },
+    { inputName: 'country', inputValue: $("#sender input[name='country']").val(), constraints: { required: true } },
+    { inputName: 'state', inputValue: $("#sender input[name='state']").val(), constraints: { required: true } },
+    { inputName: 'city', inputValue: $("#sender input[name='city']").val(), constraints: { required: true } },
+    { inputName: 'zip_code', inputValue: $("#sender input[name='zip_code']").val(), constraints: { required: true } }
+]);
+
+if (Object.keys(errors).length === 0) {
+    alert("Validation passed!");
+} else {
+    if (errors.firstname) displayError(0, 'firstname', errors.firstname);
+    if (errors.lastname) displayError(1, 'lastname', errors.lastname);
+    if (errors.email) displayError(2, 'email', errors.email);
+    if (errors.phone) displayError(3, 'phone', errors.phone);
+    if (errors.address1) displayError(4, 'address1', errors.address1);
+    if (errors.country) displayError(5, 'country', errors.country);
+    if (errors.state) displayError(6, 'state', errors.state);
+    if (errors.city) displayError(7, 'city', errors.city);
+    if (errors.zip_code) displayError(8, 'zip_code', errors.zip_code);
+}
+
+

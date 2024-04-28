@@ -8,7 +8,7 @@
                     </div>
                     
 
-                    <div class="row mt-5">
+                    <div class="row mt-3">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
@@ -20,7 +20,7 @@
                                         </div>
                                     </div>
                                     <div class="table-responsive">
-                                        <table data-order="false" class="trx-table table text-nowrap mb-0 align-middle">
+                                        <table data-order="false" class="trx-table table table-borderless text-nowrap mb-0 align-middle">
                                             <thead class="text-dark fs-4">
                                                 <tr>
                                                     <th class="border-bottom-0">
@@ -130,7 +130,7 @@
         failed: "custom-bg-danger"
     };
 
-    const rowColors = {failed: "#ffffff", success: "#233E830D", pending: "#ffffff"};
+    const rowColors = {failed: "#ffffff", pending: "#233E830D", success: "#ffffff"};
 
     function getIndex(per_page, current_page, index){
         if(current_page == 1){

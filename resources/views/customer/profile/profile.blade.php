@@ -86,63 +86,35 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 pt-3 pb-5" style="border-left: 1px solid #1E1E1E33;">
-                                            <h5 class="mt-3 fw-semibold">Bio Details</h5>
-                                            <div class="d-flex flex-column flex-md-row">
-                                                <div class="w-100 mr-2">
-                                                    <label for="email" class="custom-input-label">Address</label>
-                                                    <input 
-                                                    type="text" 
-                                                    id="address"
-                                                    value="<?=$user->address?>"
-                                                    name="address"
-                                                    placeholder="House Address"
-                                                    class="custom-input" />
-                                                    <span class="error"> </span>
-                                                </div>
-                                                <div class="w-100 mt-md-0 mt-3 mr-2">
-                                                    <label for="email" class="custom-input-label">Phone</label>
-                                                    <input 
-                                                    type="text" 
-                                                    id="phone"
-                                                    value="<?=$user->phone?>"
-                                                    name="phone"
-                                                    placeholder="Phone Number"
-                                                    class="custom-input" />
-                                                    <span class="error"> </span>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex flex-column flex-md-row mt-3">
-                                                <div class="w-100 mr-2">
-                                                    <label for="email" class="custom-input-label">Email</label>
-                                                    <input 
-                                                    type="email" 
-                                                    id="email"
-                                                    value="<?=$user->email?>"
-                                                    name="email"
-                                                    placeholder="Email Address"
-                                                    class="custom-input" readonly/>
-                                                    <span class="error"> </span>
-                                                </div>
-                                                <div class="w-100 mt-md-0 mt-3 mr-2">
-                                                    <label for="email" class="custom-input-label">UserType</label>
-                                                    <input 
-                                                    type="text" 
-                                                    id="account_type"
-                                                    value="<?=$user->account->name?>"
-                                                    name="account_type"
-                                                    placeholder="Account Type"
-                                                    class="custom-input" readonly/>
-                                                    <span class="error"> </span>
-                                                </div>
-                                            </div>
-                                            <div class="mt-4">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <h5 class="mt-3 fw-semibold">Bio Details</h5>
                                                 <button 
                                                 type="button"
                                                 data-toggle="modal" data-target="#changePasswordModal"
-                                                class="custom-btn fs-4 fw-bold">
+                                                class="btn btn-light fs-4 fw-bold">
                                                 <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="20" class="mr-2" alt="">
                                                 Change Password
                                                 </button>
+                                            </div>
+                                            <div class="d-flex flex-column flex-md-row mt-3">
+                                                <div class="w-100 mr-2">
+                                                    <label for="email" class="custom-input-label">Address</label>
+                                                    <p><?=$user->address?></p>
+                                                </div>
+                                                <div class="w-100 mt-md-0 mt-2 mr-2">
+                                                    <label for="email" class="custom-input-label">Phone</label>
+                                                    <p><?=$user->phone?></p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-column flex-md-row mt-2">
+                                                <div class="w-100 mr-2">
+                                                    <label for="email" class="custom-input-label">Email</label>
+                                                    <p><?=$user->email?></p>
+                                                </div>
+                                                <div class="w-100 mt-md-0 mt-2 mr-2 d-flex flex-column">
+                                                    <label for="email" class="custom-input-label">UserType</label>
+                                                    <span style="" class="rounded-all"><?=$user->account->name?></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -311,22 +283,30 @@
         $("#imagePreviewBox").empty();
         var inputs = event.target.files;
         var filesAmount = inputs.length;
-        // Loop through each file
-        for(var i = 0; i < filesAmount; i++) {
-            var reader = new FileReader();
-            // Convert each image file to a string
-            reader.readAsDataURL(inputs[i]);
-            // FileReader will emit the load event when the dataURL is ready
-            // Access the string using reader.result inside the callback function
-            reader.onload = function(e){
-                $("#imagePreviewModal").modal("show");
-                $(".upload-kyc-btn").data("imgEl", "valid_govt_id");
-                $("#imagePreviewBox").append(`
-                    <img src=${e.target.result} 
-                    height="250" 
-                    class="w-50 kyc-img-preview" 
-                    style="border:1px solid #233E8366;border-radius:20px;object-fit:cover;">
-                `);
+        if (filesAmount != 2) {
+            // Clear the file input
+            $(this).val(null);
+            // Display an error message
+            alert("Only two images are allowed.");
+            return; // Exit the function to prevent further execution
+        }else{
+            //Loop through each file
+            for(var i = 0; i < filesAmount; i++) {
+                var reader = new FileReader();
+                // Convert each image file to a string
+                reader.readAsDataURL(inputs[i]);
+                // FileReader will emit the load event when the dataURL is ready
+                // Access the string using reader.result inside the callback function
+                reader.onload = function(e){
+                    $("#imagePreviewModal").modal("show");
+                    $(".upload-kyc-btn").data("imgEl", "valid_govt_id");
+                    $("#imagePreviewBox").append(`
+                        <img src=${e.target.result} 
+                        height="250" 
+                        class="w-50 kyc-img-preview" 
+                        style="border:1px solid #233E8366;border-radius:20px;object-fit:cover;">
+                    `);
+                }
             }
         }
     });
@@ -336,9 +316,24 @@
         btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
         btn.attr("disabled", true);
         let element = $(this).data("imgEl");
-        let payload = {
-            [element]: $("#"+element)[0].files[0]
-        };
+        let payload = {};
+        if(element != "valid_govt_id"){
+            payload = {
+                [element]: $("#"+element)[0].files[0]
+            };
+        }else{
+            let files = $("#"+element)[0].files;
+            // Check if there are files
+            if (files.length > 0) {
+                // Initialize an array to store files under the same key
+                payload["valid_govt_id[]"] = [];
+                // Iterate over each file
+                for (let i = 0; i < files.length; i++) {
+                    // Push each file to the array under the key element
+                    payload["valid_govt_id[]"].push(files[i]);
+                }
+            }
+        }
         // Append loader immediately
         setTimeout(() => {
             const config = {
@@ -356,6 +351,15 @@
                 btn.attr("disabled", false).text("Upload File");
                 $("#imagePreviewModal").modal("hide");
                 window.location.href = "/profile";
+            }).catch(function(error){
+                let errors = error.response.data.error;
+                /*if(errors.email){
+                    $('.error').eq(0).text(errors.email);
+                    $("#email").css("border", "1px solid #FA150A");
+                }*/
+
+                btn.attr("disabled", false)
+                .html("Upload File <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
             });
         }, 100); // Delay submission by 100 milliseconds
     });
@@ -406,6 +410,13 @@
         //update the input with the new filelist;
         $("#images").prop("files", filteredFiles.files);  //Assign the updates list*/
     });
+
+    $("#imagePreviewModal .close").on("click", function(){
+        $("#imagePreviewModal").modal("hide");
+    });
+    $('#imagePreviewModal').on('hidden.bs.modal', function (e) {
+        $("#imagePreviewModal").modal("hide");
+    })
 </script>
 <script>
     $(document).ready(function() {

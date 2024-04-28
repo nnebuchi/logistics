@@ -55,6 +55,9 @@ Route::group([
     Route::get('/profile', [UserController::class, 'showProfile']);
     Route::get('/logout', [AuthController::class, 'logOut']);
 
+    Route::get('/cities/{stateId}', [ShippingController::class, 'getCities']);
+    Route::get('/states/{countryId}', [ShippingController::class, 'getStates']);
+
     Route::post("/change-password", [UserController::class, "changePassword"]);
     //users endpoint
     Route::group([
