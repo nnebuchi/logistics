@@ -29,6 +29,9 @@
         }
     },
     "autoload-dev": {
+        "files": [
+            "app/Helpers/Sanitization.php"
+        ],
         "psr-4": {
             "Tests\\": "tests/"
         }

@@ -29,6 +29,9 @@
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
+                                <div class="text-center main-div">
+                                    @include('layouts.shared.alert')
+                                </div>
                                 <h4 style="font-weight:700">Sign In Here</h4>
                                 <form id="login" action="{{route('user-signin')}}" method="POST">
                                     @csrf
@@ -39,14 +42,13 @@
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box">
                                                 <img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt="">
                                             </div>
-                                            <input 
-                                            type="email" 
-                                            id="email"
-                                            name="email"
-                                            placeholder="Email"
-                                            class="custom-input" />
+                                            <input type="email"  id="email" name="email" placeholder="Email" class="custom-input" />
                                         </div>
-                                        <span class="error"> </span>
+                                        <div class="text-danger backend-msg">
+                                            @error('email')
+                                                {{ $message }}
+                                            @enderror
+                                        </div>
                                     </div>
                                     <div class="mt-3">
                                         <label for="password" class="custom-input-label">Password</label>
@@ -59,7 +61,11 @@
                                                 <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
                                             </div>
                                         </div>
-                                        <span class="error"></span>
+                                        <div class="text-danger backend-msg">
+                                            @error('password')
+                                                {{ $message }}
+                                            @enderror
+                                        </div>
                                     </div>
 
                                     <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
@@ -69,8 +75,7 @@
                                                 Remember Me
                                             </label>
                                         </div>
-                                        <a class="custom-text-secondary" 
-                                        href="{{url('/forgot-password')}}" style="font-weight: 600">Forgot Password ?</a>
+                                        <a class="custom-text-secondary" href="{{url('/forgot-password')}}" style="font-weight: 600">Forgot Password ?</a>
                                     </div>
 
                                     <div class="d-flex justify-content-center mt-4">
