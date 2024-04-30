@@ -14,7 +14,14 @@
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Buchi JS plugin  -->
+        <script src="{{asset('assets/plugins/buchi.js')}}"></script>
         <?php date_default_timezone_set("Africa/Lagos"); ?>
+
+        <script>
+            const url = "{{ url('/') }}";
+          </script>
     </head>
     <style>
         .error{
@@ -23,3 +30,4 @@
         }
     </style>
     <body>
+       
