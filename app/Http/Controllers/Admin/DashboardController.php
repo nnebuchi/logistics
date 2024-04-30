@@ -64,6 +64,16 @@ class DashboardController extends Controller
         );
     }
 
+    public function getAdminData(Request $request, $userId)
+    {
+        $user = Admin::find($userId);
+        
+        return ResponseFormatter::success(
+            "User Data:", 
+            $user
+        );
+    }
+
     public function showTransactions()
     {
         $user = Admin::find(Auth::user()->id);
@@ -101,6 +111,14 @@ class DashboardController extends Controller
         $user = Admin::find(Auth::user()->id);
         
         return view('admin.rates.rate', compact('user'));
+    }
+
+    public function showAdmins()
+    {
+        $user = Admin::find(Auth::user()->id);
+        $admins = Admin::orderByDesc("created_at")->get(); 
+        
+        return view('admin.admins', compact('user', 'admins'));
     }
 
     public function fetchStatistics()
