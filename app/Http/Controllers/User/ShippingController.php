@@ -36,7 +36,14 @@ class ShippingController extends Controller
         $user = User::find(Auth::user()->id);
         $countries = Country::all();
 
-        return view('customer.shippings.create-shipping', compact('user', 'countries'));
+        $response = Http::acceptJson()
+            ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
+                ->get('https://api.terminal.africa/v1/hs-codes/simplified/chapters');
+        $response = json_decode($response);
+        $chapters = $response->data;
+        $carriers = [];
+
+        return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters', 'carriers'));
     }
 
     public static function getStates(int $countryId)

@@ -17,6 +17,57 @@
                         </div>
                     </div>
 
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6" style="height:161px">
+                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
+                                <div class="">
+                                    <span>Total Shippings</span>
+                                    <h2 class="balance"></h2>
+                                    <span class="text-sec"></span>
+                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
+                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
+                                    </div>
+                                </div>
+                                <div class=" pr-2">
+                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
+                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
+                                <div class="">
+                                    <span>Delivered</span>
+                                    <h2 class="balance"></h2>
+                                    <span class="text-sec"></span>
+                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
+                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
+                                    </div>
+                                </div>
+                                <div class=" pr-2">
+                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-3 mt-3" style="height:161px">
+                            <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
+                                <div class="">
+                                    <span>In-Transit</span>
+                                    <h2 class="balance"></h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-3 mt-3" style="height:161px">
+                            <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
+                                <div class="">
+                                    <span>Cancelled</span>
+                                    <h2 class="balance"></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                     <div class="row mt-5">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
@@ -72,6 +123,28 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-2">
+                        <div class="mr-3">
+                            <button 
+                            type="button"
+                            disabled
+                            class="btn btn-light fs-4 fw-bold prev">
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
+                            Previous
+                            </button>
+                        </div>
+                        <div class="">
+                            <button 
+                            type="button"
+                            data-to=""
+                            data-type="sender"
+                            class="custom-btn fs-4 fw-bold next">
+                            Next
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                            </button>
                         </div>
                     </div>
 
@@ -134,13 +207,6 @@
         .then((res) => {
             //let transactions = res.data.results.slice(0, 10);
             let shipments = [
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"},
-                {id: 1, status: "delivered"},
-                {id: 1, status: "pending"},
                 {id: 1, status: "pending"},
                 {id: 1, status: "delivered"}
             ].slice(0, 10);

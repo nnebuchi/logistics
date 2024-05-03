@@ -18,43 +18,55 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
+         //if(in_array($country->name, $allowedCountries)):
+        //$allowedCountries = ["United Kingdom", "Nigeria", "Afghanistan", "Germany", "South Africa"];
+
         $response = Http::acceptJson()
             ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
-                ->get('https://api.terminal.africa/v1/countries');
+            ->get('https://api.terminal.africa/v1/countries');
         $response = json_decode($response);
         $countries = $response->data;
-        $allowedCountries = ["United Kingdom", "Nigeria", "Afghanistan", "Germany", "South Africa"];
+
         foreach($countries as $country):
-            if(in_array($country->name, $allowedCountries)):
+            // Check if the country has states
+            $statesResponse = Http::acceptJson()
+                ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
+                ->get('https://api.terminal.africa/v1/states?country_code='.$country->isoCode);
+            $statesResponse = json_decode($statesResponse);
+            $states = $statesResponse->data;
+
+            // Only proceed if the country has states
+            if (!empty($states)):
+                // Create the country
                 $newCountry = Country::create([
                     "name"=> $country->name,
                     "sortname"=> $country->isoCode,
-                    "phonecode"=> $country->phonecode
+                    "phonecode" => strpos($country->phonecode, '+') === 0 ? $country->phonecode : '+' . $country->phonecode
                 ]);
 
-                $response = Http::acceptJson()
-                ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
-                    ->get('https://api.terminal.africa/v1/states?country_code='.$country->isoCode);
-                $response = json_decode($response);
-                $states = $response->data;
-                foreach($states as $state):
+                // Loop through the states
+                foreach($states as $state) {
+                    // Create the state
                     $newState = State::create([
                         "country_id" => $newCountry->id,
                         "name"=> $state->name
                     ]);
 
-                    $response = Http::acceptJson()
-                    ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
+                    // Fetch cities for the state
+                    $citiesResponse = Http::acceptJson()
+                        ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
                         ->get('https://api.terminal.africa/v1/cities?country_code='.$state->countryCode.'&state_code='.$state->isoCode);
-                    $response = json_decode($response);
-                    $cities = $response->data;
-                    foreach($cities as $city):
+                    $citiesResponse = json_decode($citiesResponse);
+                    $cities = $citiesResponse->data;
+
+                    // Create cities for the state
+                    foreach($cities as $city) {
                         City::create([
                             "state_id" => $newState->id,
                             "name"=> $city->name
                         ]);
-                    endforeach;
-                endforeach;
+                    }
+                }
             endif;
         endforeach;
 
