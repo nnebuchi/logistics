@@ -153,3 +153,141 @@ if (Object.keys(errors).length === 0) {
 }
 
 
+
+<!--<form class="d-none" method="POST" id="addItemForm" style="">
+                    <h4 style="color:#1E1E1E66" class="mt-2">Enter Shipping Details</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-9 mt-sm-2">
+                            <div class="w-100 mr-2">
+                                <label class="custom-input-label">Name of item</label>
+                                <input type="text" name="name" placeholder="e.g books" class="custom-input" />
+                                <span class="error"> </span>
+                            </div>
+                            <div class="w-100 mt-2">
+                                <label class="custom-input-label">Category</label>
+                                <input type="text" name="category" placeholder="" class="custom-input" />
+                                <span class="error"> </span>
+                            </div>
+                            <div class="w-100 mt-2">
+                                <label class="custom-input-label">Sub-Category</label>
+                                <input type="text" name="sub_category" placeholder="" class="custom-input" />
+                                <span class="error"> </span>
+                            </div>
+                            <div class="w-100 mt-2">
+                                <label class="custom-input-label">HS Code</label>
+                                <input type="text" name="hs_code" placeholder="" class="custom-input" />
+                                <span class="error"> </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-9 mt-0 mt-sm-2">
+                            <div class="w-100 mr-2">
+                                <label class="custom-input-label">Weight (kg)</label>
+                                <input type="number" name="weight" placeholder="" class="custom-input" />
+                                <span class="error"> </span>
+                            </div>
+                            <div class="w-100 mt-2">
+                                <label class="custom-input-label">Quantity</label>
+                                <input type="number" name="quantity" placeholder="" class="custom-input" />
+                                <span class="error"> </span>
+                            </div>
+                            <div class="d-flex flex-column flex-md-row mt-2 justify-content-between">
+                                <div class="w-100 mr-2">
+                                    <label class="custom-input-label">Country</label>
+                                    <select
+                                        name="country"
+                                        class="custom-select">
+                                        <option value="">--Select one---</option>
+                                        @foreach($countries as $country)
+                                            <option value="{{$country->id}}">{{$country->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="error"> </span>
+                                </div>
+                                <div class="w-100 mt-md-0 mt-3">
+                                    <label class="custom-input-label">State</label>
+                                    <select
+                                        name="state"
+                                        class="custom-select">
+                                        <option value="">--Select one---</option>
+                                    </select>
+                                    <span class="error"> </span>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column flex-md-row mt-2 justify-content-between">
+                                <div class="w-100 mr-2">
+                                    <label class="custom-input-label">City</label>
+                                    <select
+                                        name="city"
+                                        class="custom-select">
+                                        <option value="">--Select one---</option>
+                                    </select>
+                                    <span class="error"> </span>
+                                </div>
+                                <div class="w-100 mt-md-0 mt-3">
+                                    <label class="custom-input-label">Zip Code</label>
+                                    <input type="text" name="zip_code" placeholder="xyz@gmail.com" class="custom-input" />
+                                    <span class="error"> </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center mt-5">
+                        <div class="mr-3">
+                            <button 
+                            type="button"
+                            class="btn btn-light fs-4 fw-bold prev">
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
+                            Previous
+                            </button>
+                        </div>
+                        <div class="">
+                            <button 
+                            type="button"
+                            id="addItem"
+                            data-item=""
+                            data-action="create"
+                            data-type="shipping"
+                            class="custom-btn fs-4 fw-bold">
+                            Save
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                            </button>
+                        </div>
+                    </div>
+                </form>-->
+
+
+                <input type="radio" id="d-young" name="carrier" value="CSS" class="d-none">
+                        <label for="d-young" class="radio-group d-flex justify-content-between p-2" style="overflow-x:auto;">
+                            <div class="" style="min-width:200px">
+                                <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="70" height="50" class="mr-2" alt="">
+                                <p>DHL Express</p>
+                            </div>
+                            <div class="" style="min-width:150px">
+                                <p>Pick Up: within 2 days</p>
+                                <p>Delivery: within 5 days</p>
+                            </div>
+                            <div class="d-flex align-items-center" style="min-width:200px">
+                                <p>NGN 15,000.50</p>
+                            </div>
+                            <div class="d-flex align-items-center" style="min-width:100px">
+                                <div class="dots-line rounded-circle d-flex align-items-center justify-content-center" style="height:20px;width:20px;border:2px solid #233E8366;">
+                                    <div class="dots d-none rounded-circle" style="height:12.5px;width:12.5px;background-color:#233E83;"></div>
+                                </div>
+                            </div>
+                        </label>
+
+
+
+
+                        // Check if any radio button is selected
+            /*if ($('#optionsBox #html').is(':checked') || $('#optionsBox #css').is(':checked')) {
+                // At least one radio button is checked
+                console.log('At least one radio button is selected.');
+
+                // Identify which radio button is checked
+                if ($('#optionsBox #html').is(':checked')) {
+                    console.log('HTML radio button is selected.');
+                } else {
+                    console.log('CSS radio button is selected.');
+                }
+            }*/

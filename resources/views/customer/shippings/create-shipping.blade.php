@@ -53,8 +53,6 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    let states = [];
-    let cities = [];
 
     const displayError = (formId, index, fieldName, errorMessage) => {
         $(`#${formId} .error`).eq(index).text(errorMessage);
@@ -130,7 +128,53 @@
 
     $(document).ready(function(){
         let formData = { "sender": {}, "receiver": {}, "items": [] };
-        $(".next").on("click", function(event){
+        let parcel = {};
+        let carriers = [];
+        let selectedCarrier = {};
+        const createParcel = async (items) => {
+            let payload = {
+                "description": 'New parcel for shipment',
+                "weight_unit": "kg",
+                "items": [] // Initialize an empty array for items
+            };
+            // Loop through the items array and construct payload items
+            items.forEach(item => {
+                payload.items.push({
+                    "name": item.name,
+                    "hs_code": item.hs_code,
+                    "description": item.description,
+                    "type": "parcel",
+                    "currency": "NGN",
+                    "value": parseFloat(item.value),
+                    "quantity": parseInt(item.quantity),
+                    "weight": parseFloat(item.weight)
+                });
+            });
+            
+            try{
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
+                    }
+                };
+                const response = await axios.post(`https://api.terminal.africa/v1/parcels`, payload, config);
+                parcel = response.data.data;
+
+                let shipmentsPayload = {
+                    "address_from": formData.sender.address_id,
+                    "address_to": formData.receiver.address_id,
+                    "parcel": parcel.parcel_id
+                };
+                const shipmentsResponse = await axios.post('https://api.terminal.africa/v1/shipments', shipmentsPayload, config);
+                const ratesResponse = await axios.get(`https://api.terminal.africa/v1/rates/shipment?pickup_address=${formData.sender.address_id}&delivery_address=${formData.receiver.address_id}&shipment_id=${shipmentsResponse.data.data.shipment_id}`, config);
+                carriers = ratesResponse.data.data;
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        }
+        $(".next").on("click", async function(event){
             event.preventDefault();
             let type = $(this).data("type");
             var currentStep = $(this).closest(".step");
@@ -153,7 +197,7 @@
                         { inputName: 'firstname', inputValue: $("#sender input[name='firstname']").val(), constraints: { required: true, max_length: 50 } },
                         { inputName: 'lastname', inputValue: $("#sender input[name='lastname']").val(), constraints: { required: true, max_length: 50 } },
                         { inputName: 'email', inputValue: $("#sender input[name='email']").val(), constraints: { required: true, email: true } },
-                        { inputName: 'phone', inputValue: $("#sender input[name='phone']").val(), constraints: { required: true, phone: true } },
+                        { inputName: 'phone', inputValue: $("#sender input[name='phone']").val(), constraints: { required: true, phone: true, min_length: 8 } },
                         { inputName: 'address1', inputValue: $("#sender input[name='address1']").val(), constraints: { required: true } },
                         { inputName: 'address2', inputValue: $("#sender input[name='address2']").val(), constraints: { required: false } },
                         { inputName: 'country', inputValue: $("#sender select[name='country']").val(), constraints: { required: true } },
@@ -167,7 +211,7 @@
                         { inputName: 'firstname', inputValue: $("#receiver input[name='firstname']").val(), constraints: { required: true, max_length: 50 } },
                         { inputName: 'lastname', inputValue: $("#receiver input[name='lastname']").val(), constraints: { required: true, max_length: 50 } },
                         { inputName: 'email', inputValue: $("#receiver input[name='email']").val(), constraints: { required: true, email: true } },
-                        { inputName: 'phone', inputValue: $("#receiver input[name='phone']").val(), constraints: { required: true, phone: true } },
+                        { inputName: 'phone', inputValue: $("#receiver input[name='phone']").val(), constraints: { required: true, phone: true, min_length: 8 } },
                         { inputName: 'address1', inputValue: $("#receiver input[name='address1']").val(), constraints: { required: true } },
                         { inputName: 'address2', inputValue: $("#receiver input[name='address2']").val(), constraints: { required: false } },
                         { inputName: 'country', inputValue: $("#receiver select[name='country']").val(), constraints: { required: true } },
@@ -179,19 +223,40 @@
             }
             const errors = validate(type, inputs);
             if (Object.keys(errors).length === 0) {
-                //alert("Sender validation passed!");
-                currentStep.hide();
-                nextStep.show();
-                if(type == "sender"){
-                    $(".progress").removeClass("bg-primary");
-                    $(".progress").eq(1).addClass("bg-primary");
-                }else if(type == "receiver"){
-                    $(".progress").removeClass("bg-primary");
-                    $(".progress").eq(2).addClass("bg-primary");
-                }
-                //alert(JSON.stringify(formData));
-            } else {
-                //alert("Sender validation failed!");
+                let payload = {
+                    "first_name": formData[type].firstname,
+                    "last_name": formData[type].lastname,
+                    "email": formData[type].email,
+                    "phone": formData[type].phone,
+                    "city": formData[type].city,
+                    "country": formData[type].country,
+                    "state": formData[type].state,
+                    "zip": formData[type].zip,
+                    "line1": formData[type].address1
+                };
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
+                    }
+                };
+                axios.post(`https://api.terminal.africa/v1/addresses`, payload, config)
+                .then(function(response){
+                    let results = response.data.data;
+                    formData[type] = results;
+                    currentStep.hide();
+                    nextStep.show();
+                    if(type == "sender"){
+                        $(".progress").removeClass("bg-primary");
+                        $(".progress").eq(1).addClass("bg-primary");
+                    }else if(type == "receiver"){
+                        $(".progress").removeClass("bg-primary");
+                        $(".progress").eq(2).addClass("bg-primary");
+                    }
+                }).catch(function(error){
+                    //alert(error);
+                })
             }
         });
 
@@ -223,7 +288,7 @@
                 `);
                 states.forEach(state => {
                     $(`${formIdentifier} select[name='state']`).append(`
-                        <option value="${state.id}">${state.name}</option>`
+                        <option value="${state.name}" data-id="${state.id}">${state.name}</option>`
                     );
                 });
             });
@@ -231,20 +296,24 @@
         // Event handler for country select change for sender form
         $("#sender select[name='country']").on("change", function(event) {
             event.preventDefault();
-            let countryId = $(this).val();
+            //let countryId = $(this).val();
+            let countryId = $(this).find('option:selected').data('id');
+            // Attach country code
+            var countryCode = $(this).find('option:selected').data('phonecode');
+            $("input[name='phone']").val(countryCode);
+            $("input[name='phone']").data("phone", countryCode);
             fetchStates("#sender", countryId);
         });
         // Event handler for country select change for receiver form
         $("#receiver select[name='country']").on("change", function(event) {
             event.preventDefault();
-            let countryId = $(this).val();
+            //let countryId = $(this).val();
+            let countryId = $(this).find('option:selected').data('id');
+            // Attach country code
+            var countryCode = $(this).find('option:selected').data('phonecode');
+            $("input[name='phone']").val(countryCode);
+            $("input[name='phone']").data("phone", countryCode);
             fetchStates("#receiver", countryId);
-        });
-        // Event handler for country select change for shipping form
-        $("#shipping select[name='country']").on("change", function(event) {
-            event.preventDefault();
-            let countryId = $(this).val();
-            fetchStates("#shipping", countryId);
         });
 
         function fetchCities(formIdentifier, stateId) {
@@ -263,7 +332,7 @@
                 $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
                 cities.forEach(city => {
                     $(`${formIdentifier} select[name='city']`).append(`
-                        <option value="${city.id}">${city.name}</option>`
+                        <option value="${city.name}" data-id="${city.id}">${city.name}</option>`
                     );
                 });
             });
@@ -271,23 +340,91 @@
         // Event handler for state select change for sender form
         $("#sender select[name='state']").on("change", function(event) {
             event.preventDefault();
-            let stateId = $(this).val();
+            //let stateId = $(this).val();
+            let stateId = $(this).find('option:selected').data('id');
             fetchCities("#sender", stateId);
         });
         // Event handler for state select change for receiver form
         $("#receiver select[name='state']").on("change", function(event) {
             event.preventDefault();
-            let stateId = $(this).val();
+            //let stateId = $(this).val();
+            let stateId = $(this).find('option:selected').data('id');
             fetchCities("#receiver", stateId);
         });
-        // Event handler for state select change for shipping form
-        $("#shipping select[name='state']").on("change", function(event) {
+
+        function fetchSubCategories(formIdentifier, $chapter) {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
+                }
+            };
+            axios.get(`https://api.terminal.africa/v1/hs-codes/simplified/category?chapter=${$chapter}`, config)
+            .then((res) => {
+                let categories = res.data.data;
+                // Update the state select input in the specified form
+                $(`${formIdentifier} select[name='sub_category']`).empty(); // Clear previous options
+                $(`${formIdentifier} select[name='sub_category']`).append(`
+                    <option value="">Choose one...</option>
+                `); // Clear previous options
+                $(`${formIdentifier} select[name='hs_code']`).empty(); // Clear previous options
+                $(`${formIdentifier} select[name='hs_code']`).append(`
+                    <option value="">Choose one...</option>
+                `);
+                categories.forEach(category => {
+                    $(`${formIdentifier} select[name='sub_category']`).append(`
+                        <option value="${category._id}" data-id="${$chapter}">${category.category}</option>`
+                    );
+                });
+            });
+        }
+        // Event handler for state select change for sender form
+        $("#addItemForm select[name='category']").on("change", function(event) {
             event.preventDefault();
-            let stateId = $(this).val();
-            fetchCities("#shipping", stateId);
+            let $id = $(this).val();
+            fetchSubCategories("#addItemForm", $id);
+        });
+        function fetchHsCode(formIdentifier, $chapter, $category) {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
+                }
+            };
+            axios.get(`https://api.terminal.africa/v1/hs-codes/simplified?chapter=${$chapter}&category_code=${$category}`, config)
+            .then((res) => {
+                let hs_codes = res.data?.data?.hs_codes;
+                // Update the state select input in the specified form
+                $(`${formIdentifier} select[name='hs_code']`).empty(); // Clear previous options
+                hs_codes.forEach(hs_code => {
+                    $(`${formIdentifier} select[name='hs_code']`).append(`
+                        <option value="${hs_code.hs_code}" data-description="${hs_code.sub_category}">${hs_code.sub_category}</option>`
+                    );
+                });
+            });
+        }
+        // Event handler for state select change for sender form
+        $("#addItemForm select[name='sub_category']").on("change", function(event) {
+            event.preventDefault();
+            let $category = $(this).val();
+            let $chapter = $(this).find('option:selected').data('id');
+            fetchHsCode("#addItemForm", $chapter, $category);
         });
 
-        $("#addItem").on("click", function(event) {
+        $("#addItemForm input[name='quantity'], #addItemForm input[name='value'], #addItemForm input[name='weight']").on("input", function() {
+            // Get the input value
+            let value = $(this).val();
+            // Remove any non-numeric characters except for dot '.'
+            let sanitizedValue = value.replace(/[^\d.]/g, ''); // Allow only digits and one dot
+            // Remove extra dots except the first one
+            sanitizedValue = sanitizedValue.replace(/\.(?=.*\.)/g, '');
+            // Update the input value with the sanitized value
+            $(this).val(sanitizedValue);
+        });
+
+        $("#addItem").on("click", async function(event) {
             event.preventDefault();
             let item = {};
             const action = $(this).data("action");
@@ -297,21 +434,22 @@
                 var fieldType = $(this).prop("tagName").toLowerCase();
                 if(fieldType === "input" || fieldType === "select") {
                     item[fieldName] = $(this).val();
+                    if(fieldName == "hs_code"){
+                        let description = $(this).find("option:selected").data("description");
+                        item["description"] = description;
+                    }
                 }
             });
             $(`#shipping .error`).text('');
             $(`#shipping input`).css("borderColor", "transparent");
             inputs = [
                 { inputName: 'name', inputValue: $("#shipping input[name='name']").val(), constraints: { required: true } },
-                { inputName: 'category', inputValue: $("#shipping input[name='category']").val(), constraints: { required: true } },
-                { inputName: 'sub_category', inputValue: $("#shipping input[name='sub_category']").val(), constraints: { required: true } },
-                { inputName: 'hs_code', inputValue: $("#shipping input[name='hs_code']").val(), constraints: { required: true } },
-                { inputName: 'weight', inputValue: $("#shipping input[name='weight']").val(), constraints: { required: true, integer: true } },
+                { inputName: 'category', inputValue: $("#shipping select[name='category']").val(), constraints: { required: true } },
+                { inputName: 'sub_category', inputValue: $("#shipping select[name='sub_category']").val(), constraints: { required: true } },
+                { inputName: 'hs_code', inputValue: $("#shipping select[name='hs_code']").val(), constraints: { required: true } },
+                { inputName: 'weight', inputValue: $("#shipping input[name='weight']").val(), constraints: { required: true } },
                 { inputName: 'quantity', inputValue: $("#shipping input[name='quantity']").val(), constraints: { required: true, integer: true } },
-                { inputName: 'country', inputValue: $("#shipping select[name='country']").val(), constraints: { required: true } },
-                { inputName: 'state', inputValue: $("#shipping select[name='state']").val(), constraints: { required: true } },
-                { inputName: 'city', inputValue: $("#shipping select[name='city']").val(), constraints: { required: true } },
-                { inputName: 'zip_code', inputValue: $("#shipping input[name='zip_code']").val(), constraints: { required: true } }
+                { inputName: 'value', inputValue: $("#shipping input[name='value']").val(), constraints: { required: true } }
             ];
             const errors = validate("shipping", inputs);
             if (Object.keys(errors).length === 0) {
@@ -330,9 +468,9 @@
                     $(".items-table tbody").append(`
                         <tr style="">
                             <td scope="row">${item.name}</td>
-                            <td scope="row">${item.quantity}</td>
+                            <td scope="row">${item.quantity}pieces</td>
                             <td scope="row">${item.weight}kg</td>
-                            <td scope="row"><b>₦</b>${item.name}</td>
+                            <td scope="row"><b>₦</b>${item?.value.toLocaleString()}</td>
                             <td scope="row">
                                 <a class="update-item" data-id="${index}" data-action="edit" type="button">
                                     <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
@@ -347,7 +485,7 @@
                     `);
                 });
                 $currentForm[0].reset();
-                $currentForm.addClass("d-none");
+                $("#addItemModal").modal('hide');
             } else {
                 //alert("Sender validation failed!");
             }
@@ -371,7 +509,7 @@
                     });
                     $("#addItem").data("action", "update");
                     $("#addItem").data("item", itemId);
-                    $form.removeClass("d-none");
+                    $("#addItemModal").modal("show");
                 break;
                 case "delete":
                     // Delete the object at the specified index
@@ -380,10 +518,10 @@
                     formData.items.forEach((item, index) => {
                         $(".items-table tbody").append(`
                             <tr style="">
-                                <td scope="row">${item.name}</td>
-                                <td scope="row">${item.quantity}</td>
-                                <td scope="row">${item.weight}kg</td>
-                                <td scope="row"><b>₦</b>${item.name}</td>
+                            <td scope="row">${item.name}</td>
+                            <td scope="row">${item.quantity}pieces</td>
+                            <td scope="row">${item.weight}kg</td>
+                            <td scope="row"><b>₦</b>${item?.value.toLocaleString()}</td>
                                 <td scope="row">
                                     <a class="update-item" data-id="${index}" data-action="edit" type="button">
                                         <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
@@ -397,46 +535,82 @@
                             </tr>  
                         `);
                     });
+                    $("#step3Btn").prop("disabled", !(formData.items.length != 0));
                 break;
             }
         });
 
-        $(".openAddItemForm").on("click", function(event) {
-            event.preventDefault();
-            var $form = $("#addItemForm");
-            if($form.hasClass("d-none")){
-                $form.removeClass("d-none");
-            }
+        $(".openAddItemModal").click(function() {
+           $("#addItemModal").modal("show");
+        });
+        $("#addItemModal .close").on("click", function(){
+            $("#addItemModal").modal("hide");
+        });
+        $('#addItemModal').on('hidden.bs.modal', function (e) {
+            $("#addItemModal").modal("hide");
         });
 
-        $(".radio-group").click(function() {
+        $("#pickUpBox label").click(function() {
+            $("#pickUpBox label > div").find(".dots-line").css("border-color", "#233E8366");
+            $(this).children("div").find(".dots-line").css("border-color", "#233E83");
+            $("#pickUpBox label .dots").addClass("d-none");
+            $(this).find(".dots").removeClass("d-none");
+            
+            $("#step3Btn").prop("disabled", !(formData.items.length != 0));
+        });
+
+        $(document).on("click", "#chooseCarrier .radio-group", function(){
             // Remove the 'selected' class from all radio items
             $(".radio-group").removeClass("selected");
             // Add the 'selected' class to the clicked radio item
             $(this).addClass("selected");
+
+            $("#chooseCarrier .radio-group").find(".dots-line").css("border-color", "#233E8366");
+            $(this).find(".dots-line").css("border-color", "#233E83");
+            $("#chooseCarrier .radio-group .dots").addClass("d-none");
+            $(this).find(".dots").removeClass("d-none");
+
+            // Get the value of the selected radio button
+            var selectedValue = $(this).find("input[type='radio']").val();
+            selectedCarrier = carriers[parseInt(selectedValue)];
+
+            $("#step4Btn").prop("disabled", false);
         });
 
-        $("#step3Btn").click(function(event) {
+        $("#step3Btn").click(async function(event) {
             event.preventDefault();
             var currentStep = $(this).closest(".step");
             var nextStep = currentStep.next(".step");
-            // Check if any radio button is selected
-            /*if ($('#optionsBox #html').is(':checked') || $('#optionsBox #css').is(':checked')) {
-                // At least one radio button is checked
-                console.log('At least one radio button is selected.');
-
-                // Identify which radio button is checked
-                if ($('#optionsBox #html').is(':checked')) {
-                    console.log('HTML radio button is selected.');
-                } else {
-                    console.log('CSS radio button is selected.');
-                }
-            } else {
-                // No radio button is selected
-                console.log('No radio button is selected.');
-            }*/
+            
+            await createParcel(formData.items);
+            $(`#chooseCarrier`).empty(); // Clear previous options
+            carriers.forEach((carrier, index) => {
+                $(`#chooseCarrier`).append(`
+                    <label for="${carrier.rate_id}" class="radio-group d-flex justify-content-between p-2" style="overflow-x:auto;">
+                        <input type="radio" id="${carrier.rate_id}" name="carrier" value="${index}" class="d-none">
+                        <div class="" style="min-width:200px">
+                            <img src="${carrier.carrier_logo}" width="70" height="50" class="mr-2" alt="">
+                            <p>${carrier.carrier_name}</p>
+                        </div>
+                        <div class="" style="min-width:150px">
+                            <p>Pick Up: ${carrier.pickup_time}</p>
+                            <p>Delivery: ${carrier.delivery_time}</p>
+                        </div>
+                        <div class="d-flex align-items-center" style="min-width:200px">
+                            <p><b>₦</b>${carrier.amount}</p>
+                        </div>
+                        <div class="d-flex align-items-center" style="min-width:100px">
+                            <div class="dots-line rounded-circle d-flex align-items-center justify-content-center" style="height:20px;width:20px;border:2px solid #233E8366;">
+                                <div class="dots d-none rounded-circle" style="height:12.5px;width:12.5px;background-color:#233E83;"></div>
+                            </div>
+                        </div>
+                    </label>
+                `);
+            });
             currentStep.hide();
             nextStep.show();
+            $(".progress").removeClass("bg-primary");
+            $(".progress").eq(3).addClass("bg-primary");
         });
 
         $("#step4Btn").click(function(event) {
@@ -444,16 +618,51 @@
             var currentStep = $(this).closest(".step");
             var nextStep = currentStep.next(".step");
             
-            $('#checkout').find(".sender span").eq(0).text(formData.sender.firstname+" "+formData.sender.lastname);
-            $('#checkout').find(".sender span").eq(1).text(formData.sender.address1);
+            $('#checkout').find(".sender span").eq(0).text(formData.sender.first_name+" "+formData.sender.last_name);
+            $('#checkout').find(".sender span").eq(1).text(formData.sender.email);
             $('#checkout').find(".sender span").eq(2).text(formData.sender.phone);
-            $('#checkout').find(".sender span").eq(3).text(formData.sender.email);
-            $('#checkout').find(".receiver span").eq(0).text(formData.receiver.firstname+" "+formData.receiver.lastname);
-            $('#checkout').find(".receiver span").eq(1).text(formData.receiver.address1);
+            $('#checkout').find(".sender span").eq(3).text(formData.sender.line1);
+
+            $('#checkout').find(".receiver span").eq(0).text(formData.receiver.first_name+" "+formData.receiver.last_name);
+            $('#checkout').find(".receiver span").eq(1).text(formData.receiver.email);
             $('#checkout').find(".receiver span").eq(2).text(formData.receiver.phone);
-            $('#checkout').find(".receiver span").eq(3).text(formData.receiver.email);
+            $('#checkout').find(".receiver span").eq(3).text(formData.receiver.line1);
+
+            $('#checkout').find(".carrier img").attr("src", selectedCarrier.carrier_logo);
+            $('#checkout').find(".carrier span").eq(0).text(selectedCarrier.carrier_name);
+            $('#checkout').find(".carrier span").eq(1).text(selectedCarrier.pickup_time);
+            $('#checkout').find(".carrier span").eq(2).text(selectedCarrier.delivery_time);
+
+            formData.items.forEach((item, index) => {
+                $("#checkout .items").append(`
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Item: <span class="fw-semibold">${item.name}</span></p>
+                            <p class="m-0">Weight: <span class="fw-semibold">${item.weight}Kg</span></p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Quantity: <span class="fw-semibold">${item.quantity}pieces</span></p>
+                            <p class="m-0">Value: <span class="fw-semibold">₦${parseFloat(item.value).toLocaleString()}</span></p>
+                        </div>
+                    </div>
+                `)
+            });
+
+            $('#checkout').find(".total").text("₦"+selectedCarrier.amount);
+
             currentStep.hide();
             nextStep.show();
+        });
+
+        // Listen for changes in the input field
+        $("input[name='phone']").on("input", function() {
+            var value = $(this).val();
+            let countryCode = $(this).data("phone");
+            // Check if the value starts with the country code
+            if (!value.startsWith(countryCode)) {
+                // If not, prepend the country code to the value
+                $(this).val(countryCode);
+            }
         });
 
     });
