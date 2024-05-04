@@ -30,15 +30,6 @@
                         <div class="row justify-content-center">
                             <div class="col-xl-11 col-lg-11 col-md-12 col-sm-10">
                                 <div class="text-center main-div">
-                                    {{-- @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif --}}
                                     @include('layouts.shared.alert')
                                 </div>
                                 <h4 style="font-weight:700">Create Account</h4>
@@ -151,89 +142,7 @@
         </div>
     </section>
 
-    {{-- <script src="{{asset('assets/libs/jquery/dist/jquery.min.js')}}"></script>
-    <script src="{{asset('assets/libs/axios/axios.js')}}"></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script> --}}
     <script>
-        // $('#signup').on("submit", function (event) {
-        //     event.preventDefault();
-        //     let btn = $(this).find("button[type='submit']");
-        //     btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
-        //     btn.attr("disabled", true);
-        //     const form = event.target;
-        //     const url = form.action;
-        //     const inputs = {
-        //         firstname: $("#firstname").val(),
-        //         lastname: $("#lastname").val(),
-        //         email: $("#email").val(),
-        //         phone: $("#phone").val(),
-        //         password: $("#password").val(),
-        //         country: $("#country").val(),
-        //         account_type: $("#account_type").val()
-        //     };
-
-        //     $("#firstname").css("borderColor", "transparent");
-        //     $("#lastname").css("borderColor", "transparent");
-        //     $("#phone").css("borderColor", "transparent");
-        //     $("#email").css("borderColor", "transparent");
-        //     $("#password").css("borderColor", "transparent");
-        //     $("#account_type").css("borderColor", "transparent");
-        //     $('.error').text('');
-        //     $('.message').text('');
-        //     // Append loader immediately
-        //     setTimeout(() => {
-        //         const config = {
-        //             headers: {
-        //                 Accept: "application/json",
-        //                 "Content-Type": "application/json",
-        //                 "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-        //                 "X-Requested-With": "XMLHttpRequest"
-        //             }
-        //         };
-        //         axios.post(url, inputs, config)
-        //         .then(function(response){
-        //             let message = response.data.message;
-        //             $(".message").css("color", "green").text(message);
-        //             toast(message);
-        //             btn.attr("disabled", false)
-        //             .html("Sign Up <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-        //             window.location.href = response.data.results;
-        //         })
-        //         .catch(function(error){
-        //             let errors = error.response.data.error;
-        //             if(errors.firstname){
-        //                 $('.error').eq(0).text(errors.firstname);
-        //                 $("#firstname").css("border", "1px solid #FA150A");
-        //             }
-        //             if(errors.lastname){
-        //                 $('.error').eq(1).text(errors.lastname);
-        //                 $("#lastname").css("border", "1px solid #FA150A");
-        //             }
-        //             if(errors.phone){
-        //                 $('.error').eq(2).text(errors.phone);
-        //                 $("#phone").css("border", "1px solid #FA150A");
-        //             }
-        //             if(errors.email){
-        //                 $('.error').eq(3).text(errors.email);
-        //                 $("#email").css("border", "1px solid #FA150A");
-        //             }
-        //             if(errors.account_type){
-        //                 $('.error').eq(4).text(errors.account_type);
-        //                 $("#account_type").css("border", "1px solid #FA150A");
-        //             }
-        //             if(errors.password){
-        //                 $('.error').eq(5).text(errors.password);
-        //                 $("#password").css("border", "1px solid #FA150A");
-        //             }
-
-        //             btn.attr("disabled", false)
-        //             .html("Sign Up <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-        //         });
-        //     }, 100); // Delay submission by 100 milliseconds
-        // });
-
         function toast(message){
             const Toast = Swal.mixin({
                 toast: true,
