@@ -47,9 +47,14 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(LoginRequest $request)
+    public function login(Request $request)
     {
-        return $this->authService->login($request->validated());
+        $request->validate([
+            'email'=>'required|email',
+            'password'=>'required'
+        ]);
+
+        return $this->authService->login($request);
     }
 
     public function logOut(Request $request)

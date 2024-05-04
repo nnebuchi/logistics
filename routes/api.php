@@ -26,6 +26,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/user/{userId}', [AdminDashboardController::class, 'getUserData']);
         Route::get('/transactions', [AdminDashboardController::class, 'getTransactions']);
         Route::get('/statistics', [AdminDashboardController::class, 'fetchStatistics']);
+        Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
 
         //users endpoint
         Route::group([

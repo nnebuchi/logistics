@@ -50,34 +50,46 @@ class AuthService
         url("/email/verify"), 201);
     }
 
-    public function login($data){
-        $user = User::where(['email' => $data['email']])->first();
+    // public function login($data){
+    //     $user = User::where(['email' => $data['email']])->first();
 
-        if(!$user || !password_verify($data["password"], $user->password)):
-            $message = "Oops, your email or password is incorrect";
-            return ResponseFormatter::error($message, 400);
-        /*elseif(!$user->hasVerifiedEmail()):
-            $message = "Please Verify your email to login!";
-            return ResponseFormatter::error($message, 401);*/
-        endif;
+    //     if(!$user || !password_verify($data["password"], $user->password)):
+    //         $message = "Oops, your email or password is incorrect";
+    //         return ResponseFormatter::error($message, 400);
+       
+    //     endif;
         
-        //delete user previous token ....single device auth only
-        $this->deleteToken($user);
-        $user->refresh();
+    //     //delete user previous token ....single device auth only
+    //     $this->deleteToken($user);
+    //     $user->refresh();
         
-        //Auth::guard("web")->login($user, true);
-        Auth::login($user, true);
-        $user = Auth::user();
-        $token = $this->generateToken($user);
-        $user->token = $token;
+    //     //Auth::guard("web")->login($user, true);
+        
+    //     Auth::login($user, true);
+    //     $user = Auth::user();
+    //     $token = $this->generateToken($user);
+    //     $user->token = $token;
 
-        unset($user->tokens);
+    //     unset($user->tokens);
+    //     return redirect()->route('dashboard');
+        
+        
 
-        $message = 'Login successfully';
-        return ResponseFormatter::success(
-            $message, 
-            ["user" => $user, "redirect" => url('')]
-        );
+    //     // $message = 'Login successfully';
+    //     // return ResponseFormatter::success(
+    //     //     $message, 
+    //     //     ["user" => $user, "redirect" => url('')]
+    //     // );
+    // }
+
+    public static function login($request){
+        if(Auth::attempt(['email'=>sanitize_input($request->email), 'password'=>sanitize_input($request->password)], true)){
+            
+            $request->session()->regenerate();
+            return redirect()->route('dashboard');
+        }
+        Session(['msg'=>'Invalid Login Credentials', 'alert'=>'danger']);
+        return redirect()->back();
     }
 
     public function logOut(Request $request)

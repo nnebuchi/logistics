@@ -351,13 +351,14 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
         const inputs = {amount: $('#paymentForm #amount').val()}
         let userId = $("#paymentForm #userId").val();
         try {
-            const response = await axios.post(`${baseUrl}/api/v1/user/${userId}/transaction`, inputs, config);
+            const response = await axios.post(`${baseUrl}/user/${userId}/transaction`, inputs, config);
             let results = response.data.results;
             let handler = PaystackPop.setup({
                 key: results.key, 
