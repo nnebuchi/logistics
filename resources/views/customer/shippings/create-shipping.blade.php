@@ -133,7 +133,7 @@
         let selectedCarrier = {};
         const createParcel = async (items) => {
             let payload = {
-                "description": items[0].hs_code,
+                "description": 'New parcel for shipment',
                 "weight_unit": "kg",
                 "items": [] // Initialize an empty array for items
             };
@@ -141,7 +141,8 @@
             items.forEach(item => {
                 payload.items.push({
                     "name": item.name,
-                    "description": item.hs_code,
+                    "hs_code": item.hs_code,
+                    "description": item.description,
                     "type": "parcel",
                     "currency": "NGN",
                     "value": parseFloat(item.value),
@@ -399,7 +400,7 @@
                 $(`${formIdentifier} select[name='hs_code']`).empty(); // Clear previous options
                 hs_codes.forEach(hs_code => {
                     $(`${formIdentifier} select[name='hs_code']`).append(`
-                        <option value="${hs_code.sub_category}">${hs_code.sub_category}</option>`
+                        <option value="${hs_code.hs_code}" data-description="${hs_code.sub_category}">${hs_code.sub_category}</option>`
                     );
                 });
             });
@@ -433,6 +434,10 @@
                 var fieldType = $(this).prop("tagName").toLowerCase();
                 if(fieldType === "input" || fieldType === "select") {
                     item[fieldName] = $(this).val();
+                    if(fieldName == "hs_code"){
+                        let description = $(this).find("option:selected").data("description");
+                        item["description"] = description;
+                    }
                 }
             });
             $(`#shipping .error`).text('');
