@@ -1,6 +1,6 @@
 const getOriginalWordFromCompoundWord = (compound_word) => {
     
-    return compound_word?.replace('_', ' ');
+    return compound_word?.replaceAll('_', ' ');
 }
 
 const buchi_validate =  (input, constraints, alias=null) => {
