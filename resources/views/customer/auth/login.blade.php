@@ -79,8 +79,7 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center mt-4">
-                                        <button type="button" onclick="validateLoginForm()" class="custom-btn fs-4 mb-2 login-btn
-                                        login-btn">
+                                        <button type="button" onclick="validateLoginForm()" class="custom-btn fs-4 mb-2 login-btn">
                                             Log In 
                                             <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
@@ -95,76 +94,7 @@
         </div>
     </section>
 
-    <script src="{{asset('assets/libs/jquery/dist/jquery.min.js')}}"></script>
-    <script src="{{asset('assets/libs/axios/axios.js')}}"></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
     <script>
-
-
-        $('#login').on("submit", function (event) {
-            event.preventDefault();
-            let btn = $(this).find("button[type='submit']");
-            btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
-            btn.attr("disabled", true);
-            const form = event.target;
-            const url = form.action;
-            const inputs = {
-                email: $("#email").val(),
-                password: $("#password").val()
-            };
-
-            $("#email").css("borderColor", "transparent");
-            $("#password").css("borderColor", "transparent");
-            $('.error').text('');
-            $('.message').text('');
-            // Append loader immediately
-            // setTimeout(() => {
-            //     const config = {
-            //         headers: {
-            //             Accept: "application/json",
-            //             "Content-Type": "application/json",
-            //             "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-            //             "X-Requested-With": "XMLHttpRequest"
-            //         }
-            //     };
-            //     axios.post(url, inputs, config)
-            //     .then(function(response){
-            //         let message = response.data.message;
-            //         $(".message").css("color", "green").text(message);
-            //         toast(message);
-            //         btn.attr("disabled", false)
-            //         .html("Log In <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-            //         // Add User Auth Bearer Token To Local Storage
-            //         localStorage.setItem('token', response.data.results.user.token);
-            //         window.location.href = response.data.results.redirect;
-            //     })
-            //     .catch(function(error){
-            //         let errors = error.response.data.error;
-            //         if(errors.email){
-            //             $('.error').eq(0).text(errors.email);
-            //             $("#email").css("border", "1px solid #FA150A");
-            //         }
-            //         if(errors.password){
-            //             $('.error').eq(1).text(errors.password);
-            //             $("#password").css("border", "1px solid #FA150A");
-            //         }
-
-            //         switch(error.response.status){
-            //             case 400:
-            //                 $(".message").css("color", "red").text(error.response.data.message)
-            //             break;
-            //             case 401:
-            //                 $(".message").css("color", "red").text(error.response.data.message);
-            //             break;
-            //         }
-
-            //         btn.attr("disabled", false)
-            //         .html("Log In <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-            //     });
-            // }, 100); 
-        });
 
         function toast(message){
             const Toast = Swal.mixin({
@@ -203,55 +133,10 @@
     
     <script>
 
-        // const submitLoginForm = () => {
-        //     const config = {
-        //         headers: {
-        //             Accept: "application/json",
-        //             "Content-Type": "application/json",
-        //             "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-        //             "X-Requested-With": "XMLHttpRequest"
-        //         }
-        //     };
-        //     axios.post(url, inputs, config)
-        //     .then(function(response){
-        //         let message = response.data.message;
-        //         $(".message").css("color", "green").text(message);
-        //         toast(message);
-        //         btn.attr("disabled", false)
-        //         .html("Log In <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-        //         // Add User Auth Bearer Token To Local Storage
-        //         localStorage.setItem('token', response.data.results.user.token);
-        //         window.location.href = response.data.results.redirect;
-        //     })
-        //     .catch(function(error){
-        //         let errors = error.response.data.error;
-        //         console.log(errors);
-        //         if(errors.email){
-        //             $('.error').eq(0).text(errors.email);
-        //             $("#email").css("border", "1px solid #FA150A");
-        //         }
-        //         if(errors.password){
-        //             $('.error').eq(1).text(errors.password);
-        //             $("#password").css("border", "1px solid #FA150A");
-        //         }
-
-        //         switch(error.response.status){
-        //             case 400:
-        //                 $(".message").css("color", "red").text(error.response.data.message)
-        //             break;
-        //             case 401:
-        //                 $(".message").css("color", "red").text(error.response.data.message);
-        //             break;
-        //         }
-
-        //         btn.attr("disabled", false)
-        //         .html("Log In <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-        //     });
-        // }
         const validateLoginForm = () => {
-            // document.querySelectorAll(".backend-msg").forEach(function(field, index){
-            //     field.innerHTML = '';
-            // })
+            document.querySelectorAll(".backend-msg").forEach(function(field, index){
+                field.innerHTML = '';
+            })
             const submitBtn = document.querySelector(".login-btn");
             const oldBtnHTML = submitBtn.innerHTML;
             setBtnLoading(submitBtn);
