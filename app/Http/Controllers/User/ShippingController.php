@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Http;
 class ShippingController extends Controller
 {
     private UserService $userService;
+    private $logistics;
 
     public function __construct(UserService $userService)
     {
@@ -38,29 +39,13 @@ class ShippingController extends Controller
         $user = User::find(Auth::user()->id);
         $countries = Country::all();
 
-        /*$payload = [
-            'description' => 'New parcel for shipment',
-            'items' => [
-                [
-                    'description' => 'Purple cotton and t-shirt, size L',
-                    'hs_code' => '6205',
-                    'name' => 'Shirt',
-                    'type' => 'parcel',
-                    'currency' => 'USD',
-                    'value' => 25.99,
-                    'quantity' => 1,
-                    'weight' => 0.2
-                ]
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', env('TERMINAL_AFRICA_URI').'hs-codes/simplified/chapters/', [
+            'headers' => [
+                'Authorization' => 'Bearer '.env('TERMINAL_AFRICA_SECRET_KEY')
             ]
-        ];
-     
-        return $this->logistics->createParcel($payload);*/
-        
-
-        $response = Http::acceptJson()
-            ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
-                ->get('https://api.terminal.africa/v1/hs-codes/simplified/chapters');
-        $response = json_decode($response);
+        ]);
+        $response = json_decode($response->getBody());
         $chapters = $response->data;
 
         return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters'));

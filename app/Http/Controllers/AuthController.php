@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Validator};
-use App\Http\Requests\LoginRequest;
+// use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResetPasswordRequest;
-use App\Http\Requests\RegisterRequest;
+// use App\Http\Requests\RegisterRequest;
+use App\Rules\ContainsNumber;
+use App\Rules\HasSpecialCharacter;
+use App\Rules\PhoneVerified;
+use App\Enums\AccountType;
+use Illuminate\Validation\Rule;
 
 use App\Models\Account;
 use App\Services\AuthService;
-use App\Util\ResponseFormatter;
+// use App\Util\ResponseFormatter;
 use App\Util\Helper;
 
 class AuthController extends Controller
@@ -62,9 +67,29 @@ class AuthController extends Controller
         return $this->authService->logOut($request);
     }
 
-    public function register(RegisterRequest $request)
-    {
-        return $this->authService->register($request->validated());
+    public function register(request $request)
+    {   
+        $request->validate([
+            'firstname' => 'required|string|max:100',
+            'lastname' => 'required|string|max:100',
+            'email' => 'required|email|max:200|unique:users',
+            'phone' => [
+                'required',
+                'min:11',
+                'max:14',
+                'unique:users',
+                // 'regex:/^\+(\d{1,4})\d{7,14}$/', 
+                // new PhoneVerified
+            ],
+            'password'    => ['required', 'string', 'min:8', new HasSpecialCharacter, new ContainsNumber],
+            'account_type' => ["required", "string", Rule::in(
+                AccountType::_PERSONAL, 
+                AccountType::_BUSINESS,
+                AccountType::_3PL
+            )],
+            'country' => ['required', 'string']
+            ]);
+        return $this->authService->register($request);
     }
 
     public function forgotPassword(Request $request)
@@ -92,7 +117,7 @@ class AuthController extends Controller
         //return view('customer.auth.email-verification-success');
         //return view('vendor.notifications.verify-email');
         //return view('customer.auth.verify-email');
-        return Helper::userPercentageChange();
+        // return Helper::userPercentageChange();
     }
 
 }

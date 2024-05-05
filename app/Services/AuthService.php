@@ -27,12 +27,12 @@ class AuthService
             $account = Account::where(['name' => $data['account_type']])->first();
 
             $user = User::create([
-                'firstname' => $data['firstname'],
-                'lastname' => $data['lastname'],
-                'email' => $data['email'],
-                'phone' => $data['phone'],
-                'password' => $data['password'],
-                'country' => $data['country'],
+                'firstname' => sanitize_input($data['firstname']),
+                'lastname' => sanitize_input($data['lastname']),
+                'email' => sanitize_input($data['email']),
+                'phone' => sanitize_input($data['phone']),
+                'password' => sanitize_input($data['password']),
+                'country' => sanitize_input($data['country']),
                 'account_id' => $account->id
             ]);    
 
@@ -45,9 +45,7 @@ class AuthService
 
             return $user;
         });
-        return ResponseFormatter::success(
-            "Registration Successful, Please verify your email!", 
-        url("/email/verify"), 201);
+        return redirect()->route('dashboard');
     }
 
     // public function login($data){

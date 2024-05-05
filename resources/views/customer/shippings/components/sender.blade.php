@@ -23,7 +23,7 @@
                             </div>
                             <div class="w-100 mt-2">
                                 <label class="custom-input-label">Phone Number</label>
-                                <input type="text" name="phone" data-phone="" placeholder="" class="custom-input" />
+                                <input type="text" name="phone"  placeholder="" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
                         </div>

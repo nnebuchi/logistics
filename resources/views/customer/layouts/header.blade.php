@@ -27,7 +27,7 @@
 			<!-- Sidebar Start -->
 			<aside class="left-sidebar">
 				<!-- Sidebar scroll-->
-				<div style="background-image: linear-gradient(to right, #4F659C, #233E83);">
+				<div style="background-image: linear-gradient(to bottom, #4F659C, #233E83);">
 					<div class="brand-logo d-flex align-items-center justify-content-between">
 						<a href="{{url('/')}}" class="text-nowrap logo-img">
 							<img src="{{asset('assets/images/logos/ziga-blue2.svg')}}" width="180" alt="" />

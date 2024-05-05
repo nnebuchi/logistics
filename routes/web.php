@@ -19,7 +19,7 @@ Route::group(['middleware' => ['guest']], function () {
 });
 
 Route::post('/login', [AuthController::class, 'login'])->name('user-signin');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])->name('user-signup');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
@@ -96,6 +96,5 @@ Route::group([
     [AdminDashboardController::class, 'showRates'])->name('admin.rates');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
-    Route::get('/admin/admins', 
-    [AdminDashboardController::class, 'showAdmins']);
+    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
 });
