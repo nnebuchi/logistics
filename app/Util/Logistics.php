@@ -67,4 +67,20 @@ class Logistics
         return $response;
     }
 
+    public function getShipments()
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->get($this->baseUrl.'shipments');
+        return $response;
+    }
+
+    public function getShipment($shipment_id)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->get($this->baseUrl.'shipments/'.$shipment_id);
+        return $response;
+    }
+
 }
