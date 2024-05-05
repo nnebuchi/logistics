@@ -57,10 +57,17 @@ class ShippingController extends Controller
         return $this->logistics->createParcel($payload);*/
         
 
-        $response = Http::acceptJson()
-            ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
-                ->get('https://api.terminal.africa/v1/hs-codes/simplified/chapters');
-        $response = json_decode($response);
+        // $response = Http::acceptJson()
+        //     ->withToken("sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ")
+        //         ->get('https://api.terminal.africa/v1/hs-codes/simplified/chapters');
+        // $response = json_decode($response);
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', 'https://api.terminal.africa/v1/hs-codes/simplified/chapters/', [
+            'headers' => [
+                'Authorization' => 'Bearer '.env('TERMINAL_AFRICA_SECRET_KEY')
+            ]
+        ]);
+        $response = json_decode($response->getBody());
         $chapters = $response->data;
 
         return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters'));
