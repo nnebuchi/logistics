@@ -96,6 +96,5 @@ Route::group([
     [AdminDashboardController::class, 'showRates'])->name('admin.rates');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
-    Route::get('/admin/admins', 
-    [AdminDashboardController::class, 'showAdmins']);
+    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
 });

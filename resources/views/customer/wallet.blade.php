@@ -5,10 +5,7 @@
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
                         <h6 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Wallet</h6>
-                        <button class="btn btn-dark mr-2 rounded-0" type="button" data-toggle="modal" data-target="#paymentModal">
-                            <img src="{{asset('assets/images/icons/broadcast-light.svg')}}">
-                            Fund
-                        </button>
+                       
                     </div>
 
                     <div class="row mt-3">
@@ -33,10 +30,11 @@
                         <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
                             <div class="h-100 px-3 pt-3 bg-primary" style="border-radius:20px;">
                                 <div class="d-flex flex-column align-items-center">
-                                    <h4 class="text-white">Fund Your Wallet</h4>
+                                    {{-- <h4 class="text-white">Fund Your Wallet</h4> --}}
                                     <span class="text-white mb-2">Your transactions are secure with </span>
                                     <img src="{{asset('assets/images/icons/paystack.svg')}}">
                                 </div>
+                                <button class="btn btn-light text-center mx-auto d-block mt-3" type="button" data-toggle="modal" data-target="#paymentModal">Fund Your Wallet</button>
                                 <div class="d-flex justify-content-end">
                                     <img src="{{asset('assets/images/logos/ziga-yellow.svg')}}">
                                 </div>
