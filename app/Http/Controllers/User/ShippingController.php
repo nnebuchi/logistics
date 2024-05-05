@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Http;
 class ShippingController extends Controller
 {
     private UserService $userService;
+    private $logistics;
 
     public function __construct(UserService $userService)
     {
