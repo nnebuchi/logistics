@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             //AccountSeeder::class,
-            CountrySeeder::class,
+            //ShipmentSeeder::class,
         ]);
     }
 }

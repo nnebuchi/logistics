@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shippings', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('accounts', function (Blueprint $table) {
+            $table->decimal("markup_price");
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shippings');
+        Schema::table('accounts', function (Blueprint $table) {
+            $table->dropColumn(["markup_price"]);
+        });
     }
 };

@@ -473,12 +473,12 @@
                             <td scope="row"><b>₦</b>${item?.value.toLocaleString()}</td>
                             <td scope="row">
                                 <a class="update-item" data-id="${index}" data-action="edit" type="button">
-                                    <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                    <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
                                 </a>
                             </td>
                             <td scope="row">
                                 <a class="update-item" data-id="${index}" data-action="delete" type="button">
-                                    <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                                    <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
                                 </a>
                             </td>
                         </tr>  

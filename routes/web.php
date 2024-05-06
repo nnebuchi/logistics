@@ -48,6 +48,7 @@ Route::group([
     'middleware' => ['auth', 'verified']
 ], function () {
     Route::get('/', [UserController::class, 'index'])->name('dashboard');
+    Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
     Route::post('/shipping/create', [UserController::class, 'showShipments']);
     Route::get('/shippings', [ShippingController::class, 'showShippings']);
@@ -66,6 +67,7 @@ Route::group([
         Route::get('/', [UserController::class, 'getUser']);
         Route::post('/', [UserController::class, 'updateProfile']);
         Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
+        Route::get('/{userId}/shipments', [ShippingController::class, 'getUserShipments']);
         Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
         Route::post('/{userId}/transaction', [WalletController::class, 'createTransaction']);
         Route::get('/{userId}/notifications', [UserController::class, 'fetchNotifications']);

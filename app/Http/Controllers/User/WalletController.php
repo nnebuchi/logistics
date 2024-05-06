@@ -127,19 +127,35 @@ class WalletController extends Controller
         endif;
     }
 
-    public function paymentWebhook($payload)
+    public function paymentWebhook(Request $request)
     {
         http_response_code(200);
 
-        $transaction = Transaction::where(['reference' => $payload["data"]["reference"]])->first();
-        if(!$transaction) exit();
-        if($transaction->verified) exit();
+        if($request['event'] == "charge.success"): //If charge was successful
+            $reference = $request["data"]["reference"];
+            $transaction = Transaction::where(['reference' => $reference])->first();
+            if(!$transaction) exit();
+            if($transaction->verified) exit();
 
-        $wallet = $transaction->wallet;
-
-        if($payload["data"]["status"] == "success"):
-            $payment = new Paystack;
-            $paymentData = $payment->getPaymentData($reference);
+            $wallet = $transaction->wallet;
+            if($request["data"]["status"] == "success"):
+                $payment = new Paystack;
+                $paymentData = $payment->getPaymentData($reference);
+                if($paymentData["status"]):
+                    if($paymentData["data"]["status"] == "success"):
+                        $wallet->balance += $paymentData["data"]["amount"] / 100;
+                        $wallet->save();
+                        
+                        $transaction->status = "success";
+                        $transaction->verified = true;
+                        $transaction->save();
+                    elseif($paymentData["data"]["status"] == "failed"):
+                        $transaction->status = "failed";
+                        $transaction->verified = true;
+                        $transaction->save();
+                    endif;
+                endif;
+            endif;
         endif;
     }
 }

@@ -184,7 +184,7 @@
 
 
                 $(".trx-table tbody").append(`
-                    <tr style="background-color:${rowColors[transaction.status]}">
+                    <tr style="cursor:pointer">
                         <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
                         <td scope="row"><b>${transaction.wallet.user.email}</b></td>
                         <td scope="row">${transaction.reference}</td>

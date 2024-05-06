@@ -10,11 +10,13 @@ use App\Models\User;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Shipment;
 use App\Util\ResponseFormatter;
 use App\Util\Logistics;
 use App\Services\UserService;
 use App\Http\Requests\ChangePassword;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class ShippingController extends Controller
 {
@@ -30,8 +32,53 @@ class ShippingController extends Controller
     public function showShippings()
     {
         $user = User::find(Auth::user()->id);
+        $stats = [
+            "cancelled" => $user->shipments()->where('status', "cancelled")->count(),
+            "in-transit" => $user->shipments()->where('status', "in-transit")->count(),
+            "delivered" => $user->shipments()->where('status', "delivered")->count(),
+            "total" => $user->shipments()->count()
+        ];
 
-        return view('customer.shippings.shipping', compact('user'));
+        return view('customer.shippings.shipping', compact('user', 'stats'));
+    }
+
+    public function getUserShipments(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+
+        // Filter transactions by period
+        if ($request->has('period')):
+            switch($request->period):
+                case "today":
+                    $shipments = $user->shipments()
+                    ->whereDate('created_at', Carbon::today())
+                    ->orderByDesc("created_at")
+                    ->get();
+                break;
+                case "week":
+                    $shipments = $user->shipments()
+                    ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->orderByDesc("created_at")
+                    ->get();
+                break;
+                case "month":
+                    $shipments = $user->shipments()
+                    ->whereMonth('created_at', Carbon::now()->month)
+                    ->orderByDesc("created_at")
+                    ->get();
+                break;
+                case "year":
+                    $shipments = $user->shipments()
+                    ->whereYear('created_at', Carbon::now()->year)
+                    ->orderByDesc("created_at")
+                    ->get();
+                break;
+            endswitch;
+        else:
+            $shipments = $user->shipments()->orderByDesc("created_at")->get();
+        endif;
+
+        return ResponseFormatter::success("Shipments:", $shipments, 200);
     }
 
     public function showShippingForm()
@@ -63,6 +110,40 @@ class ShippingController extends Controller
         $cities = City::where(['state_id' => $stateId])->get();
             
         return ResponseFormatter::success("Cities:", $cities, 200);
+    }
+
+    public function shipmentWebhook(Request $request)
+    {
+        http_response_code(200);
+
+        $shipment = Shipment::where([
+            'shipment_id' => $request["data"]["shipment_id"]
+        ])->first();
+
+        switch($request["event"]):
+            case "shipment.in-transit":
+                //Handle shipment in-transit event
+                $shipment->status = "in-transit";
+            break;
+            case "shipment.delivered":
+                //Handle shipment delivered update event
+                $shipment->status = "delivered";
+            break;
+            case "shipment.cancelled":
+                //Handle shipment cancelled update event
+                $shipment->status = "cancelled";
+            break;
+            default:
+                //Handle unknown event received
+        endswitch;
+        $shipment->save();
+    }
+
+    public static function showTrackingForm()
+    {
+        $user = User::find(Auth::user()->id);
+
+        return view('customer.shippings.tracking', compact('user'));
     }
 
 }

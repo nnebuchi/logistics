@@ -10,7 +10,7 @@
                                 <img src="{{asset('assets/images/icons/plus.svg')}}" class="mr-1" width="20" height="20" />
                                 Book Shipment
                             </a>
-                            <a href="{{url('/shipping')}}" class="d-flex align-items-center btn btn-primary">
+                            <a href="{{url('/shipping/track')}}" class="d-flex align-items-center btn btn-primary">
                                 <img src="{{asset('assets/images/icons/track.svg')}}" class="mr-1" width="20" height="20" />
                                 Track Shipment
                             </a>
@@ -58,7 +58,9 @@
                             <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
                                     <span>Wallet Account Details</span>
-                                    <h2 class="balance"></h2>
+                                    <h5 style="color:#1E1E1E66">Account Name: <span class="" style="color:black">John Doe</span></h5>
+                                    <h5 style="color:#1E1E1E66">Account Number: <span class=""  style="color:black">2044556248</span></h5>
+                                    <h5 style="color:#1E1E1E66">Bank Name: <span class=""  style="color:black">Ziga Bank</span></h5>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +85,7 @@
                                             <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="year">
                                                 This Year
                                             </button>
-                                            <a class="btn" href="/">
+                                            <a class="btn" href="/shippings">
                                                 See All
                                                 <img src="{{asset('assets/images/icons/move-right.svg')}}" />
                                             </a>
@@ -144,7 +146,6 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
 
     function fetchWallet(){
         const config = {
@@ -162,24 +163,17 @@
             $(".balance").eq(0).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
             $(".balance").eq(1).text("₦"+parseInt(results?.totalCredit).toLocaleString());
             $(".balance").eq(1).next("span.text-sec").text("Last updated: "+results?.wallet.updated_at);
-            //$(".balance").eq(2).text("₦"+parseInt(325000).toLocaleString());
         });
     };
     fetchWallet();
 
     const status = {
         pending: "custom-bg-warning",
-        delivered: "custom-bg-success",
+        confirmed: "custom-bg-success",
         failed: "custom-bg-danger"
     };
 
-    const rowColors = {
-        pending: "#ffffff",
-        delivered: "#233E830D",
-        failed: "#233E830D"
-    };
-
-    function fetchShipments(){
+    function getShipments(){
         const config = {
             headers: {
                 Accept: "application/json",
@@ -188,51 +182,40 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api`)
-        //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings`, config)
+        axios.get(`${baseUrl}/user/${<?=$user->id?>}/shipments`, config)
         .then((res) => {
-            //let shipments = res.data.results;
-            let shipments = [
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "pending"},
-                {id: 1, status: "delivered"}
-            ].slice(0, 10);
-
-            $(".shipments-table tbody").empty();
-            appendShipments(shipments);
+            let shipments = res.data.results.slice(0, 5);
+            renderData(shipments);
         });
     };
-    fetchShipments();
+    getShipments();
 
-    function appendShipments(shipments){
-        shipments.forEach(function(shipment, index){
+    function renderData(shipments){
+        $(".shipments-table tbody").empty();
+        if(shipments.length == 0){
             $(".shipments-table tbody").append(`
-                <tr style="background-color:${rowColors[shipment.status]}">
-                    <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">${index + 1}.</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal mb-1">154JKL-MNY</span>                        
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">12/03/24</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="mb-0 fw-normal">15 Peter Odili Road, Port Harcourt</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal mb-0">12 Aminu Kano Road, Kano</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
-                            ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
-                        </span>
-                    </td>
+                <tr class="">
+                    <td scope="row">No data available...</td>
                 </tr> 
             `);
-        })
+        }else{
+            shipments.forEach(function(shipment, index){
+                $(".shipments-table tbody").append(`
+                    <tr style="cursor:pointer">
+                        <td class="">${index + 1}.</td>
+                        <td class="">${shipment.external_shipment_id}</td>
+                        <td class="">${shipment.pickup_date ?? ""}</td>
+                        <td class="">${shipment.address_from.line1.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment.address_to.line1.substring(0, 15)+"..."}</td>
+                        <td class="">
+                            <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
+                            ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
+                            </span>
+                        </td>
+                    </tr> 
+                `);
+            });
+        }
     }
 
     $(".reload-wallet").on("click", function(event){
@@ -280,19 +263,13 @@
                     "X-Requested-With": "XMLHttpRequest"
                 }
             };
-            axios.get(`${baseUrl}/api`, config)
-            //axios.get(`${baseUrl}/api/v1/user/${<?=$user->id?>}/shippings?period=${value}`, config)
+            axios.get(`${baseUrl}/user/${<?=$user->id?>}/shipments?period=${value}`, config)
             .then((res) => {
-                //let shipments = res.data.results;
-                let shipments = [
-                    {id: 1, status: "pending"},
-                    {id: 1, status: "delivered"}
-                ].slice(0, 10);
-
+                let shipments = res.data.results.slice(0, 5);
                 $(this).text(text);
                 $(".period").prop("disabled", false); 
                 $(".shipments-table tbody").empty();
-                appendShipments(shipments);
+                renderData(shipments);
             });
         }, 2000);
     });

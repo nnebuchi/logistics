@@ -109,4 +109,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return $this->hasOne(UserProfile::class, "user_id");
     }
 
+    public function shipments()
+    {
+        return $this->hasMany(Shipment::class, "user_id");
+    }
+
 }

@@ -651,3 +651,16 @@ table td, table th {
 .radio-group.selected {
     background-color: #233E830D; /* Example background color for selected item */
 }
+
+.users-table tbody tr:hover{
+    background-color: #233E830D;
+}
+
+.trx-table tbody tr:hover{
+    background-color: #233E830D;
+}
+
+.shipments-table tbody tr:hover{
+    background-color: #233E830D;
+}
+

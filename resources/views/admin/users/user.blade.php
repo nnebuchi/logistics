@@ -198,7 +198,7 @@
                 `;
 
                 $(".users-table tbody").append(`
-                    <tr style="background-color:${rowColors[user.is_verified ?? "success"]}">
+                    <tr style="cursor:pointer">
                         <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
                         ${userCard}
                         <td scope="row">${user.phone}</td>
@@ -398,12 +398,13 @@
     }
 
     function offModal(){
+        $("#paymentModal").modal("toggle");
         // Select the modal element
-        var myModal = document.getElementById('paymentModal');
+        /*var myModal = document.getElementById('paymentModal');
         myModal.classList.remove('show');
         myModal.style.display = 'none';
         document.body.classList.remove('modal-open');
-        $('.modal-backdrop').remove();  // Remove the backdrop
+        $('.modal-backdrop').remove();  // Remove the backdrop*/
     }
 </script>
 @include("admin.layouts.footer")
