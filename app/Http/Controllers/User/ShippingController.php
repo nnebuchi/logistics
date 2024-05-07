@@ -10,23 +10,37 @@ use App\Models\User;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
-use App\Models\Shipment;
+use App\Models\{
+    Shipment,
+    Address,
+    Item,
+    Transaction
+};
 use App\Util\ResponseFormatter;
 use App\Util\Logistics;
-use App\Services\UserService;
-use App\Http\Requests\ChangePassword;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 class ShippingController extends Controller
 {
-    private UserService $userService;
-    private $logistics;
+    private Logistics $logistics;
 
-    public function __construct(UserService $userService)
+    public function __construct(Logistics $logistics)
     {
-        $this->userService = $userService;
-        $this->logistics = new Logistics();
+        $this->logistics = $logistics;
+    }
+
+    private function generateReference($id)
+    {
+        $token = "";
+        $codeAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $codeAlphabet .= 'abcdefghijklmnopqrstuvwxyz';
+        $codeAlphabet .= '0123456789';
+        $max = strlen($codeAlphabet) - 1;
+        for($i=0; $i<14; $i++):
+            $token .= $codeAlphabet[mt_rand(0, $max)]; 
+        endfor; 
+        return $id.strtolower($token);
     }
 
     public function showShippings()
@@ -144,6 +158,88 @@ class ShippingController extends Controller
         $user = User::find(Auth::user()->id);
 
         return view('customer.shippings.tracking', compact('user'));
+    }
+
+    public function makePayment(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        $wallet = $user->wallet;
+        if($wallet->balance <= $request->total):
+            return ResponseFormatter::success("Insufficient wallet balance...", null, 400);
+        endif;
+
+        $wallet->balance -= $request->total;
+        $wallet->save();
+
+        $transaction = new Transaction();
+        $transaction->wallet_id = $wallet->id;
+        $transaction->amount = $request->total;
+        $transaction->type = "Debit";
+        $transaction->purpose = "Payment for ".$request->shipment_id." shipment";
+        $transaction->reference = $this->generateReference($wallet->id);
+        $transaction->status = "success";
+        $transaction->verified = true;
+        $transaction->save();
+
+        $payload = [
+            'rate_id' => $request->rate_id
+            //'shipment_id' => $request->shipment_id, //optional
+        ];
+        //Arrange pickup for shipment
+        //$pickup = $this->logistics->arrangePickup($payload);
+        //if($pickup["data"]["status"] == "confirmed"):
+            $response = $this->logistics->getShipment($request->shipment_id);
+            $response = json_decode($response);
+            $data = $response->data;
+
+            $shipment = new Shipment;
+            $shipment->user_id = $user->id;
+            $shipment->external_shipment_id = $data->shipment_id;
+            $shipment->pickup_date = $data->pickup_date;
+            $shipment->save();
+
+            foreach($data->parcel->items as $item):
+                $newItem = new Item;
+                $newItem->shipment_id = $shipment->id;
+                $newItem->name = $item->name;
+                $newItem->currency = $item->currency;
+                $newItem->description = $item->description;
+                $newItem->value = $item->value;
+                $newItem->quantity = $item->quantity;
+                $newItem->weight = $item->weight;
+                $newItem->save();
+            endforeach;
+    
+            $from = new Address;
+            $from->shipment_id = $shipment->id;
+            $from->firstname = $data->address_from->first_name;
+            $from->lastname = $data->address_from->last_name;
+            $from->email = $data->address_from->email;
+            $from->phone = $data->address_from->phone;
+            $from->country = $data->address_from->country;
+            $from->state = $data->address_from->state;
+            $from->city = $data->address_from->city;
+            $from->zip = $data->address_from->zip;
+            $from->line1 = $data->address_from->line1;
+            $from->type = "from";
+            $from->save();
+    
+            $to = new Address;
+            $to->shipment_id = $shipment->id;
+            $to->firstname = $data->address_to->first_name;
+            $to->lastname = $data->address_to->last_name;
+            $to->email = $data->address_to->email;
+            $to->phone = $data->address_to->phone;
+            $to->country = $data->address_to->country;
+            $to->state = $data->address_to->state;
+            $to->city = $data->address_to->city;
+            $to->zip = $data->address_to->zip;
+            $to->line1 = $data->address_to->line1;
+            $to->type = "to";
+            $to->save();
+        //endif;
+
+        return ResponseFormatter::success("Shipment arranged successfully", null, 200);
     }
 
 }

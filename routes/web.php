@@ -51,6 +51,7 @@ Route::group([
     Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
     Route::post('/shipping/create', [UserController::class, 'showShipments']);
+    Route::post('/shipping/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
     Route::get('/shippings', [ShippingController::class, 'showShippings']);
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);

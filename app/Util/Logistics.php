@@ -83,4 +83,16 @@ class Logistics
         return $response;
     }
 
+    public function arrangePickup($data)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->post($this->baseUrl.'shipments/pickup', [
+                    'rate_id' => $data["rate_id"]
+                    //'shipment_id' => $data["shipment_id"],
+                    //'purchase_insurance' => $data["purchase_insurance"]
+                ]);
+        return $response;
+    }
+
 }

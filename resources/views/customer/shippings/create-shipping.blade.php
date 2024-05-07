@@ -127,7 +127,7 @@
     };
 
     $(document).ready(function(){
-        let formData = { "sender": {}, "receiver": {}, "items": [] };
+        let formData = { "sender": {}, "receiver": {}, "items": [], "shipment": {}, "total": "" };
         let parcel = {};
         let carriers = [];
         let selectedCarrier = {};
@@ -168,6 +168,7 @@
                     "parcel": parcel.parcel_id
                 };
                 const shipmentsResponse = await axios.post('https://api.terminal.africa/v1/shipments', shipmentsPayload, config);
+                formData.shipment = shipmentsResponse.data.data;
                 const ratesResponse = await axios.get(`https://api.terminal.africa/v1/rates/shipment?pickup_address=${formData.sender.address_id}&delivery_address=${formData.receiver.address_id}&shipment_id=${shipmentsResponse.data.data.shipment_id}`, config);
                 carriers = ratesResponse.data.data;
             } catch (error) {
@@ -648,7 +649,17 @@
                 `)
             });
 
-            $('#checkout').find(".total").text("₦"+selectedCarrier.amount);
+            // Given values
+            const subtotal = selectedCarrier.amount;
+            const subchargePercentage = <?=$user->account->markup_price?>;
+            const subcharge = (subtotal * subchargePercentage) / 100;
+            const total = subtotal + subcharge;
+            // Format values to 2 significant figures
+            const formattedSubcharge = Number(subcharge.toFixed(2));
+            const formattedTotal = Number(total.toFixed(2));
+            formData.total = formattedTotal;
+            $('#checkout').find(".total").text("₦"+formattedTotal);
+            $('#checkout').find(".subcharge").text("₦"+formattedSubcharge);
 
             currentStep.hide();
             nextStep.show();
@@ -663,6 +674,49 @@
                 // If not, prepend the country code to the value
                 $(this).val(countryCode);
             }
+        });
+
+        $("#checkoutBtn").on("click", function(event) {
+            event.preventDefault();
+            let url = $(this).data("url");
+            let btn = $(this);
+            btn.html(`<img src="/assets/images/loader.gif" id="loader-gif">`);
+            btn.attr("disabled", true);
+            let payload = {
+                total: formData.total,
+                rate_id: selectedCarrier.rate_id,
+                shipment_id: formData.shipment.shipment_id
+            }
+            alert(JSON.stringify(payload))
+            $('#checkout .message').text('');
+            // Append loader immediately
+            setTimeout(() => {
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                };
+                axios.post(url, payload, config)
+                .then(function(response){
+                    let message = response.data.message;
+                    $("#checkout .message").css("color", "green").text(message);
+                    btn.attr("disabled", true).text("Payment Successful...");
+                })
+                .catch(function(error){
+                    let errors = error.response.data.error;
+                    switch(error.response.status){
+                        case 400:
+                            $("#checkout .message").css("color", "red").text(error.response.data.message)
+                        break;
+                    }
+
+                    btn.attr("disabled", false).text("Make Payment");
+                });
+            }, 100); // Delay submission by 100 milliseconds
+
         });
 
     });
