@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\User;
 use App\Models\Account;
+use App\Models\Shipment;
 use App\Models\Transaction;
 use App\Util\Helper;
 use Illuminate\Support\Facades\Auth;
@@ -106,11 +107,12 @@ class DashboardController extends Controller
         return ResponseFormatter::success("Transactions:", $transactions, 200); 
     }
 
-    public function showRates()
+    public function showShippings()
     {
         $user = Admin::find(Auth::user()->id);
+        $shipments = Shipment::orderByDesc("created_at")->get();
         
-        return view('admin.rates.rate', compact('user'));
+        return view('admin.shipping.shipping', compact('user', 'shipments'));
     }
 
     public function showAdmins()

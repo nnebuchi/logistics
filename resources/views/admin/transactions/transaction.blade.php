@@ -53,28 +53,31 @@
                                                                       
                                             </tbody>
                                         </table>
-                                        <!--  Pagination Starts -->
-                                        <div class="d-flex justify-content-end my-2 pr-2">
-                                            <button class="btn btn-primary mr-2 paginate" data-page="" type="button">
-                                                Prev
-                                            </button>
-                                            <button class="btn btn-primary paginate" data-page="" type="button">
-                                                Next
-                                            </button>
-                                        </div>
-                                        <div class="my-2 pl-2">
-                                                Showing
-                                                <span class="entries fw-semibold">. </span> to
-                                                <span class="entries fw-semibold">. </span> of
-                                                <span class="entries fw-semibold">. </span>
-                                                transactions
-                                            </div>
-                                        <!--  Pagination Ends -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!--  Pagination Starts -->
+                    <div class="d-flex justify-content-center my-2 pr-2">
+                        <button class="btn btn-light fs-4 fw-bold mr-2 paginate" data-page="" type="button">
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
+                            Previous
+                        </button>
+                        <button class="custom-btn fs-4 fw-bold paginate" data-page="" type="button">
+                            Next
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                        </button>
+                    </div>
+                    <div class="my-2 pl-2">
+                            Showing
+                            <span class="entries fw-semibold">. </span> to
+                            <span class="entries fw-semibold">. </span> of
+                            <span class="entries fw-semibold">. </span>
+                            transactions
+                        </div>
+                    <!--  Pagination Ends -->
 
 
                 </div>
@@ -139,7 +142,7 @@
             return (per_page * current_page) - per_page + 1 + index
         }
     }
-
+    
     function getTransactions(page){
         const config = {
             headers: {

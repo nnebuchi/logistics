@@ -95,8 +95,8 @@ Route::group([
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/users', 
     [AdminDashboardController::class, 'showUsers'])->name('admin.users');
-    Route::get('/admin/rates', 
-    [AdminDashboardController::class, 'showRates'])->name('admin.rates');
+    Route::get('/admin/shippings', 
+    [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
     Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
