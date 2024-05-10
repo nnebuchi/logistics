@@ -273,12 +273,18 @@
             current_page = $(this).data("page");
             renderData();
         });
-
+        
         //Add shipment ID to clipboard text
         $(document).on("click", ".shipments-table tbody tr", function(event){
             event.preventDefault();
-            let $id = $(this).data("id");
-            // Create a temporary element to hold the text to copy
+            // Get the data-id attribute of the clicked row
+            let shipmentId = $(this).data("id");
+            // Construct the URL
+            let url = `/shippings/${shipmentId}`;
+            //window.open(url, '_blank');  // Open the URL in a new tab
+            // Redirect to the desired page with the shipment ID
+            window.location.href = url;
+            /*// Create a temporary element to hold the text to copy
             var $temp = $("<input>");
             // Add the $id as the value of the temporary input element
             $("body").append($temp);
@@ -288,7 +294,7 @@
             // Remove the temporary element
             $temp.remove();
             // Show a success message to the user
-            alert("ID copied to clipboard: " + $id);
+            alert("ID copied to clipboard: " + $id);*/
         });
     });
 </script>

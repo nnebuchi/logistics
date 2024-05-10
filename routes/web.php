@@ -50,9 +50,10 @@ Route::group([
     Route::get('/', [UserController::class, 'index'])->name('dashboard');
     Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
-    Route::post('/shipping/create', [UserController::class, 'showShipments']);
+    Route::post('/shipping/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
     Route::post('/shipping/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
     Route::get('/shippings', [ShippingController::class, 'showShippings']);
+    Route::get('/shippings/{shipmentId}', [ShippingController::class, 'editShipping']);
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);
     Route::get('/logout', [AuthController::class, 'logOut']);
