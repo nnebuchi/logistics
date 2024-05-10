@@ -173,6 +173,7 @@
         }
         $(".next").on("click", async function(event){
             event.preventDefault();
+           
             let type = $(this).data("type");
             var currentStep = $(this).closest(".step");
             var nextStep = currentStep.next(".step");
@@ -220,6 +221,8 @@
             }
             const errors = validate(type, inputs);
             if (Object.keys(errors).length === 0) {
+                const innerHTML = event.target.innerHTML;
+                setBtnLoading(event.target)
                 let payload = {
                     "first_name": formData[type].firstname,
                     "last_name": formData[type].lastname,
@@ -240,6 +243,7 @@
                 };
                 axios.post(`https://api.terminal.africa/v1/addresses`, payload, config)
                 .then(function(response){
+                    setBtnNotLoading(event.target, innerHTML)
                     let results = response.data.data;
                     formData[type] = results;
                     currentStep.hide();

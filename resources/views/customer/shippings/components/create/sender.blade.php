@@ -91,13 +91,8 @@
                             </button>
                         </div>
                         <div class="">
-                            <button 
-                            type="button"
-                            data-to=""
-                            data-type="sender"
-                            class="custom-btn fs-4 fw-bold next">
-                            Next
-                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                            <button  type="button" data-to="" data-type="sender" class="custom-btn fs-4 fw-bold next">
+                                Next <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
                             </button>
                         </div>
                     </div>
