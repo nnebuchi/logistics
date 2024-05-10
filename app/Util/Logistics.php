@@ -120,4 +120,12 @@ class Logistics
         return $response;
     }
 
+    public function trackShipment($shipment_id)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->get($this->baseUrl.'shipments/track/'.$shipment_id);
+        return $response;
+    }
+
 }

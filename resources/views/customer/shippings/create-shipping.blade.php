@@ -689,7 +689,6 @@
                 rate_id: selectedCarrier.rate_id,
                 shipment_id: formData.shipment.shipment_id
             }
-            alert(JSON.stringify(payload))
             $('#checkout .message').text('');
             // Append loader immediately
             setTimeout(() => {

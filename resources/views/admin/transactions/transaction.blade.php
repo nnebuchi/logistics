@@ -16,7 +16,15 @@
                                         <div class="">
                                             <input type="text"
                                             placeholder="Search by email, reference" 
-                                            class="form-control w-auto" id="filterInput">
+                                            class="form-control w-auto rounded-0 p-4" id="filterInput">
+                                        </div>
+                                        <div class="d-flex mt-2 flex-wrap">
+                                            <input type="text"
+                                            placeholder="Sort by date(from)" 
+                                            class="form-control w-auto rounded-0 p-4 mr-2" id="startDate">
+                                            <input type="text"
+                                            placeholder="Sort by date(to)" 
+                                            class="form-control w-auto rounded-0 p-4" id="endDate">
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -100,10 +108,21 @@
 <script src="{{asset('assets/libs/simplebar/dist/simplebar.js')}}"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
     var userToken = localStorage.getItem('token');
+
+    flatpickr('#startDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
+
+    flatpickr('#endDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
 
     function getRandomColor(){
         const r = Math.floor(Math.random() * 256);
@@ -143,7 +162,10 @@
         }
     }
     
-    function getTransactions(page){
+    const per_page = 10;
+    let current_page = 1;
+    let data = [];
+    function getTransactions(url){
         const config = {
             headers: {
                 Accept: "application/json",
@@ -151,12 +173,26 @@
                 Authorization: "Bearer "+ userToken
             }
         };
-        axios.get(`${baseUrl}/api/v1/transactions?page=${page}`, config)
+        axios.get(url, config)
         .then((res) => {
-            let results = res.data.results;
-            let transactions = results.data;
-        
-            $(".trx-table tbody").empty();
+            data = res.data.results;
+            renderData();
+        });
+    }
+    getTransactions(`${baseUrl}/api/v1/transactions`);
+
+    function renderData(){
+        $(".trx-table tbody").empty();
+        const startIndex = (current_page - 1) * per_page;
+        const endIndex = startIndex + per_page;
+        transactions = data.slice(startIndex, endIndex);
+        if(transactions.length == 0){
+            $(".trx-table tbody").append(`
+                <tr class="">
+                    <td scope="row">No data available...</td>
+                </tr> 
+            `);
+        }else{
             transactions.forEach(function(transaction, index){
                 let name = transaction.wallet.user.firstname+" "+transaction.wallet.user.lastname;
                 const userCard = (transaction.wallet.user.photo == null ) ? `
@@ -185,10 +221,9 @@
                     </td>
                 `;
 
-
                 $(".trx-table tbody").append(`
                     <tr style="cursor:pointer">
-                        <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
+                        <td scope="row">${getIndex(per_page, current_page, index)}.</td>
                         <td scope="row"><b>${transaction.wallet.user.email}</b></td>
                         <td scope="row">${transaction.reference}</td>
                         <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
@@ -203,20 +238,21 @@
                     </tr>  
                 `);
             })
+        }
 
-            // Enable or disable the button based on the condition
-            $(".paginate").eq(0).prop('disabled', results.current_page === 1);
-            $(".paginate").eq(1).prop('disabled', results.current_page === results.last_page);
+        // Calculate last_page
+        const last_page = data.length > 0 ? Math.ceil(data.length / per_page) : 1;
+        // Enable or disable the button based on the condition
+        $(".paginate").eq(0).prop('disabled', current_page === 1);
+        $(".paginate").eq(1).prop('disabled', current_page === last_page);
 
-            $(".paginate").eq(0).data("page", results.current_page - 1);
-            $(".paginate").eq(1).data("page", results.current_page + 1);
+        $(".paginate").eq(0).data("page", current_page - 1);
+        $(".paginate").eq(1).data("page", current_page + 1);
 
-            $(".entries").eq(0).text((results.current_page - 1) * results.per_page + 1);
-            $(".entries").eq(1).text((results.current_page - 1) * results.per_page + transactions.length);
-            $(".entries").eq(2).text(results.total);
-        });
+        $(".entries").eq(0).text((current_page - 1) * per_page + 1);
+        $(".entries").eq(1).text((current_page - 1) * per_page + transactions.length);
+        $(".entries").eq(2).text(data.length);
     }
-    getTransactions(page = 1);
     
     function filterTable() {
         var filterValue = $('#filterInput').val().trim().toLowerCase();
@@ -247,13 +283,25 @@
 
     // jQuery code for filtering
     $(document).ready(function() {
-        $('#filterInput').on('input', function() {
-            filterTable();
+        $('#filterInput').on('keyup', function() {
+            //filterTable();
+            let value = $(this).val();
+            if(value == ""){
+                getTransactions(`${baseUrl}/api/v1/transactions`);
+            }else{
+                getTransactions(`${baseUrl}/api/v1/transactions?searchTerm=${value}`);
+            }
         });
 
         $('.paginate').on('click', function() {
-            let page = $(this).data("page");
-            getTransactions(page);
+            current_page = $(this).data("page");
+            renderData();
+        });
+
+        $('#startDate, #endDate').on('input', function() {
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            getTransactions(`${baseUrl}/api/v1/transactions?startDate=${startDate}&endDate=${endDate}`);
         });
     });
 </script>

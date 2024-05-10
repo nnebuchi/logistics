@@ -175,15 +175,9 @@
     getStats(@json($stats));
 
     const status = {
-        pending: "custom-bg-warning",
+        draft: "custom-bg-warning",
         confirmed: "custom-bg-success",
         failed: "custom-bg-danger"
-    };
-
-    const rowColors = {
-        pending: "#ffffff",
-        delivered: "#233E830D",
-        failed: "#233E830D"
     };
 
     function getIndex(per_page, current_page, index)

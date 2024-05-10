@@ -18,6 +18,21 @@
                                         </div>
                                     </div>
                                     <div class="table-responsive">
+                                        <div class="my-3 px-2" style="">
+                                            <div class="">
+                                                <input type="text"
+                                                placeholder="Search by tracking number" 
+                                                class="form-control w-auto rounded-0 p-4" id="filterInput">
+                                            </div>
+                                            <div class="d-flex mt-2 flex-wrap">
+                                                <input type="text"
+                                                placeholder="Sort by date(from)" 
+                                                class="form-control w-auto rounded-0 p-4 mr-2" id="startDate">
+                                                <input type="text"
+                                                placeholder="Sort by date(to)" 
+                                                class="form-control w-auto rounded-0 p-4" id="endDate">
+                                            </div>
+                                        </div>
                                         <table class="shipments-table table text-nowrap mb-0 align-middle">
                                             <thead class="text-dark fs-4">
                                                 <tr>
@@ -101,9 +116,20 @@
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
+
+    flatpickr('#startDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
+
+    flatpickr('#endDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
 
     const status = {
         pending: "custom-bg-warning",
@@ -123,11 +149,22 @@
     const per_page = 10;
     let current_page = 1;
     let data = [];
-    function getShipments(shipments){
-        data = shipments;
-        renderData();
+    function getShipments(url){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
+        axios.get(url, config)
+        .then((res) => {
+            data = res.data.results;
+            renderData();
+        });
     };
-    getShipments(@json($shipments));
+    getShipments(`${baseUrl}/admin/get-all-shippings`);
 
     function renderData(){
         $(".shipments-table tbody").empty();
@@ -186,6 +223,22 @@
         $('.paginate').on('click', function() {
             current_page = $(this).data("page");
             renderData();
+        });
+
+        $('#filterInput').on('keyup', function() {
+            //filterTable();
+            let value = $(this).val();
+            if(value == ""){
+                getShipments(`${baseUrl}/admin/get-all-shippings`);
+            }else{
+                getShipments(`${baseUrl}/admin/get-all-shippings?searchTerm=${value}`);
+            }
+        });
+
+        $('#startDate, #endDate').on('input', function() {
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            getShipments(`${baseUrl}/admin/get-all-shippings?startDate=${startDate}&endDate=${endDate}`);
         });
 
         //Add shipment ID to clipboard text

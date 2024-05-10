@@ -88,6 +88,14 @@
 								</a>
 							</li>
 							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/admin/accounts')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+									</span>
+									<span class="hide-menu">Accounts</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/logout')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/logout.svg')}}" />

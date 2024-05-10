@@ -28,7 +28,23 @@ class DashboardController extends Controller
         $user = Admin::find(Auth::user()->id);
         $accounts = Account::all();
         
-        return view('admin.users.user', compact('user', 'accounts'));
+        return view('admin.users.users', compact('user', 'accounts'));
+    }
+
+    public function showAccounts()
+    {
+        $user = Admin::find(Auth::user()->id);
+        $accounts = Account::all();
+        
+        return view('admin.accounts', compact('user', 'accounts'));
+    }
+
+    public function showUser($uuid)
+    {
+        $user = Admin::find(Auth::user()->id);
+        $customer = User::where("uuid", $uuid)->first();
+        
+        return view('admin.users.view-user', compact('user', 'customer'));
     }
 
     public function getUsers(Request $request)
@@ -88,21 +104,44 @@ class DashboardController extends Controller
         $page = $request->query("page", 1); // Default page is 1
 
         $query = Transaction::with(["wallet.user"])->orderByDesc("created_at");
-        // Filter transactions by ID
-        if ($request->has('reference')):
-            $query->where('reference', $request->input('reference'));
-        endif;
+        
+        // Check if a combined search term is provided
+        if ($request->has('searchTerm')) {
+            $searchTerm = $request->input('searchTerm');
 
-        // Filter transactions by email
-        if ($request->has('email')):
-            $email = $request->input('email');
-            $query->whereHas('wallet.user', function ($query) use ($email) {
-                $query->where('email', $email);
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('reference', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('wallet.user', function ($query) use ($searchTerm) {
+                        $query->where('email', 'like', '%' . $searchTerm . '%');
+                    });
             });
-        endif;
+        }
+
+        // Filter transactions by date range
+        if ($request->has('startDate') || $request->has('endDate')) {
+            if ($request->has('startDate')) {
+                $startDate = $request->input('startDate');
+            }
+        
+            if ($request->has('endDate')) {
+                $endDate = $request->input('endDate');
+            }
+        
+            $query->where(function ($query) use ($startDate, $endDate) {
+                if (isset($startDate) && isset($endDate)) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif (isset($startDate)) {
+                    $query->where('created_at', '>=', $startDate);
+                } elseif (isset($endDate)) {
+                    $query->where('created_at', '<=', $endDate);
+                }
+            });
+        }
+
+        $transactions = $query->get();
 
         // Get filtered transactions
-        $transactions = $query->paginate($perPage, ["*"], "page", $page);
+        //$transactions = $query->paginate($perPage, ["*"], "page", $page);
 
         return ResponseFormatter::success("Transactions:", $transactions, 200); 
     }
@@ -137,4 +176,88 @@ class DashboardController extends Controller
             $data
         );
     }
+
+    public function deleteUser($userId){
+        return $user = User::find($userId);
+    }
+
+    public function getAllShipment(Request $request){
+        $query = Shipment::orderByDesc("created_at");
+
+        // Check if a combined search term is provided
+        if ($request->has('searchTerm')) {
+            $searchTerm = $request->input('searchTerm');
+
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('external_shipment_id', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filter transactions by date range
+        if ($request->has('startDate') || $request->has('endDate')) {
+            if ($request->has('startDate')) {
+                $startDate = $request->input('startDate');
+            }
+        
+            if ($request->has('endDate')) {
+                $endDate = $request->input('endDate');
+            }
+        
+            $query->where(function ($query) use ($startDate, $endDate) {
+                if (isset($startDate) && isset($endDate)) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif (isset($startDate)) {
+                    $query->where('created_at', '>=', $startDate);
+                } elseif (isset($endDate)) {
+                    $query->where('created_at', '<=', $endDate);
+                }
+            });
+        }
+
+        $shipments = $query->get();
+
+        return ResponseFormatter::success("shipments:", $shipments, 200);
+    }
+
+    public function getAllCustomers(Request $request){
+        $query = User::orderByDesc("created_at");
+
+        // Check if a combined search term is provided
+        if ($request->has('searchTerm')) {
+            $searchTerm = $request->input('searchTerm');
+
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('email', 'like', '%' . $searchTerm . '%')
+                ->orWhere('phone', 'like', '%' . $searchTerm . '%')
+                ->orWhere('firstname', 'like', '%' . $searchTerm . '%')
+                ->orWhere('lastname', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filter transactions by date range
+        if ($request->has('startDate') || $request->has('endDate')) {
+            if ($request->has('startDate')) {
+                $startDate = $request->input('startDate');
+            }
+        
+            if ($request->has('endDate')) {
+                $endDate = $request->input('endDate');
+            }
+        
+            $query->where(function ($query) use ($startDate, $endDate) {
+                if (isset($startDate) && isset($endDate)) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif (isset($startDate)) {
+                    $query->where('created_at', '>=', $startDate);
+                } elseif (isset($endDate)) {
+                    $query->where('created_at', '<=', $endDate);
+                }
+            });
+        }
+
+        $users = $query->get();
+
+        return ResponseFormatter::success("users:", $users, 200);
+    }
+
 }

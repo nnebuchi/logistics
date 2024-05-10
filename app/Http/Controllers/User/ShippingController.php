@@ -408,4 +408,10 @@ class ShippingController extends Controller
         $to->save();
     }
 
+    public function trackShipment($shipmentId){
+        $user = User::find(Auth::user()->id);
+
+        $shipment = $this->logistics->trackShipment($shipmentId);
+    }
+
 }
