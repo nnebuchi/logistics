@@ -28,11 +28,11 @@
                         </div>
                     </div>
 
-                    @include('customer.shippings.components.create.sender')
-                    @include('customer.shippings.components.create.receiver')
-                    @include('customer.shippings.components.create.add-item')
-                    @include('customer.shippings.components.create.add-carrier')
-                    @include('customer.shippings.components.create.checkout')
+                    @include('customer.shippings.components.edit.sender')
+                    @include('customer.shippings.components.edit.receiver')
+                    @include('customer.shippings.components.edit.add-item')
+                    @include('customer.shippings.components.edit.add-carrier')
+                    @include('customer.shippings.components.edit.checkout')
 
                 </div>
             </div>
@@ -127,7 +127,7 @@
     };
 
     $(document).ready(function(){
-        let formData = { "sender": {}, "receiver": {}, "items": [], "shipment": {}, "total": "" };
+        let formData = { "sender": {}, "receiver": {}, "items": <?=$shipment->items?>, "shipment": {}, "total": "" };
         let parcel = {};
         let carriers = [];
         let selectedCarrier = {};
@@ -137,7 +137,8 @@
                 "weight_unit": "kg",
                 "items": [], // Initialize an empty array for items,
                 "address_from": formData.sender.address_id,
-                "address_to": formData.receiver.address_id
+                "address_to": formData.receiver.address_id,
+                "shipment_id": "<?=$shipment->external_shipment_id?>"
             };
             // Loop through the items array and construct payload items
             items.forEach(item => {
@@ -547,7 +548,7 @@
            $("#addItemModal").modal("show");
         });
         $("#addItemModal .close").on("click", function(){
-            $("#addItemModal").modal("hide");
+            //$("#addItemModal").modal("hide");
         });
         $('#addItemModal').on('hidden.bs.modal', function (e) {
             $("#addItemModal").modal("hide");

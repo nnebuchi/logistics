@@ -17,6 +17,21 @@
                         </div>-->
                     </div>
 
+                    <div class="my-3 px-2" style="">
+                        <div class="">
+                            <input type="text"
+                            placeholder="Search by email, phone, firstname, lastname" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="filterInput">
+                        </div>
+                        <div class="d-flex mt-2 flex-wrap">
+                            <input type="text"
+                            placeholder="Sort by date(from)" 
+                            class="form-control w-auto rounded-0 p-4 mr-2 bg-white" id="startDate">
+                            <input type="text"
+                            placeholder="Sort by date(to)" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="endDate">
+                        </div>
+                    </div>
                     <div class="row mt-3">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
@@ -44,6 +59,9 @@
                                                         <h6 class="fw-semibold">Edit</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
+                                                        <h6 class="fw-semibold">Delete</h6>
+                                                    </th>
+                                                    <th class="border-bottom-0">
                                                         <h6 class="fw-semibold">Status</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
@@ -58,28 +76,31 @@
                                                                       
                                             </tbody>
                                         </table>
-                                        <!--  Pagination Starts -->
-                                        <div class="d-flex justify-content-end my-2 pr-2">
-                                            <button class="btn btn-primary mr-2 paginate" data-page="" type="button">
-                                                Prev
-                                            </button>
-                                            <button class="btn btn-primary paginate" data-page="" type="button">
-                                                Next
-                                            </button>
-                                        </div>
-                                        <div class="my-2 pl-2">
-                                                Showing
-                                                <span class="entries fw-semibold">. </span> to
-                                                <span class="entries fw-semibold">. </span> of
-                                                <span class="entries fw-semibold">. </span>
-                                                transactions
-                                            </div>
-                                        <!--  Pagination Ends -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!--  Pagination Starts -->
+                    <div class="d-flex justify-content-center my-2 pr-2">
+                        <button class="btn btn-light fs-4 fw-bold mr-2 paginate" data-page="" type="button">
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
+                            Previous
+                        </button>
+                        <button class="custom-btn fs-4 fw-bold paginate" data-page="" type="button">
+                            Next
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                        </button>
+                    </div>
+                    <div class="my-2 pl-2">
+                            Showing
+                            <span class="entries fw-semibold">. </span> to
+                            <span class="entries fw-semibold">. </span> of
+                            <span class="entries fw-semibold">. </span>
+                            customers
+                        </div>
+                    <!--  Pagination Ends -->
 
                     @include('admin.modals.user-modal')
                     @include('admin.modals.payment-modal')
@@ -95,18 +116,25 @@
 <script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 
 <script src="{{asset('assets/libs/axios/axios.js')}}"></script>
-<script src="{{asset('assets/plugins/datatables/js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('assets/plugins/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('assets/plugins/datatables/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('assets/plugins/datatables/js/responsive.bootstrap4.min.js')}}"></script>
 <script src="{{asset('assets/libs/apexcharts/dist/apexcharts.min.js')}}"></script>
 <script src="{{asset('assets/libs/simplebar/dist/simplebar.js')}}"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
+
+    flatpickr('#startDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
+
+    flatpickr('#endDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
 
     function getRandomColor(){
         const r = Math.floor(Math.random() * 256);
@@ -147,20 +175,38 @@
         }
     }
 
-    function getUsers(page){
+    const per_page = 10;
+    let current_page = 1;
+    let data = [];
+    function getUsers(url){
         const config = {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/users?page=${page}`, config)
+        axios.get(url, config)
         .then((res) => {
-            let results = res.data.results;
-            let users = results.data;
-        
-            $(".users-table tbody").empty();
+            data = res.data.results;
+            renderData();
+        });
+    }
+    getUsers(`${baseUrl}/admin/get-all-customers`);
+
+    function renderData(){
+        $(".users-table tbody").empty();
+        const startIndex = (current_page - 1) * per_page;
+        const endIndex = startIndex + per_page;
+        users = data.slice(startIndex, endIndex);
+        if(users.length == 0){
+            $(".users-table tbody").append(`
+                <tr class="">
+                    <td scope="row">No data available...</td>
+                </tr> 
+            `);
+        }else{
             users.forEach(function(user, index){
                 const status = (user.is_verified) ? `
                     <td scope="row">
@@ -173,6 +219,7 @@
                 `;
                 const userCard = (user.photo == null ) ? `
                 <td scope="row">
+                    <a href="/admin/users/${user.uuid}" class="view-user" target="_blank" style="color:inherit">
                     <div class="user-card">
                         <div class="user-avatar" style='background-color:${getRandomColor()}'>
                             <span>${getInitials(user.firstname+" "+user.lastname)}</span>
@@ -182,31 +229,39 @@
                             <div style="font-size:13px;">${user.email}</div>
                         </div>
                     </div>
+                    </a>
                 </td>
                 ` : `
-                    <td scope="row">
-                        <div class="user-card">
-                            <div class="user-avatar">
-                                <img src="${user.photo}" class="w-100 h-100">
-                            </div>
-                            <div class="">
-                                <div><b>${user.firstname+" "+user.lastname}</b></div>
-                                <div style="font-size:13px;">${user.email}</div>                       
-                            </div>
-                        </div> 
-                    </td>
+                <td scope="row">
+                    <a href="/admin/users/${user.uuid}" class="view-user" target="_blank" style="color:inherit">
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            <img src="${user.photo}" class="w-100 h-100">
+                        </div>
+                        <div class="">
+                            <div><b>${user.firstname+" "+user.lastname}</b></div>
+                            <div style="font-size:13px;">${user.email}</div>                       
+                        </div>
+                    </div> 
+                    </a>
+                </td>
                 `;
 
                 $(".users-table tbody").append(`
-                    <tr style="cursor:pointer">
-                        <td scope="row">${getIndex(results.per_page, results.current_page, index)}</td>
+                    <tr style="cursor:pointer" data-id="${user.id}">
+                        <td scope="row">${getIndex(per_page, current_page, index)}.</td>
                         ${userCard}
-                        <td scope="row">${user.phone}</td>
+                        <td scope="row"><a href="/admin/users/${user.uuid}" class="view-user" target="_blank" style="color:inherit">${user.phone}</a></td>
                         <td scope="row">${user.account.name}</td>
                         <td scope="row">${user.country != null ? user.country: "" }</td>
                         <td scope="row">
                             <a class="edit-user" data-id="${user.id}" type="button">
                                 <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                            </a>
+                        </td>
+                        <td scope="row">
+                            <a class="delete-user" data-id="${user.id}" type="button">
+                                <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" />
                             </a>
                         </td>
                         ${status}
@@ -220,20 +275,21 @@
                     </tr>  
                 `);
             })
+        }
 
-            // Enable or disable the button based on the condition
-            $(".paginate").eq(0).prop('disabled', results.current_page === 1);
-            $(".paginate").eq(1).prop('disabled', results.current_page === results.last_page);
+        // Calculate last_page
+        const last_page = data.length > 0 ? Math.ceil(data.length / per_page) : 1;
+        // Enable or disable the button based on the condition
+        $(".paginate").eq(0).prop('disabled', current_page === 1);
+        $(".paginate").eq(1).prop('disabled', current_page === last_page);
 
-            $(".paginate").eq(0).data("page", results.current_page - 1);
-            $(".paginate").eq(1).data("page", results.current_page + 1);
+        $(".paginate").eq(0).data("page", current_page - 1);
+        $(".paginate").eq(1).data("page", current_page + 1);
 
-            $(".entries").eq(0).text((results.current_page - 1) * results.per_page + 1);
-            $(".entries").eq(1).text((results.current_page - 1) * results.per_page + users.length);
-            $(".entries").eq(2).text(results.total);
-        });
+        $(".entries").eq(0).text((current_page - 1) * per_page + 1);
+        $(".entries").eq(1).text((current_page - 1) * per_page + users.length);
+        $(".entries").eq(2).text(data.length);
     }
-    getUsers(page = 1);
 
     function filterTable() {
         var filterValue = $('#filterInput').val().trim().toLowerCase();
@@ -264,16 +320,27 @@
 
     // jQuery code for filtering
     $(document).ready(function() {
-        $('#filterInput').on('input', function() {
-            filterTable();
+        $('#filterInput').on('keyup', function() {
+            //filterTable();
+            let value = $(this).val();
+            if(value == ""){
+                getUsers(`${baseUrl}/admin/get-all-customers`);
+            }else{
+                getUsers(`${baseUrl}/admin/get-all-customers?searchTerm=${value}`);
+            }
         });
 
         $('.paginate').on('click', function() {
-            let page = $(this).data("page");
-            getUsers(page);
+            current_page = $(this).data("page");
+            renderData();
+        });
+
+        $('#startDate, #endDate').on('input', function() {
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            getUsers(`${baseUrl}/admin/get-all-customers?startDate=${startDate}&endDate=${endDate}`);
         });
     });
-
 
     $(document).on("click", ".edit-user", function(event){
         event.preventDefault();
@@ -301,12 +368,67 @@
         });
     });
 
+    // Attach change event listeners to input fields and select input
+    $('#userModal input, #userModal select').change(function() {
+        // Enable the submit button
+        $('#userModal button').prop('disabled', false);
+    });
+
     $("#userModal .close").on("click", function(){
         $("#userModal").modal("hide");
     });
     $('#userModal').on('hidden.bs.modal', function (e) {
         $("#userModal").modal("hide");
     })
+
+    $(document).on("click", ".delete-user", function(event){
+        event.preventDefault();
+        const userId = $(this).data("id");
+        var $row = $(this).closest("tr");
+        //Display confirmation dialog
+        /*if(confirm("Are you sure you want to delete this entry?")){
+            //If confirmed, delete the row
+            $row.remove();  
+        }*/
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success"
+                });
+            }
+        });
+        /*const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer "+ userToken
+            }
+        };
+        axios.delete(`${baseUrl}/api/v1/user/${userId}`, config)
+        .then((res) => {
+            let users = res.data.results;
+        });*/
+    });
+
+    // Add event listener to each row
+    $(document).on("click", ".view-user", function(event){
+        // Prevent default behavior of the link
+        event.preventDefault();
+        // Get the URL from the href attribute of the clicked link
+        let url = $(this).attr("href");
+        // Open the URL in a new tab/window
+        window.open(url, "_blank");
+    });
 
     $(document).on("click", ".fund-user", function(event){
         event.preventDefault();

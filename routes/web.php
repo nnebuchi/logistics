@@ -50,8 +50,10 @@ Route::group([
     Route::get('/', [UserController::class, 'index'])->name('dashboard');
     Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
-    Route::post('/shipping/create', [UserController::class, 'showShipments']);
+    Route::post('/shipping/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
+    Route::post('/shipping/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
     Route::get('/shippings', [ShippingController::class, 'showShippings']);
+    Route::get('/shippings/{shipmentId}', [ShippingController::class, 'editShipping']);
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);
     Route::get('/logout', [AuthController::class, 'logOut']);
@@ -94,9 +96,16 @@ Route::group([
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/users', 
     [AdminDashboardController::class, 'showUsers'])->name('admin.users');
-    Route::get('/admin/rates', 
-    [AdminDashboardController::class, 'showRates'])->name('admin.rates');
+    Route::get('/admin/users/{uuid}', 
+    [AdminDashboardController::class, 'showUser'])->name('admin.user');
+    Route::get('/admin/shippings', 
+    [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
     Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
+    Route::get('/admin/accounts', [AdminDashboardController::class, 'showAccounts']);
+    Route::get('/admin/get-all-shippings', 
+    [AdminDashboardController::class, 'getAllShipment']);
+    Route::get('/admin/get-all-customers', 
+    [AdminDashboardController::class, 'getAllCustomers']);
 });

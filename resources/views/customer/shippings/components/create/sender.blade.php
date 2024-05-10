@@ -45,7 +45,7 @@
                                     <select
                                         name="country"
                                         class="custom-select">
-                                        <option value="">--Select one---</option>
+                                        <option value="">Choose one...</option>
                                         @foreach($countries as $country)
                                             <option value="{{$country->sortname}}" data-phonecode="{{$country->phonecode}}" data-id="{{$country->id}}">{{$country->name}}</option>
                                         @endforeach
@@ -57,7 +57,7 @@
                                     <select
                                         name="state"
                                         class="custom-select">
-                                        <option value="">--Select one---</option>
+                                        <option value="">Choose one...</option>
                                     </select>
                                     <span class="error"> </span>
                                 </div>
@@ -68,7 +68,7 @@
                                     <select
                                         name="city"
                                         class="custom-select">
-                                        <option value="">--Select one---</option>
+                                        <option value="">Choose one...</option>
                                     </select>
                                     <span class="error"> </span>
                                 </div>

@@ -67,6 +67,18 @@ class Logistics
         return $response;
     }
 
+    public function updateShipment($shipment_id, $payload)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->put($this->baseUrl.'shipments/'.$shipment_id, [
+                    'address_from' => $payload["address_from"],
+                    'address_to' => $payload["address_to"],
+                    'parcel' => $payload["parcel"]
+                ]);
+        return $response;
+    }
+
     public function getShipments()
     {
         $response = Http::acceptJson()
@@ -80,6 +92,39 @@ class Logistics
         $response = Http::acceptJson()
             ->withToken($this->secretKey)
                 ->get($this->baseUrl.'shipments/'.$shipment_id);
+        return $response;
+    }
+
+    public function arrangePickup($data)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->post($this->baseUrl.'shipments/pickup', [
+                    'rate_id' => $data["rate_id"]
+                    //'shipment_id' => $data["shipment_id"],
+                    //'purchase_insurance' => $data["purchase_insurance"]
+                ]);
+        return $response;
+    }
+
+    public function getRateForShipment($data)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->get($this->baseUrl.'rates/shipment', [
+                    'currency' => 'NGN',
+                    'shipment_id' => $data["shipment_id"],
+                    'pickup_address' => $data["address_from"],
+                    'delivery_address' => $data["address_to"]
+                ]);
+        return $response;
+    }
+
+    public function trackShipment($shipment_id)
+    {
+        $response = Http::acceptJson()
+            ->withToken($this->secretKey)
+                ->get($this->baseUrl.'shipments/track/'.$shipment_id);
         return $response;
     }
 

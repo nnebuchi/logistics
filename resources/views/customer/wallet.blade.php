@@ -112,9 +112,6 @@
                                                         <h6 class="fw-semibold mb-0">S/N</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Payment ID</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Amount</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
@@ -211,9 +208,6 @@
                 <tr style="background-color:${rowColors[transaction?.status]}">
                     <td class="border-bottom-0">
                         <span class="fw-normal">${index + 1}.</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal">${transaction?.reference}</span>                        
                     </td>
                     <td class="border-bottom-0">
                         <span class="fw-normal"><b>₦</b>${transaction?.amount}</span>

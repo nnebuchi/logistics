@@ -72,11 +72,11 @@
 								</a>
 							</li>
 							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/admin/rates')}}" aria-expanded="false">
+								<a class="sidebar-link" href="{{url('/admin/shippings')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
-									<span class="hide-menu">Rates</span>
+									<span class="hide-menu">Shippings</span>
 								</a>
 							</li>
 							<li class="sidebar-item">
@@ -85,6 +85,14 @@
 										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
 									</span>
 									<span class="hide-menu">Subadmins</span>
+								</a>
+							</li>
+							<li class="sidebar-item">
+								<a class="sidebar-link" href="{{url('/admin/accounts')}}" aria-expanded="false">
+									<span>
+										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+									</span>
+									<span class="hide-menu">Accounts</span>
 								</a>
 							</li>
 							<li class="sidebar-item">

@@ -1,83 +1,38 @@
-@include("customer.layouts.header")
+@include("admin.layouts.header")
         <div class="container-fluid" style="background-color:#F6F6F7;">
             <!--  Row 1 -->
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping</h5>
-                        <div class="d-flex">
-                            <a href="{{url('/shipping/create')}}" class="btn btn-primary mr-2">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
-                                Book Shipment
-                            </a>
-                            <a href="{{url('/shipping/track')}}" class="btn btn-primary">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
-                                Track Shipment
-                            </a>
-                        </div>
                     </div>
 
-                    <div class="row mt-3 justify-content-center">
-                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <span>Total Shippings</span>
-                                    <h2 class="stats"></h2>
-                                    <span class="text-sec"></span>
-                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
-                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
-                                    </div>
-                                </div>
-                                <div class=" pr-2">
-                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <span>Delivered</span>
-                                    <h2 class="stats"></h2>
-                                    <span class="text-sec"></span>
-                                    <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
-                                        <img height="120" src="{{asset('assets/images/icons/ellipse7.svg')}}">
-                                    </div>
-                                </div>
-                                <div class=" pr-2">
-                                    <img src="{{asset('assets/images/icons/wallet2.svg')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-3 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <span>In-Transit</span>
-                                    <h2 class="stats"></h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-3 mt-3" style="height:161px">
-                            <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
-                                <div class="">
-                                    <span>Cancelled</span>
-                                    <h2 class="stats"></h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row mt-5">
+                    <div class="row mt-3">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
-                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
+                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-2">
                                         <h5 class="card-title fw-semibold">All Shippings</h5>
                                         <div class="d-flex flex-wrap">
                                             
                                         </div>
                                     </div>
                                     <div class="table-responsive">
+                                        <div class="my-3 px-2" style="">
+                                            <div class="">
+                                                <input type="text"
+                                                placeholder="Search by tracking number" 
+                                                class="form-control w-auto rounded-0 p-4" id="filterInput">
+                                            </div>
+                                            <div class="d-flex mt-2 flex-wrap">
+                                                <input type="text"
+                                                placeholder="Sort by date(from)" 
+                                                class="form-control w-auto rounded-0 p-4 mr-2" id="startDate">
+                                                <input type="text"
+                                                placeholder="Sort by date(to)" 
+                                                class="form-control w-auto rounded-0 p-4" id="endDate">
+                                            </div>
+                                        </div>
                                         <table class="shipments-table table text-nowrap mb-0 align-middle">
                                             <thead class="text-dark fs-4">
                                                 <tr>
@@ -161,21 +116,23 @@
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var authToken = localStorage.getItem('token');
 
-    function getStats(stats){
-        $(".stats").eq(0).text(stats.total.toLocaleString());
-        $(".stats").eq(1).text(stats.delivered.toLocaleString());
-        $(".stats").eq(2).text(stats["in-transit"].toLocaleString());
-        $(".stats").eq(3).text(stats.cancelled.toLocaleString());
-    };
-    getStats(@json($stats));
+    flatpickr('#startDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
+
+    flatpickr('#endDate', {
+        enableTime: false,
+        dateFormat: "Y-m-d H:i"
+    });
 
     const status = {
-        draft: "custom-bg-warning",
+        pending: "custom-bg-warning",
         confirmed: "custom-bg-success",
         failed: "custom-bg-danger"
     };
@@ -192,7 +149,7 @@
     const per_page = 10;
     let current_page = 1;
     let data = [];
-    function getShipments(){
+    function getShipments(url){
         const config = {
             headers: {
                 Accept: "application/json",
@@ -201,13 +158,13 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/user/${<?=$user->id?>}/shipments`, config)
+        axios.get(url, config)
         .then((res) => {
             data = res.data.results;
             renderData();
         });
     };
-    getShipments();
+    getShipments(`${baseUrl}/admin/get-all-shippings`);
 
     function renderData(){
         $(".shipments-table tbody").empty();
@@ -267,18 +224,28 @@
             current_page = $(this).data("page");
             renderData();
         });
-        
+
+        $('#filterInput').on('keyup', function() {
+            //filterTable();
+            let value = $(this).val();
+            if(value == ""){
+                getShipments(`${baseUrl}/admin/get-all-shippings`);
+            }else{
+                getShipments(`${baseUrl}/admin/get-all-shippings?searchTerm=${value}`);
+            }
+        });
+
+        $('#startDate, #endDate').on('input', function() {
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            getShipments(`${baseUrl}/admin/get-all-shippings?startDate=${startDate}&endDate=${endDate}`);
+        });
+
         //Add shipment ID to clipboard text
         $(document).on("click", ".shipments-table tbody tr", function(event){
             event.preventDefault();
-            // Get the data-id attribute of the clicked row
-            let shipmentId = $(this).data("id");
-            // Construct the URL
-            let url = `/shippings/${shipmentId}`;
-            //window.open(url, '_blank');  // Open the URL in a new tab
-            // Redirect to the desired page with the shipment ID
-            window.location.href = url;
-            /*// Create a temporary element to hold the text to copy
+            let $id = $(this).data("id");
+            // Create a temporary element to hold the text to copy
             var $temp = $("<input>");
             // Add the $id as the value of the temporary input element
             $("body").append($temp);
@@ -288,8 +255,8 @@
             // Remove the temporary element
             $temp.remove();
             // Show a success message to the user
-            alert("ID copied to clipboard: " + $id);*/
+            alert("ID copied to clipboard: " + $id);
         });
     });
 </script>
-@include("customer.layouts.footer")
+@include("admin.layouts.footer")
