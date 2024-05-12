@@ -42,7 +42,7 @@
                     <button 
                     type="button"
                     disabled
-                    class="btn btn-primary fs-4 fw-bold">
+                    class="custom-btn fs-4 fw-bold">
                     Submit
                     <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
                     </button>

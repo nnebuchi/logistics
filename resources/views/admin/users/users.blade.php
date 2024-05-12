@@ -349,10 +349,11 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/${userId}`, config)
+        axios.get(`${baseUrl}/admin/customer/${userId}`, config)
         .then((res) => {
             let user = res.data.results;
 

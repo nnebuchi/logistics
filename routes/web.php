@@ -108,5 +108,8 @@ Route::group([
     [AdminDashboardController::class, 'getAllShipment']);
     Route::get('/admin/get-all-customers', 
     [AdminDashboardController::class, 'getAllCustomers']);
+    Route::get('/admin/customer/{userId}', [AdminDashboardController::class, 'getUserData']);
     Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
+    Route::post('/account', [AdminDashboardController::class, 'createAccount'])->name("account.create");
+    Route::post('/account/{accountId}', [AdminDashboardController::class, 'updateAccount']);
 });
