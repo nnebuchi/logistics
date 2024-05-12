@@ -115,7 +115,8 @@ class AuthService
     }
 
     public function forgotPassword($data)
-    {
+    {   
+        // You did not check if the email exists before sending password reset link
         $status = Password::sendResetLink(["email" => $data["email"]]);
         /*return $status === Password::RESET_LINK_SENT
         ? back()->with(['status' => __($status)])
