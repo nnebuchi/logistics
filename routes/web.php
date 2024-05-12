@@ -108,4 +108,5 @@ Route::group([
     [AdminDashboardController::class, 'getAllShipment']);
     Route::get('/admin/get-all-customers', 
     [AdminDashboardController::class, 'getAllCustomers']);
+    Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
 });

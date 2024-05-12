@@ -112,7 +112,6 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
 
     flatpickr('#startDate', {
         enableTime: false,
@@ -170,7 +169,8 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
         axios.get(url, config)
@@ -179,7 +179,7 @@
             renderData();
         });
     }
-    getTransactions(`${baseUrl}/api/v1/transactions`);
+    getTransactions(`${baseUrl}/admin/get-all-transactions`);
 
     function renderData(){
         $(".trx-table tbody").empty();
@@ -287,9 +287,9 @@
             //filterTable();
             let value = $(this).val();
             if(value == ""){
-                getTransactions(`${baseUrl}/api/v1/transactions`);
+                getTransactions(`${baseUrl}/admin/get-all-transactions`);
             }else{
-                getTransactions(`${baseUrl}/api/v1/transactions?searchTerm=${value}`);
+                getTransactions(`${baseUrl}/admin/get-all-transactions?searchTerm=${value}`);
             }
         });
 
@@ -301,7 +301,7 @@
         $('#startDate, #endDate').on('input', function() {
             let startDate = $("#startDate").val();
             let endDate = $("#endDate").val();
-            getTransactions(`${baseUrl}/api/v1/transactions?startDate=${startDate}&endDate=${endDate}`);
+            getTransactions(`${baseUrl}/admin/get-all-transactions?startDate=${startDate}&endDate=${endDate}`);
         });
     });
 </script>

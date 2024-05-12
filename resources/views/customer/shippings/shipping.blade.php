@@ -164,7 +164,6 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var authToken = localStorage.getItem('token');
 
     function getStats(stats){
         $(".stats").eq(0).text(stats.total.toLocaleString());
@@ -177,7 +176,9 @@
     const status = {
         draft: "custom-bg-warning",
         confirmed: "custom-bg-success",
-        failed: "custom-bg-danger"
+        delivered: "custom-bg-success",
+        "in-transit": "custom-bg-success",
+        cancelled: "custom-bg-danger"
     };
 
     function getIndex(per_page, current_page, index)
@@ -223,7 +224,7 @@
         }else{
             shipments.forEach(function(shipment, index){
                 $(".shipments-table tbody").append(`
-                    <tr style="cursor:pointer" data-id="${shipment.external_shipment_id}">
+                    <tr style="cursor:pointer" data-status="${shipment.status}" data-id="${shipment.external_shipment_id}">
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.external_shipment_id}</td>
                         <td class="">${shipment.pickup_date ?? ""}</td>
@@ -271,13 +272,16 @@
         //Add shipment ID to clipboard text
         $(document).on("click", ".shipments-table tbody tr", function(event){
             event.preventDefault();
-            // Get the data-id attribute of the clicked row
-            let shipmentId = $(this).data("id");
-            // Construct the URL
-            let url = `/shippings/${shipmentId}`;
-            //window.open(url, '_blank');  // Open the URL in a new tab
-            // Redirect to the desired page with the shipment ID
-            window.location.href = url;
+            let status = $(this).data("status");
+            if(status == "draft"){
+                // Get the data-id attribute of the clicked row
+                let shipmentId = $(this).data("id");
+                // Construct the URL
+                let url = `/shippings/${shipmentId}`;
+                //window.open(url, '_blank');  // Open the URL in a new tab
+                // Redirect to the desired page with the shipment ID
+                window.location.href = url;
+            }
             /*// Create a temporary element to hold the text to copy
             var $temp = $("<input>");
             // Add the $id as the value of the temporary input element

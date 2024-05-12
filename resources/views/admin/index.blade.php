@@ -121,29 +121,18 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
 
-    function fetchStats(){
-        const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
-            }
-        };
-        axios.get(`${baseUrl}/api/v1/statistics`, config)
-        .then((res) => {
-            let results = res.data.results;
-            $(".stats").eq(0).text(results?.customers_count);
-            $(".stats").eq(1).text(results?.customers_last_week[0]);
-            $(".stats").eq(2).text("₦"+parseInt(results?.transactions_cost_last_week[0]).toLocaleString());
-            $(".stats").eq(3).text("₦"+parseInt(results?.transactions_cost_last_month[0]).toLocaleString());
-            $(".stat-percent").eq(0).text("+"+results?.customers_last_week[1].toFixed(0)+"%").css("color", "#128807");
-            $(".stat-percent").eq(1).text("+"+results?.transactions_cost_last_week[1].toFixed(0)+"%").css("color", "#128807");
-            $(".stat-percent").eq(2).text("+"+results?.transactions_cost_last_month[1].toFixed(0)+"%").css("color", "#128807");
-        });
+    function getStats(statistics){
+        let results = statistics;
+        $(".stats").eq(0).text(results?.customers_count);
+        $(".stats").eq(1).text(results?.customers_last_week[0]);
+        $(".stats").eq(2).text("₦"+parseInt(results?.transactions_cost_last_week[0]).toLocaleString());
+        $(".stats").eq(3).text("₦"+parseInt(results?.transactions_cost_last_month[0]).toLocaleString());
+        $(".stat-percent").eq(0).text("+"+results?.customers_last_week[1].toFixed(0)+"%").css("color", "#128807");
+        $(".stat-percent").eq(1).text("+"+results?.transactions_cost_last_week[1].toFixed(0)+"%").css("color", "#128807");
+        $(".stat-percent").eq(2).text("+"+results?.transactions_cost_last_month[1].toFixed(0)+"%").css("color", "#128807");
     };
-    fetchStats();
+    getStats(@json($statistics));
 
     $("#broadcastModal #searchUser").on("keyup", function() {
         var searchTerm = $(this).val().toLowerCase();
@@ -169,17 +158,18 @@
         }
     });
 
-    function fetchAllCustomers(){
+    function getCustomers(){
         const config = {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/users`, config)
+        axios.get(`${baseUrl}/admin/get-all-customers`, config)
         .then((res) => {
-            let users = res.data.results.data;
+            let users = res.data.results;
             users.forEach(function(user, index){
                 $("select[name='recipient']").append(`
                     <option value=${user.id} data-email=${user.email}>${user.firstname+" "+user.lastname}</option>
@@ -187,7 +177,7 @@
             });
         });
     };
-    fetchAllCustomers();
+    getCustomers();
 
     const status = {
         pending: "custom-bg-warning",
@@ -219,7 +209,7 @@
         return initials;
     }
 
-    function fetchAllTransactions(data){
+    function getTransactions(data){
         let transactions = data.slice(0, 5);
 
         $(".transactions-table tbody").empty();
@@ -265,7 +255,7 @@
             `);
         })
     };
-    fetchAllTransactions(@json($transactions));
+    getTransactions(@json($transactions));
 
     $("#send").on("click", function(event){
         event.preventDefault();

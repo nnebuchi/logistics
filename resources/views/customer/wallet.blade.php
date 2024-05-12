@@ -15,7 +15,7 @@
                                     <div class="mb-2 reload-wallet" type="button" data-type="balance">
                                         <img src="{{asset('assets/images/icons/reload.svg')}}">
                                     </div>
-                                    <span>Curent Wallet Balance</span>
+                                    <span>Current Wallet Balance</span>
                                     <h2 class="balance"></h2>
                                     <span class="text-sec"></span>
                                     <div class="position-absolute d-flex align-items-center" style="top:0;right:0;height:100%">
@@ -41,6 +41,30 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--<div class="mt-5 px-2" style="">
+                        <div class="d-flex">
+                            <select name="status" id="filterInput"
+                                class="form-control w-auto rounded-0 bg-white mr-2" style="height:50px">
+                                <option value="Debit">Debit</option>
+                                <option value="Credit">Credit</option>
+                            </select>
+                            <select name="status" id="filterInput"
+                                class="form-control w-auto rounded-0 bg-white" style="height:50px">
+                                <option value="Pending">Pending</option>
+                                <option value="Successful">Successful</option>
+                                <option value="Failed">Failed</option>
+                            </select>
+                        </div>
+                        <div class="d-flex mt-2 flex-wrap">
+                            <input type="text"
+                            placeholder="Sort by date(from)" 
+                            class="form-control w-auto rounded-0 p-4 mr-2 bg-white" id="startDate">
+                            <input type="text"
+                            placeholder="Sort by date(to)" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="endDate">
+                        </div>
+                    </div>-->
 
                     <div class="row mt-5">
                         <div class="col-12 d-flex align-items-stretch">
@@ -138,8 +162,40 @@
                         </div>
                     </div>
 
+                    <div class="d-flex justify-content-center mt-2">
+                        <div class="mr-3">
+                            <button 
+                            type="button"
+                            disabled
+                            data-page=""
+                            class="btn btn-light fs-4 fw-bold paginate">
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
+                            Previous
+                            </button>
+                        </div>
+                        <div class="">
+                            <button 
+                            type="button"
+                            data-page=""
+                            class="custom-btn fs-4 fw-bold paginate">
+                            Next
+                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <!--  Pagination Starts -->
+                    <div class="my-2 pl-2">
+                        Showing
+                        <span class="entries fw-semibold">. </span> to
+                        <span class="entries fw-semibold">. </span> of
+                        <span class="entries fw-semibold">. </span>
+                        shipments
+                    </div>
+                    <!--  Pagination Ends -->
+
+
+
                     @include('customer.modals.payment-modal')
-                    @include('customer.modals.change-password-modal')
                 </div>
             </div>
             <!--  End of Row 1 -->
@@ -160,7 +216,6 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
 
     flatpickr('#startDate', {
         enableTime: false,
@@ -187,7 +242,7 @@
             console.log(data);
             $(".balance").eq(0).text("₦"+parseInt(data.wallet?.balance).toLocaleString());
             $(".balance").eq(0).next("span.text-sec").text("Last updated: "+data?.wallet.updated_at);
-            fetchAllTransactions(data?.transactions);
+            getTransactions(data?.transactions);
         });
     };
     fetchWallet();
@@ -198,39 +253,71 @@
         failed: "custom-bg-danger"
     };
 
-    const rowColors = {failed: "#ffffff", success: "#233E830D", pending: "#ffffff"};
+    function getIndex(per_page, current_page, index)
+    {
+        if(current_page == 1){
+            return index + 1
+        }else{
+            return (per_page * current_page) - per_page + 1 + index
+        }
+    }
 
-    function fetchAllTransactions(transactions){
-        //let transactions = data.slice(0, 10);
-        $(".transactions-table tbody").empty();
-        transactions.forEach(function(transaction, index){
-            $(".transactions-table tbody").append(`
-                <tr style="background-color:${rowColors[transaction?.status]}">
-                    <td class="border-bottom-0">
-                        <span class="fw-normal">${index + 1}.</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal"><b>₦</b>${transaction?.amount}</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal">${transaction?.created_at}</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal">${transaction?.purpose}</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="fw-normal">${transaction?.type}</span>
-                    </td>
-                    <td class="border-bottom-0">
-                        <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
-                            ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                        </span>
-                    </td>
-                </tr> 
-            `);
-        })
+    const per_page = 4;
+    let current_page = 1;
+    let data = [];
+    function getTransactions(transactions){
+        data = transactions;
+        renderData();
     };
 
+    function renderData(){
+        $(".transactions-table tbody").empty();
+        const startIndex = (current_page - 1) * per_page;
+        const endIndex = startIndex + per_page;
+        transactions = data.slice(startIndex, endIndex);
+        if(transactions.length == 0){
+            $(".transactions-table tbody").append(`
+                <tr class="">
+                    <td scope="row">No data available...</td>
+                </tr> 
+            `);
+        }else{
+            transactions.forEach(function(transaction, index){
+                $(".transactions-table tbody").append(`
+                    <tr style="cursor:pointer">
+                        <td scope="row">${getIndex(per_page, current_page, index)}.</td>
+                        <td scope="row"><b>₦</b>${transaction?.amount}</td>
+                        <td scope="row">${transaction?.created_at}</td>
+                        <td scope="row">${transaction?.purpose}</td>
+                        <td scope="row">${transaction?.type}</td>
+                        <td scope="row">
+                            <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
+                                ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                            </span>
+                        </td>
+                    </tr> 
+                `);
+            })
+        }
+
+        // Calculate last_page
+        const last_page = data.length > 0 ? Math.ceil(data.length / per_page) : 1;
+        // Enable or disable the button based on the condition
+        $(".paginate").eq(0).prop('disabled', current_page === 1);
+        $(".paginate").eq(1).prop('disabled', current_page === last_page);
+
+        $(".paginate").eq(0).data("page", current_page - 1);
+        $(".paginate").eq(1).data("page", current_page + 1);
+
+        $(".entries").eq(0).text((current_page - 1) * per_page + 1);
+        $(".entries").eq(1).text((current_page - 1) * per_page + transactions.length);
+        $(".entries").eq(2).text(data.length);
+    }
+
+    $('.paginate').on('click', function() {
+        current_page = $(this).data("page");
+        renderData();
+    });
 
     $(".reload-wallet").on("click", function(event){
         event.preventDefault();
@@ -305,7 +392,6 @@
         document.body.classList.remove('modal-open');
         $('.modal-backdrop').remove();  // Remove the backdrop
     }
-
 </script>
 <script>
     $('#paymentForm #amount').on('input', function() {
@@ -353,8 +439,7 @@
         axios.get(url, config)
         .then((res) => {
             let transactions = res.data.results;
-            console.log(transactions);
-            fetchAllTransactions(transactions);
+            getTransactions(transactions);
         });
     }
 
@@ -370,12 +455,5 @@
         event.preventDefault(); // Prevent the default action of the button
         $(this).next('.dropdown-menu').toggle(); // Toggle the submenu
     });
-
-    // Close the main dropdown when a submenu item is clicked
-    /*$('.dropdown-submenu .dropdown-item').on('click', function(e) {
-        var $parentDropdown = $(this).closest('.dropdown');
-        $parentDropdown.removeClass('show'); // Close the main dropdown
-        $(this).next('.dropdown-menu').toggle(); // Toggle the submenu
-    });*/
 </script>
 @include("customer.layouts.footer")

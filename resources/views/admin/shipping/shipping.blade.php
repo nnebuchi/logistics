@@ -132,9 +132,11 @@
     });
 
     const status = {
-        pending: "custom-bg-warning",
+        draft: "custom-bg-warning",
         confirmed: "custom-bg-success",
-        failed: "custom-bg-danger"
+        delivered: "custom-bg-success",
+        "in-transit": "custom-bg-success",
+        cancelled: "custom-bg-danger"
     };
 
     function getIndex(per_page, current_page, index)
