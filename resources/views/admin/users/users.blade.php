@@ -416,7 +416,7 @@
                     //$row.remove();  
                     Swal.fire({
                         title: "Deleted!",
-                        text: "Your file has been deleted.",
+                        text: "Customer has been deleted.",
                         icon: "success"
                     });
                 });
