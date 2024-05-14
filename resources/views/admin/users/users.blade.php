@@ -401,24 +401,27 @@
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success"
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                };
+                axios.delete(`${baseUrl}/admin/customer/${userId}`, config)
+                .then((res) => {
+                    data = res.data.results;
+                    renderData();
+                    //$row.remove();  
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success"
+                    });
                 });
             }
         });
-        /*const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
-            }
-        };
-        axios.delete(`${baseUrl}/api/v1/user/${userId}`, config)
-        .then((res) => {
-            let users = res.data.results;
-        });*/
     });
 
     // Add event listener to each row

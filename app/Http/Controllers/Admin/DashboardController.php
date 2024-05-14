@@ -149,8 +149,13 @@ class DashboardController extends Controller
         return view('admin.admins', compact('user', 'admins', 'roles'));
     }
 
-    public function deleteUser($userId){
-        return $user = User::find($userId);
+    public function deleteCustomer($userId){
+        $user = User::find($userId);
+        $user->delete();
+
+        $users = User::orderByDesc("created_at")->get();
+        
+        return ResponseFormatter::success("users:", $users, 200);
     }
 
     public function getAllShipment(Request $request){

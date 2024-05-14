@@ -95,25 +95,31 @@ Route::group([
     Route::get('/admin/logout', [AdminAuthController::class, 'logOut']);
 
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::get('/admin/users', 
     [AdminDashboardController::class, 'showUsers'])->name('admin.users');
     Route::get('/admin/users/{uuid}', 
     [AdminDashboardController::class, 'showUser'])->name('admin.user');
+
     Route::get('/admin/shippings', 
     [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
-    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
+    Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
+
     Route::get('/admin/accounts', [AdminDashboardController::class, 'showAccounts']);
     Route::get('/admin/get-all-shippings', 
     [AdminDashboardController::class, 'getAllShipment']);
+
     Route::get('/admin/get-all-customers', 
     [AdminDashboardController::class, 'getAllCustomers']);
     Route::get('/admin/customer/{userId}', [AdminDashboardController::class, 'getUserData']);
-    Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
+    Route::delete('/admin/customer/{userId}', [AdminDashboardController::class, 'deleteCustomer']);
+
     Route::post('/account', [AdminDashboardController::class, 'createAccount'])->name("account.create");
     Route::post('/account/{accountId}', [AdminDashboardController::class, 'updateAccount']);
 
+    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
     Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
     Route::post('/admin', [AdminController::class, 'createAdmin'])->name("subadmin.create");
     Route::post('/admin/{adminId}', [AdminController::class, 'updateAdmin']);
