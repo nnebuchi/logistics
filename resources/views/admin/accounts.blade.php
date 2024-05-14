@@ -43,13 +43,15 @@
                                 <div class="card-body" style="">
                                     <form action="<?=route('account.create')?>" method="POST" id="createAccountForm">
                                         <div class="mt-2">
+                                            <label for="" class="fw-semibold">Name</label>
                                             <input type="text" name="name"
                                             placeholder="name" class="w-100 custom-input rounded-0">
                                             <span class="error"> </span>
                                         </div>
                                         <div class="mt-2">
+                                            <label for="" class="fw-semibold"> Percent</label>
                                             <input type="number" name="price"
-                                            placeholder="price" class="w-100 custom-input rounded-0">
+                                            placeholder="percent" class="w-100 custom-input rounded-0">
                                             <span class="error"> </span>
                                         </div>
                                         <div class="d-flex justify-content-center mt-3">
@@ -78,13 +80,15 @@
                                 <div class="modal-body">
                                     <form action="<?=route('account.create')?>" method="POST">
                                         <div class="">
+                                            <label for="" class="fw-semibold">Name</label>
                                             <input type="text" id="name"
                                             placeholder="name" class="w-100 form-control rounded-0">
                                             <span class="error"> </span>
                                         </div>
                                         <input type="hidden" id="id"
                                         placeholder="price" class="w-100 form-control rounded-0">
-                                        <div class="mt-2">
+                                        <div class="mt-3">
+                                            <label for="" class="fw-semibold">Percent</label>
                                             <input type="number" id="price"
                                             placeholder="price" class="w-100 form-control rounded-0">
                                             <span class="error"> </span>
@@ -126,20 +130,28 @@
 
     function getAccounts(accounts){
         $(".accounts-table tbody").empty();
-        accounts.forEach(function(account, index){
+        if(accounts.length == 0){
             $(".accounts-table tbody").append(`
-                <tr style="">
-                    <td scope="row">${index + 1}</td>
-                    <td scope="row">${account.name}</td>
-                    <td scope="row">${account.markup_price}%</td>
-                    <td scope="row">
-                        <a class="edit-account m-0 p-0" data-id="${account.id}" data-name="${account.name}" data-price="${account.markup_price}" type="button">
-                            <img width="20" height="20" src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                        </a>
-                    </td>
-                </tr>  
+                <tr class="">
+                    <td scope="row">No data available...</td>
+                </tr> 
             `);
-        })
+        }else{
+            accounts.forEach(function(account, index){
+                $(".accounts-table tbody").append(`
+                    <tr style="">
+                        <td scope="row">${index + 1}</td>
+                        <td scope="row">${account.name}</td>
+                        <td scope="row">${account.markup_price}%</td>
+                        <td scope="row">
+                            <a class="edit-account m-0 p-0" data-id="${account.id}" data-name="${account.name}" data-price="${account.markup_price}" type="button">
+                                <img width="20" height="20" src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                            </a>
+                        </td>
+                    </tr>  
+                `);
+            })
+        }
     }
     getAccounts(@json($accounts));
 
@@ -212,6 +224,8 @@
             let message = response.data.message;
             //msg.css("color", "green").text(message);
             btn.attr("disabled", false).text("Submit");
+            console.log(response.data.results);
+            getAccounts(response.data.results);
         }).catch(function(error){
             let errors = error.response.data.error;
             if(errors.name){

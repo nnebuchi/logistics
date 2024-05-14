@@ -10,10 +10,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Role;
 
 class Admin extends Authenticatable implements CanResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles;
 
     protected $guard = "admin";
 
@@ -75,5 +78,4 @@ class Admin extends Authenticatable implements CanResetPassword
             set: fn ($value) => strtolower($value),
         );
     }
-
 }

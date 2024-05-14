@@ -12,6 +12,8 @@ use App\Models\Transaction;
 use App\Util\Helper;
 use Illuminate\Support\Facades\Auth;
 use App\Util\ResponseFormatter;
+use App\Http\Requests\CreateAccount;
+use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
@@ -66,6 +68,7 @@ class DashboardController extends Controller
     public function getAdminData(Request $request, $userId)
     {
         $user = Admin::find($userId);
+        $roles = $user->getRoleNames(); // Returns a collection
         
         return ResponseFormatter::success(
             "User Data:", 
@@ -139,9 +142,11 @@ class DashboardController extends Controller
     public function showAdmins()
     {
         $user = Admin::find(Auth::user()->id);
+        $roles = $user->getRoleNames(); // Returns a collection
         $admins = Admin::orderByDesc("created_at")->get(); 
+        $roles = Role::all();
         
-        return view('admin.admins', compact('user', 'admins'));
+        return view('admin.admins', compact('user', 'admins', 'roles'));
     }
 
     public function deleteUser($userId){
@@ -226,5 +231,28 @@ class DashboardController extends Controller
 
         return ResponseFormatter::success("users:", $users, 200);
     }
+
+    public function createAccount(CreateAccount $request){
+        $account = new Account();
+        $account->name = $request->name;
+        $account->markup_price = $request->price;
+        $account->save();
+
+        $accounts = Account::all();
+
+        return ResponseFormatter::success("account:", $accounts, 200);
+    }
+
+    public function updateAccount(CreateAccount $request, $accountId){
+        $account = Account::find($accountId);
+        $account->name = $request->name;
+        $account->markup_price = $request->price;
+        $account->save();
+
+        $accounts = Account::all();
+
+        return ResponseFormatter::success("account:", $accounts, 200);
+    }
+
 
 }

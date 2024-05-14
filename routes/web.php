@@ -10,6 +10,7 @@ use App\Http\Controllers\User\TransactionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\AdminController;
 
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/reset-password/{email}/{token}', [AuthController::class, 'showPasswordResetForm'])->name('password.reset');
@@ -112,4 +113,8 @@ Route::group([
     Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
     Route::post('/account', [AdminDashboardController::class, 'createAccount'])->name("account.create");
     Route::post('/account/{accountId}', [AdminDashboardController::class, 'updateAccount']);
+
+    Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
+    Route::post('/admin', [AdminController::class, 'createAdmin'])->name("subadmin.create");
+    Route::post('/admin/{adminId}', [AdminController::class, 'updateAdmin']);
 });
