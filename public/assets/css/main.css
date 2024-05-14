@@ -15660,10 +15660,10 @@ textarea.form-control-lg{
     border-right:1px solid rgb(229,234,239)
 }
 .left-sidebar .scroll-sidebar{
-    overflow-y:auto;
-    padding:0 24px;
-    height:calc(100vh - 80px);
-    border-radius:7px
+    overflow-y: auto;
+    padding: 0 0 0 24px;
+    height: calc(100vh - 80px);
+    border-radius: 7px;
 }
 .left-sidebar .scroll-sidebar .simplebar-track.simplebar-horizontal{
     visibility:hidden!important
@@ -15706,10 +15706,12 @@ textarea.form-control-lg{
     position:relative;
     margin:0px 0px 2px;
     padding:10px;
-    border-radius:7px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
     gap:15px;
-    font-weight:400;
+    font-weight: 500;
     text-decoration:none;
+    font-family: "Red Hat Display", sans-serif;
 }
 .sidebar-nav ul .sidebar-item .sidebar-link span:first-child{
     display:-webkit-box;
