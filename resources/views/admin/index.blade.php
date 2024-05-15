@@ -76,7 +76,7 @@
                                         <span class="card-title fw-semibold">Total Transactions</span>
                                         <h3 class="fw-semibold text-primary" id="chart-transactions"></h3>
                                       </div>
-                                      <div>
+                                      <!--<div>
                                         <select class="form-select" name="month">
                                             <option value="0">January</option>
                                             <option value="1">February</option>
@@ -91,7 +91,7 @@
                                             <option value="10">November</option>
                                             <option value="11">December</option>
                                         </select>
-                                      </div>
+                                      </div>-->
                                     </div>
                                     <div id="chart"></div>
                                 </div>
@@ -185,8 +185,6 @@
         failed: "custom-bg-danger"
     };
 
-    const rowColors = {failed: "#ffffff", pending: "#233E830D", success: "#ffffff"};
-
     function getRandomColor(){
         const r = Math.floor(Math.random() * 256);
         const g = Math.floor(Math.random() * 256);
@@ -242,7 +240,7 @@
             `;
 
             $(".transactions-table tbody").append(`
-                <tr style="background-color:${rowColors[transaction.status]}">
+                <tr>
                     ${userCard}
                     <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
                     <td scope="row">${transaction.created_at}</td>
@@ -313,5 +311,90 @@
 
         $("#broadcastModal input[name='email']").val(email); 
     });
+
+    var chart = {
+        series: [],
+        title: {text: "Total Revenues"},
+        noData: {text: "Loading..."},
+        chart: {
+            type: "line",
+            height: 345,
+            foreColor: "#adb0bb",
+            fontFamily: 'inherit',
+            offsetX: -15
+        },
+        colors: ["#d8383e"],
+        fill: {
+            colors: ["#000"],
+            type: "gradient",
+            gradient: {
+                shapeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100],
+                inverseColors: false,
+                shade: "dark",
+                type: "vertical"
+            }
+        },
+        grid: {
+            borderColor: "rgba(0,0,0,0.1)",
+            strokeDashArray: 3,
+            xaxis: {
+                lines: {
+                   show: true
+                },
+            },
+        },
+        xaxis: {
+            type: "category",
+            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            labels: {
+                style: { cssClass: "grey--text lighten-2--text fill-color" },
+            },
+        },
+        yaxis: {
+            show: true,
+            min: 0,
+            // max: 400,
+            tickAmount: 4,
+            labels: {
+                style: {
+                   cssClass: "grey--text lighten-2--text fill-color",
+                },
+                formatter: function(value){
+                    return "₦"+value;
+                }
+            }
+        },
+        stroke: {
+            show: true,
+            curve: "smooth",
+            width: 3,
+            lineCap: "butt"
+        }
+    };
+    var chart = new ApexCharts(document.querySelector("#chart"), chart);
+    chart.render();
+
+    function fetchChartData(){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
+        axios.get(`${baseUrl}/get-chart-data`, config)
+        .then((res) => {
+            let revenues = res.data.results;
+            chart.updateSeries([{ 
+                name: "Transactions", 
+                data: revenues
+            }]);
+        });
+    }
+    fetchChartData();
 </script>
 @include("admin.layouts.footer")

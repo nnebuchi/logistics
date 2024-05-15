@@ -32,7 +32,7 @@ class VerifyAccountMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Dinma - Confirm your email address',
+            subject: 'Ziga Afrika - Confirm your email address',
         );
     }
 

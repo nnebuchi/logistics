@@ -10,10 +10,11 @@ use App\Models\Account;
 use App\Models\Shipment;
 use App\Models\Transaction;
 use App\Util\Helper;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{DB, Auth};
 use App\Util\ResponseFormatter;
 use App\Http\Requests\CreateAccount;
 use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -259,5 +260,29 @@ class DashboardController extends Controller
         return ResponseFormatter::success("account:", $accounts, 200);
     }
 
+    public function getChartData()
+    {
+        $desiredYear = Carbon::now()->year;
+        $desiredMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        $chartData = [];
+
+        foreach ($desiredMonths as $month) {
+            $startDate = Carbon::create($desiredYear, $month, 1);
+            $endDate = Carbon::create($desiredYear, $month, 1)->addMonth();
+
+            $revenue = DB::table('transactions')
+            ->where("status", "success")
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+            if($revenue === null):
+                $chartData[] = 0;
+            else:
+                $chartData[] = $revenue;
+            endif;
+        }
+
+        return ResponseFormatter::success("Chart Data:", $chartData, 200);
+    }
 
 }

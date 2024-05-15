@@ -28,7 +28,7 @@
                         <div class="row justify-content-center">
                             <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
                                 <h4 style="font-weight:700">Enter New Password</h4>
-                                <form id="reset-pwd" action="{{url('/reset-password')}}" method="POST">
+                                <form id="reset-pwd" action="{{url('/admin/reset-password')}}" method="POST">
                                     @csrf
                                     <p class="message text-center"></p>
                                     <div class="mb-3">
@@ -156,8 +156,7 @@
                 title: message
             });
         }
-    </script>
-    <script>
+
         $(document).ready(function () {
             $(".show-hide").click(function (event) {
                 let icon = $(this);

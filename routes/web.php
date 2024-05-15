@@ -83,8 +83,12 @@ Route::group([
     'middleware' => 'guest:admin'
 ], function () {
     Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name("admin.login");
+    Route::get('/admin/reset-password/{email}/{token}', [AdminAuthController::class, 'showPasswordResetForm']);
+    Route::get('/admin/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm']);
 });
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
+Route::post('/admin/forgot-password', [AdminAuthController::class, 'forgotPassword']);
+Route::post('/admin/reset-password', [AdminAuthController::class, 'resetPassword']);
 
 Route::group([
     'middleware' => [
@@ -123,4 +127,6 @@ Route::group([
     Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
     Route::post('/admin', [AdminController::class, 'createAdmin'])->name("subadmin.create");
     Route::post('/admin/{adminId}', [AdminController::class, 'updateAdmin']);
+
+    Route::get('/get-chart-data', [AdminDashboardController::class, 'getChartData']);
 });

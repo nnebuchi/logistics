@@ -50,7 +50,7 @@ class Admin extends Authenticatable implements CanResetPassword
     */
     public function sendPasswordResetNotification($token): void
     {
-        $url = env("APP_URL")."/reset-password/".$this->email."/".$token;
+        $url = env("APP_URL")."/admin/reset-password/".$this->email."/".$token;
 
         $this->notify(new ResetPasswordNotification($url));
     }

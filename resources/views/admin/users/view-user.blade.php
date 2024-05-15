@@ -155,6 +155,12 @@
                         </div>
                     </div>
 
+                    <?php if(!$customer->is_verified):?>    
+                        <div class="mt-2">
+                            <button class="custom-btn" type="button">Verify User</button>
+                        </div>
+                    <?php endif; ?>
+
                     
                 </div>
             </div>
