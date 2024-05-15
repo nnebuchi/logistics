@@ -50,6 +50,7 @@ Route::group([
 ], function () {
     Route::get('/', [UserController::class, 'index'])->name('dashboard');
     Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
+    Route::get('/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
     Route::post('/shipping/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
     Route::post('/shipping/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');

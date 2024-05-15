@@ -70,7 +70,7 @@
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
-                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
+                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-0">
                                         <h5 class="card-title fw-semibold">Recent Shippings</h5>
                                         <div class="d-flex flex-wrap">
                                             <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="today">
