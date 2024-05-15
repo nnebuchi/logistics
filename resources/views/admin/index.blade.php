@@ -10,7 +10,7 @@
                                 <img src="{{asset('assets/images/icons/broadcast-light.svg')}}">
                                 Send Broadcast
                             </button>
-                            <a href="{{url('/users')}}" class="btn btn-primary rounded-0">
+                            <a href="{{url('/admin/users')}}" class="btn btn-primary rounded-0">
                                 <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
                                 Customers
                             </a>
