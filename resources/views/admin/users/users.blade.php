@@ -210,7 +210,7 @@
             users.forEach(function(user, index){
                 const status = (user.is_verified) ? `
                     <td scope="row">
-                        <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="20" height="20" />
+                        <img src="{{asset('assets/images/icons/auth/success-icon.png')}}" width="25" height="25" />
                     </td>
                 ` : `
                     <td scope="row">
