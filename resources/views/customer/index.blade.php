@@ -17,6 +17,16 @@
                         </div>
                     </div>
 
+                    @auth
+                        <div class="mt-2">
+                            @if(session('admin_id'))
+                                <a href="{{ route('impersonate.leave') }}" class="btn btn-primary">
+                                    Leave Impersonation
+                                </a>
+                            @endif
+                        </div>
+                    @endauth
+
                     <div class="row mt-3">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">

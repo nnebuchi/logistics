@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ImpersonateController;
 
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/reset-password/{email}/{token}', [AuthController::class, 'showPasswordResetForm'])->name('password.reset');
@@ -77,6 +78,8 @@ Route::group([
         Route::get('/{userId}/notifications', [UserController::class, 'fetchNotifications']);
          //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
     });
+
+    Route::get('impersonate/leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });
 
 Route::group([
@@ -130,4 +133,10 @@ Route::group([
     Route::post('/admin/{adminId}', [AdminController::class, 'updateAdmin']);
 
     Route::get('/get-chart-data', [AdminDashboardController::class, 'getChartData']);
+
+    Route::get('impersonate/{user_id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+});
+
+Route::group(['middleware' => ['auth']], function() {
+    
 });

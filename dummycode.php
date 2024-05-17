@@ -291,3 +291,7 @@ if (Object.keys(errors).length === 0) {
                     console.log('CSS radio button is selected.');
                 }
             }*/
+
+            <a class="" data-id="${user.id}" type="button" href="${impersonateBaseUrl.replace(':id', user.id)}">
+                                Impersonate
+                            </a>

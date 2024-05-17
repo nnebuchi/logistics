@@ -247,6 +247,7 @@
                 </td>
                 `;
 
+                var impersonateBaseUrl = "{{ route('impersonate', ':id') }}";
                 $(".users-table tbody").append(`
                     <tr style="cursor:pointer" data-id="${user.id}">
                         <td scope="row">${getIndex(per_page, current_page, index)}.</td>
@@ -271,7 +272,11 @@
                             class="btn btn-light fund-user" type="button">Fund
                             </button>
                         </td>
-                        <td scope="row">...</td>
+                        <td scope="row">
+                            <a class="btn btn-light" data-id="${user.id}" type="button" href="${impersonateBaseUrl.replace(':id', user.id)}">
+                                Login
+                            </a>
+                        </td>
                     </tr>  
                 `);
             })
