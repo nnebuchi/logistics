@@ -262,7 +262,7 @@
         }
     }
 
-    const per_page = 4;
+    const per_page = 10;
     let current_page = 1;
     let data = [];
     function getTransactions(transactions){
