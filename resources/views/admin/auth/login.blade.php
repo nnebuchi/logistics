@@ -74,7 +74,7 @@
                                             </label>
                                         </div>
                                         <a class="custom-text-secondary" 
-                                        href="{{url('/forgot-password')}}" style="font-weight: 600">Forgot Password ?</a>
+                                        href="{{url('/admin/forgot-password')}}" style="font-weight: 600">Forgot Password ?</a>
                                     </div>
 
                                     <div class="d-flex justify-content-center mt-4">
@@ -84,7 +84,6 @@
                                         Log In <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
                                     </div>
-                                    <h5 style="font-size:14px;" class="mt-2 text-center">Don't have an account? <a href="{{url('/register')}}" class="custom-text-secondary fw-bold">Sign Up</a></h5>
                                 </form>
                             </div>
                         </div>

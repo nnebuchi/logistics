@@ -28,7 +28,7 @@
                         <div class="row justify-content-center">
                             <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
                                 <h4 style="font-weight:700">Reset Password</h4>
-                                <form id="forgot-pwd" action="{{url('/forgot-password')}}" method="POST">
+                                <form id="forgot-pwd" action="{{url('/admin/forgot-password')}}" method="POST">
                                     @csrf
                                     <p class="message text-center"></p>
                                     <div class="">
@@ -52,7 +52,7 @@
                                         Submit <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
                                     </div>
-                                    <h5 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary fw-bold">Login</a></h5>
+                                    <h5 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/admin/login')}}" class="custom-text-secondary fw-bold">Login</a></h5>
                                 </form>
                             </div>
                         </div>

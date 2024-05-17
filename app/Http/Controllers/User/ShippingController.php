@@ -412,6 +412,13 @@ class ShippingController extends Controller
         $user = User::find(Auth::user()->id);
 
         $shipment = $this->logistics->trackShipment($shipmentId);
+        $shipment = json_decode($shipment);
+        $shipment = $shipment->data;
+
+        $getShipping = Shipment::where("external_shipment_id", $shipmentId)->first();
+        $shipment->items = $getShipping->items;
+
+        return ResponseFormatter::success("Shipment fetched successfully:", $shipment, 200);
     }
 
 }

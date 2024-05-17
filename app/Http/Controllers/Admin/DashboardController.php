@@ -10,8 +10,11 @@ use App\Models\Account;
 use App\Models\Shipment;
 use App\Models\Transaction;
 use App\Util\Helper;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{DB, Auth};
 use App\Util\ResponseFormatter;
+use App\Http\Requests\CreateAccount;
+use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -19,8 +22,14 @@ class DashboardController extends Controller
     {
         $user = Admin::find(Auth::user()->id);
         $transactions = Transaction::with(["wallet.user"])->orderByDesc("created_at")->get();
+        $statistics = [
+            "customers_count" => User::count(),
+            "customers_last_week" => Helper::getNewUsersLast7Days(),
+            "transactions_cost_last_week" => Helper::fetchTransactionsCostInPastWeek(),
+            "transactions_cost_last_month" => Helper::fetchTransactionsCostInPastMonth()
+        ];
         
-        return view('admin.index', compact('user', 'transactions'));
+        return view('admin.index', compact('user', 'transactions', 'statistics'));
     }
 
     public function showUsers()
@@ -47,30 +56,6 @@ class DashboardController extends Controller
         return view('admin.users.view-user', compact('user', 'customer'));
     }
 
-    public function getUsers(Request $request)
-    {
-        // Check if perPage and page parameters are present in the request
-        if(!$request->has("perPage") && !$request->has("page")) {
-            // Fetch all users without pagination
-            $users = User::orderBy("firstname")->get();
-            
-            return ResponseFormatter::success("Users:", ["data" => $users]);
-        }
-    
-        $perPage =  $request->query("perPage", 5); // Default per page is 10
-        $page = $request->query("page", 1); // Default page is 1
-
-        $query = User::orderByDesc("created_at");
-
-        // Get filtered transactions
-        $users = $query->paginate($perPage, ["*"], "page", $page);
-        
-        return ResponseFormatter::success(
-            "Users:", 
-            $users
-        );
-    }
-
     public function getUserData(Request $request, $userId)
     {
         $user = User::find($userId);
@@ -84,6 +69,7 @@ class DashboardController extends Controller
     public function getAdminData(Request $request, $userId)
     {
         $user = Admin::find($userId);
+        $roles = $user->getRoleNames(); // Returns a collection
         
         return ResponseFormatter::success(
             "User Data:", 
@@ -157,28 +143,20 @@ class DashboardController extends Controller
     public function showAdmins()
     {
         $user = Admin::find(Auth::user()->id);
+        $roles = $user->getRoleNames(); // Returns a collection
         $admins = Admin::orderByDesc("created_at")->get(); 
+        $roles = Role::all();
         
-        return view('admin.admins', compact('user', 'admins'));
+        return view('admin.admins', compact('user', 'admins', 'roles'));
     }
 
-    public function fetchStatistics()
-    {
-        $data = [
-            "customers_count" => User::count(),
-            "customers_last_week" => Helper::getNewUsersLast7Days(),
-            "transactions_cost_last_week" => Helper::fetchTransactionsCostInPastWeek(),
-            "transactions_cost_last_month" => Helper::fetchTransactionsCostInPastMonth()
-        ];
+    public function deleteCustomer($userId){
+        $user = User::find($userId);
+        $user->delete();
 
-        return ResponseFormatter::success(
-            "Dashboard Statistcs::", 
-            $data
-        );
-    }
-
-    public function deleteUser($userId){
-        return $user = User::find($userId);
+        $users = User::orderByDesc("created_at")->get();
+        
+        return ResponseFormatter::success("users:", $users, 200);
     }
 
     public function getAllShipment(Request $request){
@@ -258,6 +236,53 @@ class DashboardController extends Controller
         $users = $query->get();
 
         return ResponseFormatter::success("users:", $users, 200);
+    }
+
+    public function createAccount(CreateAccount $request){
+        $account = new Account();
+        $account->name = $request->name;
+        $account->markup_price = $request->price;
+        $account->save();
+
+        $accounts = Account::all();
+
+        return ResponseFormatter::success("account:", $accounts, 200);
+    }
+
+    public function updateAccount(CreateAccount $request, $accountId){
+        $account = Account::find($accountId);
+        $account->name = $request->name;
+        $account->markup_price = $request->price;
+        $account->save();
+
+        $accounts = Account::all();
+
+        return ResponseFormatter::success("account:", $accounts, 200);
+    }
+
+    public function getChartData()
+    {
+        $desiredYear = Carbon::now()->year;
+        $desiredMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        $chartData = [];
+
+        foreach ($desiredMonths as $month) {
+            $startDate = Carbon::create($desiredYear, $month, 1);
+            $endDate = Carbon::create($desiredYear, $month, 1)->addMonth();
+
+            $revenue = DB::table('transactions')
+            ->where("status", "success")
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+            if($revenue === null):
+                $chartData[] = 0;
+            else:
+                $chartData[] = $revenue;
+            endif;
+        }
+
+        return ResponseFormatter::success("Chart Data:", $chartData, 200);
     }
 
 }

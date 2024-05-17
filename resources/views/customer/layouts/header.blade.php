@@ -60,7 +60,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/shippings')}}" aria-expanded="false">
 									<span>
-										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img style="" src="{{asset('assets/images/sidebar/shipping.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Shipping</span>
 								</a>
@@ -68,7 +68,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/wallet')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/wallet.svg')}}" />
+										<img class="" src="{{asset('assets/images/sidebar/wallet.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Wallet</span>
 								</a>
@@ -76,7 +76,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/profile')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img class="" src="{{asset('assets/images/sidebar/profile.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Profile</span>
 								</a>
@@ -84,7 +84,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/logout')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/logout.svg')}}" />
+										<img class="" src="{{asset('assets/images/sidebar/logout.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Logout</span>
 								</a>

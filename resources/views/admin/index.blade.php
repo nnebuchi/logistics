@@ -10,7 +10,7 @@
                                 <img src="{{asset('assets/images/icons/broadcast-light.svg')}}">
                                 Send Broadcast
                             </button>
-                            <a href="{{url('/users')}}" class="btn btn-primary rounded-0">
+                            <a href="{{url('/admin/users')}}" class="btn btn-primary rounded-0">
                                 <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
                                 Customers
                             </a>
@@ -76,7 +76,7 @@
                                         <span class="card-title fw-semibold">Total Transactions</span>
                                         <h3 class="fw-semibold text-primary" id="chart-transactions"></h3>
                                       </div>
-                                      <div>
+                                      <!--<div>
                                         <select class="form-select" name="month">
                                             <option value="0">January</option>
                                             <option value="1">February</option>
@@ -91,7 +91,7 @@
                                             <option value="10">November</option>
                                             <option value="11">December</option>
                                         </select>
-                                      </div>
+                                      </div>-->
                                     </div>
                                     <div id="chart"></div>
                                 </div>
@@ -121,29 +121,18 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
 
-    function fetchStats(){
-        const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
-            }
-        };
-        axios.get(`${baseUrl}/api/v1/statistics`, config)
-        .then((res) => {
-            let results = res.data.results;
-            $(".stats").eq(0).text(results?.customers_count);
-            $(".stats").eq(1).text(results?.customers_last_week[0]);
-            $(".stats").eq(2).text("₦"+parseInt(results?.transactions_cost_last_week[0]).toLocaleString());
-            $(".stats").eq(3).text("₦"+parseInt(results?.transactions_cost_last_month[0]).toLocaleString());
-            $(".stat-percent").eq(0).text("+"+results?.customers_last_week[1].toFixed(0)+"%").css("color", "#128807");
-            $(".stat-percent").eq(1).text("+"+results?.transactions_cost_last_week[1].toFixed(0)+"%").css("color", "#128807");
-            $(".stat-percent").eq(2).text("+"+results?.transactions_cost_last_month[1].toFixed(0)+"%").css("color", "#128807");
-        });
+    function getStats(statistics){
+        let results = statistics;
+        $(".stats").eq(0).text(results?.customers_count);
+        $(".stats").eq(1).text(results?.customers_last_week[0]);
+        $(".stats").eq(2).text("₦"+parseInt(results?.transactions_cost_last_week[0]).toLocaleString());
+        $(".stats").eq(3).text("₦"+parseInt(results?.transactions_cost_last_month[0]).toLocaleString());
+        $(".stat-percent").eq(0).text("+"+results?.customers_last_week[1].toFixed(0)+"%").css("color", "#128807");
+        $(".stat-percent").eq(1).text("+"+results?.transactions_cost_last_week[1].toFixed(0)+"%").css("color", "#128807");
+        $(".stat-percent").eq(2).text("+"+results?.transactions_cost_last_month[1].toFixed(0)+"%").css("color", "#128807");
     };
-    fetchStats();
+    getStats(@json($statistics));
 
     $("#broadcastModal #searchUser").on("keyup", function() {
         var searchTerm = $(this).val().toLowerCase();
@@ -169,17 +158,18 @@
         }
     });
 
-    function fetchAllCustomers(){
+    function getCustomers(){
         const config = {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/users`, config)
+        axios.get(`${baseUrl}/admin/get-all-customers`, config)
         .then((res) => {
-            let users = res.data.results.data;
+            let users = res.data.results;
             users.forEach(function(user, index){
                 $("select[name='recipient']").append(`
                     <option value=${user.id} data-email=${user.email}>${user.firstname+" "+user.lastname}</option>
@@ -187,15 +177,13 @@
             });
         });
     };
-    fetchAllCustomers();
+    getCustomers();
 
     const status = {
         pending: "custom-bg-warning",
         success: "custom-bg-success",
         failed: "custom-bg-danger"
     };
-
-    const rowColors = {failed: "#ffffff", pending: "#233E830D", success: "#ffffff"};
 
     function getRandomColor(){
         const r = Math.floor(Math.random() * 256);
@@ -219,7 +207,7 @@
         return initials;
     }
 
-    function fetchAllTransactions(data){
+    function getTransactions(data){
         let transactions = data.slice(0, 5);
 
         $(".transactions-table tbody").empty();
@@ -252,7 +240,7 @@
             `;
 
             $(".transactions-table tbody").append(`
-                <tr style="background-color:${rowColors[transaction.status]}">
+                <tr>
                     ${userCard}
                     <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
                     <td scope="row">${transaction.created_at}</td>
@@ -265,7 +253,7 @@
             `);
         })
     };
-    fetchAllTransactions(@json($transactions));
+    getTransactions(@json($transactions));
 
     $("#send").on("click", function(event){
         event.preventDefault();
@@ -323,5 +311,90 @@
 
         $("#broadcastModal input[name='email']").val(email); 
     });
+
+    var chart = {
+        series: [],
+        title: {text: "Total Revenues"},
+        noData: {text: "Loading..."},
+        chart: {
+            type: "line",
+            height: 345,
+            foreColor: "#adb0bb",
+            fontFamily: 'inherit',
+            offsetX: -15
+        },
+        colors: ["#d8383e"],
+        fill: {
+            colors: ["#000"],
+            type: "gradient",
+            gradient: {
+                shapeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100],
+                inverseColors: false,
+                shade: "dark",
+                type: "vertical"
+            }
+        },
+        grid: {
+            borderColor: "rgba(0,0,0,0.1)",
+            strokeDashArray: 3,
+            xaxis: {
+                lines: {
+                   show: true
+                },
+            },
+        },
+        xaxis: {
+            type: "category",
+            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            labels: {
+                style: { cssClass: "grey--text lighten-2--text fill-color" },
+            },
+        },
+        yaxis: {
+            show: true,
+            min: 0,
+            // max: 400,
+            tickAmount: 4,
+            labels: {
+                style: {
+                   cssClass: "grey--text lighten-2--text fill-color",
+                },
+                formatter: function(value){
+                    return "₦"+value;
+                }
+            }
+        },
+        stroke: {
+            show: true,
+            curve: "smooth",
+            width: 3,
+            lineCap: "butt"
+        }
+    };
+    var chart = new ApexCharts(document.querySelector("#chart"), chart);
+    chart.render();
+
+    function fetchChartData(){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
+        axios.get(`${baseUrl}/get-chart-data`, config)
+        .then((res) => {
+            let revenues = res.data.results;
+            chart.updateSeries([{ 
+                name: "Transactions", 
+                data: revenues
+            }]);
+        });
+    }
+    fetchChartData();
 </script>
 @include("admin.layouts.footer")

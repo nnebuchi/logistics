@@ -41,14 +41,26 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-8">
                             <div class="card">
                                 <div class="card-body" style="">
-                                    <form action="" method="POST">
+                                    <form action="<?=route('account.create')?>" method="POST" id="createAccountForm">
                                         <div class="mt-2">
-                                            <input type="text"
+                                            <label for="" class="fw-semibold">Name</label>
+                                            <input type="text" name="name"
                                             placeholder="name" class="w-100 custom-input rounded-0">
+                                            <span class="error"> </span>
                                         </div>
                                         <div class="mt-2">
-                                            <input type="number"
-                                            placeholder="price" class="w-100 custom-input rounded-0">
+                                            <label for="" class="fw-semibold"> Percent</label>
+                                            <input type="number" name="price"
+                                            placeholder="percent" class="w-100 custom-input rounded-0">
+                                            <span class="error"> </span>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button 
+                                            type="button"
+                                            id="createAccount"
+                                            class="custom-btn fs-4 fw-bold">
+                                            Submit
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -66,15 +78,30 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="">
-                                        <input type="text"
-                                        placeholder="name" class="w-100 form-control rounded-0">
-                                    </div>
-                                    <div class="mt-2">
-                                        <input type="text"
+                                    <form action="<?=route('account.create')?>" method="POST">
+                                        <div class="">
+                                            <label for="" class="fw-semibold">Name</label>
+                                            <input type="text" id="name"
+                                            placeholder="name" class="w-100 form-control rounded-0">
+                                            <span class="error"> </span>
+                                        </div>
+                                        <input type="hidden" id="id"
                                         placeholder="price" class="w-100 form-control rounded-0">
-                                    </div>
-
+                                        <div class="mt-3">
+                                            <label for="" class="fw-semibold">Percent</label>
+                                            <input type="number" id="price"
+                                            placeholder="price" class="w-100 form-control rounded-0">
+                                            <span class="error"> </span>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button 
+                                            type="button"
+                                            id="editAccount"
+                                            class="custom-btn fs-4 fw-bold">
+                                            Submit
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -103,45 +130,39 @@
 
     function getAccounts(accounts){
         $(".accounts-table tbody").empty();
-        accounts.forEach(function(account, index){
+        if(accounts.length == 0){
             $(".accounts-table tbody").append(`
-                <tr style="">
-                    <td scope="row">${index + 1}</td>
-                    <td scope="row">${account.name}</td>
-                    <td scope="row">${account.markup_price}%</td>
-                    <td scope="row">
-                        <a class="edit-account m-0 p-0" data-id="${account.id}" type="button">
-                            <img width="20" height="20" src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                        </a>
-                    </td>
-                </tr>  
+                <tr class="">
+                    <td scope="row">No data available...</td>
+                </tr> 
             `);
-        })
+        }else{
+            accounts.forEach(function(account, index){
+                $(".accounts-table tbody").append(`
+                    <tr style="">
+                        <td scope="row">${index + 1}</td>
+                        <td scope="row">${account.name}</td>
+                        <td scope="row">${account.markup_price}%</td>
+                        <td scope="row">
+                            <a class="edit-account m-0 p-0" data-id="${account.id}" data-name="${account.name}" data-price="${account.markup_price}" type="button">
+                                <img width="20" height="20" src="{{asset('assets/images/icons/file-edit.svg')}}" />
+                            </a>
+                        </td>
+                    </tr>  
+                `);
+            })
+        }
     }
     getAccounts(@json($accounts));
 
     $(document).on("click", ".edit-account", function(event){
         event.preventDefault();
         const accountId = $(this).data("id");
-        /*const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
-            }
-        };
-        axios.get(`${baseUrl}/api/v1/admin/${userId}`, config)
-        .then((res) => {
-            let user = res.data.results;
-
-            let userData = $("#accountModal input");
-            userData.eq(0).val(user?.firstname);
-            userData.eq(1).val(user?.lastname);
-            userData.eq(2).val(user?.email);
-            userData.eq(3).val(user?.phone);
-            //$("#accountModal select[name='account']").val(user?.account.id);
-            $("#accountModal").modal("show");
-        });*/
+        const name = $(this).data("name");
+        const price = $(this).data("price");
+        $("#accountModal #id").val(accountId);
+        $("#accountModal #name").val(name);
+        $("#accountModal #price").val(price);
         $("#accountModal").modal("show");
     });
 
@@ -150,6 +171,71 @@
     });
     $('#accountModal').on('hidden.bs.modal', function (e) {
         $("#accountModal").modal("hide");
-    })
+    });
+
+    $("#editAccount").on("click", function(event){
+        event.preventDefault();
+        let btn = $(this);
+        btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
+        btn.attr("disabled", true);
+        const accountId = $("#id").val();
+        let url = $(this).closest("form").attr("action")+"/"+accountId;
+        const inputs = {
+            name: $("#name").val(),
+            price: $("#price").val()
+        };
+        let errorEl = $('#accountModal .error');
+        errorEl.text('');
+        // Append loader immediately
+        setTimeout(() => {
+            saveData(btn, url, inputs, errorEl)
+        }, 100); // Delay submission by 100 milliseconds
+    });
+
+    $("#createAccount").on("click", function(event){
+        event.preventDefault();
+        let btn = $(this);
+        let url = $(this).closest("form").attr("action");
+        btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
+        btn.attr("disabled", true);
+        const inputs = {
+            name: $("#createAccountForm input[name='name']").val(),
+            price: $("#createAccountForm input[name='price']").val()
+        };
+        let errorEl = $('#createAccountForm .error');
+        errorEl.text('');
+        // Append loader immediately
+        setTimeout(() => {
+            saveData(btn, url, inputs, errorEl);
+        }, 100); // Delay submission by 100 milliseconds
+    });
+
+    function saveData(btn, url, inputs, errorEl){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
+        axios.post(url, inputs, config)
+        .then(function(response){
+            let message = response.data.message;
+            //msg.css("color", "green").text(message);
+            btn.attr("disabled", false).text("Submit");
+            console.log(response.data.results);
+            getAccounts(response.data.results);
+        }).catch(function(error){
+            let errors = error.response.data.error;
+            if(errors.name){
+                errorEl.eq(0).text(errors.name);
+            }
+            if(errors.price){
+                errorEl.eq(1).text(errors.price);
+            }
+            btn.attr("disabled", false).text("Submit");
+        });
+    }
 </script>
 @include("admin.layouts.footer")

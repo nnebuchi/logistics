@@ -4,35 +4,30 @@
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping</h5>
+                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shippings</h5>
+                    </div>
+
+                    <div class="my-3 px-2" style="">
+                        <div class="">
+                            <input type="text"
+                            placeholder="Search by tracking number" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="filterInput">
+                        </div>
+                        <div class="d-flex mt-2 flex-wrap">
+                            <input type="text"
+                            placeholder="Sort by date(from)" 
+                            class="form-control w-auto rounded-0 p-4 mr-2 bg-white" id="startDate">
+                            <input type="text"
+                            placeholder="Sort by date(to)" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="endDate">
+                        </div>
                     </div>
 
                     <div class="row mt-3">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
-                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-2">
-                                        <h5 class="card-title fw-semibold">All Shippings</h5>
-                                        <div class="d-flex flex-wrap">
-                                            
-                                        </div>
-                                    </div>
                                     <div class="table-responsive">
-                                        <div class="my-3 px-2" style="">
-                                            <div class="">
-                                                <input type="text"
-                                                placeholder="Search by tracking number" 
-                                                class="form-control w-auto rounded-0 p-4" id="filterInput">
-                                            </div>
-                                            <div class="d-flex mt-2 flex-wrap">
-                                                <input type="text"
-                                                placeholder="Sort by date(from)" 
-                                                class="form-control w-auto rounded-0 p-4 mr-2" id="startDate">
-                                                <input type="text"
-                                                placeholder="Sort by date(to)" 
-                                                class="form-control w-auto rounded-0 p-4" id="endDate">
-                                            </div>
-                                        </div>
                                         <table class="shipments-table table text-nowrap mb-0 align-middle">
                                             <thead class="text-dark fs-4">
                                                 <tr>
@@ -132,9 +127,11 @@
     });
 
     const status = {
-        pending: "custom-bg-warning",
+        draft: "custom-bg-warning",
         confirmed: "custom-bg-success",
-        failed: "custom-bg-danger"
+        delivered: "custom-bg-success",
+        "in-transit": "custom-bg-success",
+        cancelled: "custom-bg-danger"
     };
 
     function getIndex(per_page, current_page, index)

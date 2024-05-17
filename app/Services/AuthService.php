@@ -16,6 +16,7 @@ use App\Util\ResponseFormatter;
 use App\Models\{User, Role, Account};
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
+use Ramsey\Uuid\Uuid;
 
 class AuthService 
 {
@@ -33,7 +34,8 @@ class AuthService
                 'phone' => sanitize_input($data['phone']),
                 'password' => sanitize_input($data['password']),
                 'country' => sanitize_input($data['country']),
-                'account_id' => $account->id
+                'account_id' => $account->id,
+                'uuid' => Uuid::uuid4()->toString()
             ]);    
 
             $user->wallet()->create();

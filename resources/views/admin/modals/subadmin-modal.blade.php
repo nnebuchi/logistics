@@ -8,28 +8,47 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="">
-                    <input type="text"
-                    placeholder="firstname" class="w-100 form-control rounded-0">
-                </div>
-                <div class="mt-2">
-                    <input type="text"
-                    placeholder="lastname" class="w-100 form-control rounded-0">
-                </div>
-                <div class="mt-2">
-                    <input type="text"
-                    placeholder="email" readonly class="w-100 form-control rounded-0">
-                </div>
-                <div class="mt-2">
-                    <input type="text"
-                    placeholder="phone" readonly class="w-100 form-control rounded-0">
-                </div>
-                <div class="mt-2">
-                    <select class="w-100 form-control rounded-0" name="account">
-                        
-                    </select>
-                </div>
-
+                <form action="<?=route('subadmin.create')?>" method="POST">
+                    <div class="mt-2">
+                        <input type="text" name="firstname"
+                        placeholder="Firstname" class="w-100 form-control rounded-0">
+                        <span class="error"> </span>
+                    </div>
+                    <div class="mt-2">
+                        <input type="text" name="lastname"
+                        placeholder="Lastname" class="w-100 form-control rounded-0">
+                        <span class="error"> </span>
+                    </div>
+                    <div class="mt-2">
+                        <input type="email" name="email" readonly
+                        placeholder="Email" class="w-100 form-control rounded-0">
+                        <span class="error"> </span>
+                    </div>
+                    <div class="mt-2">
+                        <input type="text" name="phone" readonly
+                        placeholder="phone" class="w-100 form-control rounded-0">
+                        <span class="error"> </span>
+                    </div>
+                    <input type="hidden" name="id"
+                    placeholder="id" class="w-100 form-control rounded-0">
+                    <div class="mt-2">
+                        <select class="w-100 form-control rounded-0" name="role" readonly>
+                            @foreach($roles as $role)
+                                <option value="{{$role->id}}">{{$role->name}}</option>
+                            @endforeach
+                        </select>
+                        <span class="error"> </span>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button 
+                        type="button"
+                        id="editAdmin"
+                        class="custom-btn fs-4 fw-bold">
+                        Submit
+                        <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

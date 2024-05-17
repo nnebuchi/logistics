@@ -210,7 +210,7 @@
             users.forEach(function(user, index){
                 const status = (user.is_verified) ? `
                     <td scope="row">
-                        <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="20" height="20" />
+                        <img src="{{asset('assets/images/icons/auth/success-icon.png')}}" width="25" height="25" />
                     </td>
                 ` : `
                     <td scope="row">
@@ -247,6 +247,7 @@
                 </td>
                 `;
 
+                var impersonateBaseUrl = "{{ route('impersonate', ':id') }}";
                 $(".users-table tbody").append(`
                     <tr style="cursor:pointer" data-id="${user.id}">
                         <td scope="row">${getIndex(per_page, current_page, index)}.</td>
@@ -271,7 +272,11 @@
                             class="btn btn-light fund-user" type="button">Fund
                             </button>
                         </td>
-                        <td scope="row">...</td>
+                        <td scope="row">
+                            <a class="btn btn-light" data-id="${user.id}" type="button" href="${impersonateBaseUrl.replace(':id', user.id)}">
+                                Login
+                            </a>
+                        </td>
                     </tr>  
                 `);
             })
@@ -349,10 +354,11 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/api/v1/user/${userId}`, config)
+        axios.get(`${baseUrl}/admin/customer/${userId}`, config)
         .then((res) => {
             let user = res.data.results;
 
@@ -400,24 +406,27 @@
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success"
+                const config = {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                };
+                axios.delete(`${baseUrl}/admin/customer/${userId}`, config)
+                .then((res) => {
+                    data = res.data.results;
+                    renderData();
+                    //$row.remove();  
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Customer has been deleted.",
+                        icon: "success"
+                    });
                 });
             }
         });
-        /*const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
-            }
-        };
-        axios.delete(`${baseUrl}/api/v1/user/${userId}`, config)
-        .then((res) => {
-            let users = res.data.results;
-        });*/
     });
 
     // Add event listener to each row

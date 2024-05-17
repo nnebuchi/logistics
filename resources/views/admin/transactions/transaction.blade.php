@@ -7,26 +7,26 @@
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Transactions</h5>
                     </div>
                     
+                    <div class="my-3 px-2" style="">
+                        <div class="">
+                            <input type="text"
+                            placeholder="Search by email, reference" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="filterInput">
+                        </div>
+                        <div class="d-flex mt-2 flex-wrap">
+                            <input type="text"
+                            placeholder="Sort by date(from)" 
+                            class="form-control w-auto rounded-0 p-4 mr-2 bg-white" id="startDate">
+                            <input type="text"
+                            placeholder="Sort by date(to)" 
+                            class="form-control w-auto rounded-0 p-4 bg-white" id="endDate">
+                        </div>
+                    </div>
 
                     <div class="row mt-3">
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
-                                    <div class="my-3 px-2" style="">
-                                        <div class="">
-                                            <input type="text"
-                                            placeholder="Search by email, reference" 
-                                            class="form-control w-auto rounded-0 p-4" id="filterInput">
-                                        </div>
-                                        <div class="d-flex mt-2 flex-wrap">
-                                            <input type="text"
-                                            placeholder="Sort by date(from)" 
-                                            class="form-control w-auto rounded-0 p-4 mr-2" id="startDate">
-                                            <input type="text"
-                                            placeholder="Sort by date(to)" 
-                                            class="form-control w-auto rounded-0 p-4" id="endDate">
-                                        </div>
-                                    </div>
                                     <div class="table-responsive">
                                         <table data-order="false" class="trx-table table table-borderless text-nowrap mb-0 align-middle">
                                             <thead class="text-dark fs-4">
@@ -112,7 +112,6 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-    var userToken = localStorage.getItem('token');
 
     flatpickr('#startDate', {
         enableTime: false,
@@ -170,7 +169,8 @@
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer "+ userToken
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
             }
         };
         axios.get(url, config)
@@ -179,7 +179,7 @@
             renderData();
         });
     }
-    getTransactions(`${baseUrl}/api/v1/transactions`);
+    getTransactions(`${baseUrl}/admin/get-all-transactions`);
 
     function renderData(){
         $(".trx-table tbody").empty();
@@ -287,9 +287,9 @@
             //filterTable();
             let value = $(this).val();
             if(value == ""){
-                getTransactions(`${baseUrl}/api/v1/transactions`);
+                getTransactions(`${baseUrl}/admin/get-all-transactions`);
             }else{
-                getTransactions(`${baseUrl}/api/v1/transactions?searchTerm=${value}`);
+                getTransactions(`${baseUrl}/admin/get-all-transactions?searchTerm=${value}`);
             }
         });
 
@@ -301,7 +301,7 @@
         $('#startDate, #endDate').on('input', function() {
             let startDate = $("#startDate").val();
             let endDate = $("#endDate").val();
-            getTransactions(`${baseUrl}/api/v1/transactions?startDate=${startDate}&endDate=${endDate}`);
+            getTransactions(`${baseUrl}/admin/get-all-transactions?startDate=${startDate}&endDate=${endDate}`);
         });
     });
 </script>

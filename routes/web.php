@@ -10,6 +10,8 @@ use App\Http\Controllers\User\TransactionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ImpersonateController;
 
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/reset-password/{email}/{token}', [AuthController::class, 'showPasswordResetForm'])->name('password.reset');
@@ -49,6 +51,7 @@ Route::group([
 ], function () {
     Route::get('/', [UserController::class, 'index'])->name('dashboard');
     Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
+    Route::get('/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
     Route::post('/shipping/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
     Route::post('/shipping/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
@@ -75,6 +78,8 @@ Route::group([
         Route::get('/{userId}/notifications', [UserController::class, 'fetchNotifications']);
          //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
     });
+
+    Route::get('impersonate/leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });
 
 Route::group([
@@ -82,8 +87,12 @@ Route::group([
     'middleware' => 'guest:admin'
 ], function () {
     Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name("admin.login");
+    Route::get('/admin/reset-password/{email}/{token}', [AdminAuthController::class, 'showPasswordResetForm']);
+    Route::get('/admin/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm']);
 });
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
+Route::post('/admin/forgot-password', [AdminAuthController::class, 'forgotPassword']);
+Route::post('/admin/reset-password', [AdminAuthController::class, 'resetPassword']);
 
 Route::group([
     'middleware' => [
@@ -94,18 +103,40 @@ Route::group([
     Route::get('/admin/logout', [AdminAuthController::class, 'logOut']);
 
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::get('/admin/users', 
     [AdminDashboardController::class, 'showUsers'])->name('admin.users');
     Route::get('/admin/users/{uuid}', 
     [AdminDashboardController::class, 'showUser'])->name('admin.user');
+
     Route::get('/admin/shippings', 
     [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
     Route::get('/admin/transactions', 
     [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
-    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
+    Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
+
     Route::get('/admin/accounts', [AdminDashboardController::class, 'showAccounts']);
     Route::get('/admin/get-all-shippings', 
     [AdminDashboardController::class, 'getAllShipment']);
+
     Route::get('/admin/get-all-customers', 
     [AdminDashboardController::class, 'getAllCustomers']);
+    Route::get('/admin/customer/{userId}', [AdminDashboardController::class, 'getUserData']);
+    Route::delete('/admin/customer/{userId}', [AdminDashboardController::class, 'deleteCustomer']);
+
+    Route::post('/account', [AdminDashboardController::class, 'createAccount'])->name("account.create");
+    Route::post('/account/{accountId}', [AdminDashboardController::class, 'updateAccount']);
+
+    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
+    Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
+    Route::post('/admin', [AdminController::class, 'createAdmin'])->name("subadmin.create");
+    Route::post('/admin/{adminId}', [AdminController::class, 'updateAdmin']);
+
+    Route::get('/get-chart-data', [AdminDashboardController::class, 'getChartData']);
+
+    Route::get('impersonate/{user_id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+});
+
+Route::group(['middleware' => ['auth']], function() {
+    
 });

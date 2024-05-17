@@ -17,6 +17,16 @@
                         </div>
                     </div>
 
+                    @auth
+                        <div class="mt-2">
+                            @if(session('admin_id'))
+                                <a href="{{ route('impersonate.leave') }}" class="btn btn-primary">
+                                    Leave Impersonation
+                                </a>
+                            @endif
+                        </div>
+                    @endauth
+
                     <div class="row mt-3">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
@@ -70,7 +80,7 @@
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100">
                                 <div class="card-body p-0">
-                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-4">
+                                    <div class="p-3 d-flex flex-wrap justify-content-between align-items-center mb-0">
                                         <h5 class="card-title fw-semibold">Recent Shippings</h5>
                                         <div class="d-flex flex-wrap">
                                             <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="today">

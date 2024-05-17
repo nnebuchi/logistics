@@ -10,10 +10,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Role;
+use Lab404\Impersonate\Models\Impersonate;
 
 class Admin extends Authenticatable implements CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, Impersonate;
 
     protected $guard = "admin";
 
@@ -47,7 +50,7 @@ class Admin extends Authenticatable implements CanResetPassword
     */
     public function sendPasswordResetNotification($token): void
     {
-        $url = env("APP_URL")."/reset-password/".$this->email."/".$token;
+        $url = env("APP_URL")."/admin/reset-password/".$this->email."/".$token;
 
         $this->notify(new ResetPasswordNotification($url));
     }
@@ -75,5 +78,4 @@ class Admin extends Authenticatable implements CanResetPassword
             set: fn ($value) => strtolower($value),
         );
     }
-
 }

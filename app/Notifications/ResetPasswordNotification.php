@@ -35,17 +35,17 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-        //->subject("Reset Password")
+        /*return (new MailMessage)
+        ->subject("Reset Password")
         ->from("ziga-afrika@gmail.com", "Ziga-Afrika")
         ->line('You are receiving this email because we received a password reset request for your account.')
         ->action('Reset Password', $this->url)
         ->line('This password link will expire in 60 minutes.')
-        ->line('Thank you for using our application!');
+        ->line('Thank you for using our application!');*/
 
-        /*return (new MailMessage)->view(
-            'emails.name', ["invoice" => $this->invoice]
-        );*/
+        return (new MailMessage)->view(
+            'email.password-reset', ["url" => $this->url]
+        );
     }
 
     /**

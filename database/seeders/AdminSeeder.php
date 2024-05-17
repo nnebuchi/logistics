@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use App\Models\Admin;
+use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
 {
@@ -15,13 +16,19 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::create([
-            'firstname' => "Summer",
-            'lastname' => "Walker",
-            'email' => "summer06@gmail.com",
+        $user = Admin::create([
+            'firstname' => "Stephanie",
+            'lastname' => "Omoruyi",
+            'email' => "summer07@gmail.com",
             'email_verified_at' => now(),
-            'phone' => '+2348155678797',
+            'phone' => '+2348155678725',
             'password' => 'Reckless@3030', // Reckless@3030
         ]);
+
+        // Find the role by name
+        $role = Role::where('name', 'admin')->first();
+
+        // Assign the role to the user
+        $user->assignRole($role);
     }
 }

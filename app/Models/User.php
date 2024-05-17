@@ -13,10 +13,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Lab404\Impersonate\Models\Impersonate;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, Impersonate;
 
     protected $fillable = [
         'firstname',
@@ -29,7 +30,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'photo',
         'address',
         'country',
-        'is_verified'
+        'is_verified',
+        'uuid'
     ];
 
     protected $hidden = [

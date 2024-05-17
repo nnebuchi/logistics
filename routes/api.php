@@ -21,11 +21,6 @@ Route::get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('/shippings', [ShippingController::class, 'getShippings']);
-        Route::get('/users', [AdminDashboardController::class, 'getUsers']);
-        Route::get('/user/{userId}', [AdminDashboardController::class, 'getUserData']);
-        Route::get('/transactions', [AdminDashboardController::class, 'getTransactions']);
-        Route::get('/statistics', [AdminDashboardController::class, 'fetchStatistics']);
-        Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
     });
 });
 

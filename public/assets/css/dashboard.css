@@ -13,7 +13,7 @@
     --bs-teal: #20c997;
     --bs-cyan: #0dcaf0;
     --bs-white: #fff;
-    --bs-gray: #7d879c;
+    --bs-gray: rgba(125, 135, 156, 0.3);
     --bs-gray-dark: #373f50;
     --bs-primary: #233E83;
     --bs-accent: #4e54c8;
@@ -164,6 +164,11 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
 .custom-btn:hover{
     text-decoration: none;
     color: var(--bs-secondary);
+}
+.custom-btn:disabled{
+    text-decoration: none;
+    color: white;
+    background-color: var(--bs-gray);
 }
 
 #loader-gif{
