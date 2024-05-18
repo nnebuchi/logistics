@@ -122,15 +122,22 @@
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
 
+    function updateStat(element, value) {
+        const formattedPercentage = value.toFixed(1);
+        const color = value > 0 ? "#128807" : value < 0 ? "#FF0000" : "#000000";
+        const sign = value > 0 ? "+" : ""; // Add "+" sign only if value is positive
+        element.text(sign + formattedPercentage + "%").css("color", color);
+    }
+
     function getStats(statistics){
         let results = statistics;
-        $(".stats").eq(0).text(results?.customers_count);
-        $(".stats").eq(1).text(results?.customers_last_week[0]);
+        $(".stats").eq(0).text(results?.customers_count.toLocaleString());
+        $(".stats").eq(1).text(results?.customers_last_week[0].toLocaleString());
         $(".stats").eq(2).text("₦"+parseInt(results?.transactions_cost_last_week[0]).toLocaleString());
         $(".stats").eq(3).text("₦"+parseInt(results?.transactions_cost_last_month[0]).toLocaleString());
-        $(".stat-percent").eq(0).text("+"+results?.customers_last_week[1].toFixed(0)+"%").css("color", "#128807");
-        $(".stat-percent").eq(1).text("+"+results?.transactions_cost_last_week[1].toFixed(0)+"%").css("color", "#128807");
-        $(".stat-percent").eq(2).text("+"+results?.transactions_cost_last_month[1].toFixed(0)+"%").css("color", "#128807");
+        updateStat($(".stat-percent").eq(0), results?.customers_last_week[1]);
+        updateStat($(".stat-percent").eq(1), results?.transactions_cost_last_week[1]);
+        updateStat($(".stat-percent").eq(2), results?.transactions_cost_last_month[1]);
     };
     getStats(@json($statistics));
 

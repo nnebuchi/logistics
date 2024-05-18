@@ -24,7 +24,7 @@ class DashboardController extends Controller
         $transactions = Transaction::with(["wallet.user"])->orderByDesc("created_at")->get();
         $statistics = [
             "customers_count" => User::count(),
-            "customers_last_week" => Helper::getNewUsersLast7Days(),
+            "customers_last_week" => Helper::getNewUsersLastWeek(),
             "transactions_cost_last_week" => Helper::fetchTransactionsCostInPastWeek(),
             "transactions_cost_last_month" => Helper::fetchTransactionsCostInPastMonth()
         ];

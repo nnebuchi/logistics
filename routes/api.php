@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\ShippingController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\TransactionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -13,6 +14,7 @@ Route::get('/', function () {
         'version' => '1.0.0'
     ];
 });
+//Route::post('/address', [ShippingController::class, 'createAddress']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();

@@ -38,6 +38,9 @@
                                                         <h6 class="fw-semibold mb-0">Shipping ID</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
+                                                        <h6 class="fw-semibold mb-0">Customer (Info)</h6>
+                                                    </th>
+                                                    <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Date</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
@@ -92,8 +95,27 @@
                     </div>
                     <!--  Pagination Ends -->
 
+                    <!-- Modal -->
+                    <div class="modal fade" id="shipmentDataModal" tabindex="-1" role="dialog" aria-labelledby="shipmentDataModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-semibold" id="shipmentDataModalLabel">Shipment Details</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="shipmentData">
 
-                    @include('customer.modals.broadcast-modal')
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Modal -->
+                    
                 </div>
             </div>
             <!--  End of Row 1 -->
@@ -177,9 +199,14 @@
         }else{
             shipments.forEach(function(shipment, index){
                 $(".shipments-table tbody").append(`
-                    <tr style="cursor:pointer" data-id="${shipment.external_shipment_id}">
+                    <tr style="cursor:pointer;font-size" data-id="${shipment.external_shipment_id}">
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.external_shipment_id}</td>
+                        <td class="">
+                            <span class="fw-semibold">${shipment.address_from.firstname+" "+shipment.address_from.lastname}</span><br>
+                            <span>${shipment.address_from.email}</span><br>
+                            <span>${shipment.address_from.phone}</span>
+                        </td>
                         <td class="">${shipment.pickup_date ?? ""}</td>
                         <td class="">${shipment.address_from.line1.substring(0, 15)+"..."}</td>
                         <td class="">${shipment.address_to.line1.substring(0, 15)+"..."}</td>
@@ -252,7 +279,68 @@
             // Remove the temporary element
             $temp.remove();
             // Show a success message to the user
-            alert("ID copied to clipboard: " + $id);
+            //alert("ID copied to clipboard: " + $id);
+
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            };
+            axios.get(`${baseUrl}/shipping/${$id}/track`, config)
+            .then((res) => {
+                let shipment = res.data.results;
+                let items = "";
+                for(const item of shipment.items){
+                    items += `<div class="mt-2">
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Item: <span class="fw-semibold">${item.name}</span></p>
+                            <p class="m-0">Weight: <span class="fw-semibold">${item.weight}Kg</span></p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Quantity: <span class="fw-semibold">${item.quantity}pieces</span></p>
+                            <p class="m-0">Value: <span class="fw-semibold">₦${parseFloat(item.value).toLocaleString()}</span></p>
+                        </div>
+                    </div>`;
+                }
+                $("#shipmentData").empty();
+                $("#shipmentData").append(`
+                    <div class="p-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h4>${shipment.shipment_id}</h4>
+                    </div>
+                    <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h5>Customer Details</h5>
+                        <div class="px-2 small">
+                            <p class="m-0">Name: <span class="fw-semibold">${shipment.address_from.first_name+" "+shipment.address_from.last_name}</span></p>
+                            <p class="m-0">Email: <span class="fw-semibold">${shipment.address_from.email}</span></p>
+                            <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_from.phone}</span></p>
+                            <p class="m-0">Address: <span class="fw-semibold">${shipment.address_from.line1}</span></p>
+                        </div>
+                    </div>
+                    <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h5>Delivery Details</h5>
+                        <div class="px-2 small">
+                            <p class="m-0">Name: <span class="fw-semibold">${shipment.address_to.first_name+" "+shipment.address_to.last_name}</span></p>
+                            <p class="m-0">Email: <span class="fw-semibold">${shipment.address_to.email}</span></p>
+                            <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_to.phone}</span></p>
+                            <p class="m-0">Address: <span class="fw-semibold">${shipment.address_to.line1}</span></p>
+                        </div>
+                    </div>
+                    <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h5>Shipment Details</h5>
+                        <div class="px-2 small">
+                            ${items}
+                        </div>
+                    </div>
+                `);
+                $("#shipmentDataModal").modal("show");
+            });
+        });
+
+        $("#shipmentDataModal .close").on("click", function(){
+            $("#shipmentDataModal").modal("hide");
         });
     });
 </script>

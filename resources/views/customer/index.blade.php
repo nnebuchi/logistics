@@ -31,9 +31,9 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
-                                    <div class="mb-2 reload-wallet" type="button" data-type="balance">
+                                    <!--<div class="mb-2 reload-wallet" type="button" data-type="balance">
                                         <img src="{{asset('assets/images/icons/reload.svg')}}">
-                                    </div>
+                                    </div>-->
                                     <span>Curent Wallet Balance</span>
                                     <h2 class="balance"></h2>
                                     <span class="text-sec"></span>
@@ -49,9 +49,9 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white position-relative d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
-                                    <div class="mb-2 reload-wallet" type="button" data-type="all-funding">
+                                    <!--<div class="mb-2 reload-wallet" type="button" data-type="all-funding">
                                         <img src="{{asset('assets/images/icons/reload.svg')}}">
-                                    </div>
+                                    </div>-->
                                     <span>All-time Funding</span>
                                     <h2 class="balance"></h2>
                                     <span class="text-sec"></span>
@@ -67,10 +67,10 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 mt-xl-0 mt-lg-0 mt-md-0 mt-3" style="height:161px">
                             <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
-                                    <span>Wallet Account Details</span>
-                                    <h5 style="color:#1E1E1E66">Account Name: <span class="" style="color:black">John Doe</span></h5>
-                                    <h5 style="color:#1E1E1E66">Account Number: <span class=""  style="color:black">2044556248</span></h5>
-                                    <h5 style="color:#1E1E1E66">Bank Name: <span class=""  style="color:black">Ziga Bank</span></h5>
+                                    <h5>Wallet Account Details</h5>
+                                    <h6 style="color:#1E1E1E66">Account Name: <span class="" style="color:black">John Doe</span></h6>
+                                    <h6 style="color:#1E1E1E66">Account Number: <span class=""  style="color:black">2044556248</span></h6>
+                                    <h6 style="color:#1E1E1E66">Bank Name: <span class=""  style="color:black">Ziga Bank</span></h6>
                                 </div>
                             </div>
                         </div>

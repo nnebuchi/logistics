@@ -83,6 +83,7 @@
                     <div class="d-flex justify-content-center mt-5">
                         <div class="mr-3">
                             <button 
+                            data-type="sender"
                             type="button"
                             disabled
                             class="btn btn-light fs-4 fw-bold prev">

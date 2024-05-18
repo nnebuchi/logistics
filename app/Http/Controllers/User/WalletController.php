@@ -133,12 +133,14 @@ class WalletController extends Controller
 
         if($request['event'] == "charge.success"): //If charge was successful
             $reference = $request["data"]["reference"];
-            $transaction = Transaction::where(['reference' => $reference])->first();
-            if(!$transaction) exit();
-            if($transaction->verified) exit();
+            $trx = Transaction::where(['reference' => $reference])->first();
+            //if(!$trx) exit();
+            if($trx && $trx->verified) exit();
 
-            $wallet = $transaction->wallet;
             if($request["data"]["status"] == "success"):
+                $user = User::where(["email" => $request["data"]["customer"]["email"]])->first();
+                $wallet = $user->wallet;
+
                 $payment = new Paystack;
                 $paymentData = $payment->getPaymentData($reference);
                 if($paymentData["status"]):
@@ -146,13 +148,25 @@ class WalletController extends Controller
                         $wallet->balance += $paymentData["data"]["amount"] / 100;
                         $wallet->save();
                         
-                        $transaction->status = "success";
-                        $transaction->verified = true;
-                        $transaction->save();
+                        if($trx):
+                            $trx->status = "success";
+                            $trx->verified = true;
+                            $trx->save();
+                        else:
+                            $transaction = new Transaction();
+                            $transaction->wallet_id = $wallet->id;
+                            $transaction->amount = $paymentData["data"]["amount"] / 100;
+                            $transaction->type = "Credit";
+                            $transaction->purpose = "Wallet Top up";
+                            $transaction->reference = $reference;
+                            $transaction->status = "success";
+                            $transaction->verified = true;
+                            $transaction->save();
+                        endif;
                     elseif($paymentData["data"]["status"] == "failed"):
-                        $transaction->status = "failed";
-                        $transaction->verified = true;
-                        $transaction->save();
+                        //$transaction->status = "failed";
+                        //$transaction->verified = true;
+                        //$transaction->save();
                     endif;
                 endif;
             endif;
