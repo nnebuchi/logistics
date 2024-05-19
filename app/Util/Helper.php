@@ -39,51 +39,64 @@ class Helper
         return $id.strtolower($token);
     }
 
-    public static function getNewUsersLast7Days()
+    public static function getNewUsersLastWeek()
     {
-        // Calculate the date 7 days ago from today
-        $startDate = Carbon::now()->subDays(7);
-        //$endDate = Carbon::now();
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+        $usersLastWeek = User::whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->count();
 
-        // Fetch the total number of users registered in the last 7 days
-        $newUsersCount = User::whereDate('created_at', '>=', $startDate)->count();
-        //$totalUsers = User::whereBetween('created_at', [$startDate, $endDate])->count();
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $endOfThisWeek = Carbon::now()->endOfWeek();
+        $usersThisWeek = User::whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])->count();
 
-        $totalUsers = User::count();
         // Calculate the percentage of new users
-        $percentage = ($newUsersCount / $totalUsers) * 100;
-
-        return [$newUsersCount, $percentage];
+        if($usersLastWeek == 0):
+            $percentage = 100;
+        else:
+            $percentage = (($usersThisWeek - $usersLastWeek) * 100) / $usersLastWeek;
+        endif;
+        
+        return [$usersThisWeek, $percentage];
     }
 
     public static function fetchTransactionsCostInPastWeek()
     {
-        // Calculate the start and end dates for the past week
-        $startDate = Carbon::now()->subDays(7);
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+        $trxLastWeek = Transaction::whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->sum("amount");
 
-        // Fetch the total number of users registered between the start and end dates
-        $newTrxCost = Transaction::whereDate('created_at', '>=', $startDate)->sum("amount");
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $endOfThisWeek = Carbon::now()->endOfWeek();
+        $trxThisWeek = Transaction::whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])->sum("amount");
 
-        $totalTrx = Transaction::all()->sum("amount");
-        // Calculate the percentage of new users
-        $percentage = ($newTrxCost / $totalTrx) * 100;
+        // Calculate the percentage change in transactions
+        if($trxLastWeek == 0):
+            $percentage = 100;
+        else:
+            $percentage = (($trxThisWeek - $trxLastWeek) * 100) / $trxLastWeek;
+        endif;
 
-        return [$newTrxCost, $percentage];
+        return [$trxThisWeek, $percentage];
     }
 
     public static function fetchTransactionsCostInPastMonth()
     {
-        // Calculate the start and end dates for the past month
-        $startDate = Carbon::now()->subMonth();
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+        $trxLastMonth = Transaction::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->sum("amount");
+        
+        $startOfThisMonth = Carbon::now()->startOfMonth();
+        $endOfThisMonth = Carbon::now()->endOfMonth();
+        $trxThisMonth = Transaction::whereBetween('created_at', [$startOfThisMonth, $endOfThisMonth])->sum("amount");
 
-        // Fetch the total number of users registered between the start and end dates
-        $newTrxCost = Transaction::whereDate('created_at', '>=', $startDate)->sum("amount");
+        // Calculate the percentage change in transactions
+        if ($trxLastMonth == 0) {
+            $percentage = 100;
+        } else {
+            $percentage = (($trxThisMonth - $trxLastMonth) * 100) / $trxLastMonth;
+        }
 
-        $totalTrx = Transaction::all()->sum("amount");
-        // Calculate the percentage of new users
-        $percentage = ($newTrxCost / $totalTrx) * 100;
-
-        return [$newTrxCost, $percentage];
+        return [$trxThisMonth, $percentage];
     }
 
 }

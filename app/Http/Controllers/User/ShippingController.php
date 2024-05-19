@@ -72,13 +72,8 @@ class ShippingController extends Controller
         $fromCities = City::where("state_id", $fromState->id)->get();
         $toCities = City::where("state_id", $toState->id)->get();
 
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', env('TERMINAL_AFRICA_URI').'hs-codes/simplified/chapters/', [
-            'headers' => [
-                'Authorization' => 'Bearer '.env('TERMINAL_AFRICA_SECRET_KEY')
-            ]
-        ]);
-        $response = json_decode($response->getBody());
+        $response = $this->logistics->getChapters();
+        $response = json_decode($response);
         $chapters = $response->data;
 
         $states = [
@@ -141,13 +136,8 @@ class ShippingController extends Controller
         $user = User::find(Auth::user()->id);
         $countries = Country::all();
 
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', env('TERMINAL_AFRICA_URI').'hs-codes/simplified/chapters/', [
-            'headers' => [
-                'Authorization' => 'Bearer '.env('TERMINAL_AFRICA_SECRET_KEY')
-            ]
-        ]);
-        $response = json_decode($response->getBody());
+        $response = $this->logistics->getChapters();
+        $response = json_decode($response);
         $chapters = $response->data;
 
         return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters'));
@@ -267,7 +257,7 @@ class ShippingController extends Controller
                     "hs_code"=> "071290"
                 ]
             ],
-            "shipment_id" => "SH-SK52SQLQEC38EE36"
+            //"shipment_id" => "SH-SK52SQLQEC38EE36"
         ];
         $request = new Request();
         $request->merge($payload);*/
@@ -419,6 +409,16 @@ class ShippingController extends Controller
         $shipment->items = $getShipping->items;
 
         return ResponseFormatter::success("Shipment fetched successfully:", $shipment, 200);
+    }
+
+    public function createAddress(Request $request){
+        $address = $this->logistics->createAddress($request->all());
+        $address = json_decode($address);
+        if(!$address->status):
+            return ResponseFormatter::error($address->message, 400);
+        else:
+            return ResponseFormatter::success($address->message, $address->data, 200);
+        endif;
     }
 
 }

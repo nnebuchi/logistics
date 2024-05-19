@@ -21,6 +21,7 @@
         <div class="d-flex justify-content-center mt-3">
             <div class="mr-3">
                 <button 
+                data-type="carrier"
                 type="button"
                 class="btn btn-light fs-4 fw-bold prev">
                 <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">

@@ -224,8 +224,8 @@
                 const innerHTML = event.target.innerHTML;
                 setBtnLoading(event.target)
                 let payload = {
-                    "first_name": formData[type].firstname,
-                    "last_name": formData[type].lastname,
+                    "firstname": formData[type].firstname,
+                    "lastname": formData[type].lastname,
                     "email": formData[type].email,
                     "phone": formData[type].phone,
                     "city": formData[type].city,
@@ -238,14 +238,16 @@
                     headers: {
                         Accept: "application/json",
                         "Content-Type": "application/json",
-                        Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                        "X-Requested-With": "XMLHttpRequest"
                     }
                 };
-                axios.post(`https://api.terminal.africa/v1/addresses`, payload, config)
+                axios.post(`${baseUrl}/address`, payload, config)
                 .then(function(response){
                     setBtnNotLoading(event.target, innerHTML)
-                    let results = response.data.data;
+                    let results = response.data.results;
                     formData[type] = results;
+                    console.log(results);
                     currentStep.hide();
                     nextStep.show();
                     if(type == "sender"){
@@ -256,8 +258,10 @@
                         $(".progress").eq(2).addClass("bg-primary");
                     }
                 }).catch(function(error){
-                    //alert(error);
-                })
+                    setBtnNotLoading(event.target, innerHTML)
+                    let errors = error.response.data.error;
+                    alert(error.response.data.message);
+                });
             }
         });
 
@@ -267,6 +271,18 @@
             var prevStep = currentStep.prev(".step");
             currentStep.hide();
             prevStep.show();
+
+            let type = $(this).data("type");
+            if(type == "receiver"){
+                $(".progress").removeClass("bg-primary");
+                $(".progress").eq(0).addClass("bg-primary");
+            }else if(type == "shipping"){
+                $(".progress").removeClass("bg-primary");
+                $(".progress").eq(1).addClass("bg-primary");
+            }else if(type == "carrier"){
+                $(".progress").removeClass("bg-primary");
+                $(".progress").eq(2).addClass("bg-primary");
+            }
         });
 
         function fetchStates(formIdentifier, countryId) {

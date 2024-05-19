@@ -51,6 +51,7 @@ Route::group([
 ], function () {
     Route::get('/', [UserController::class, 'index'])->name('dashboard');
     Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
+    Route::post('/address', [ShippingController::class, 'createAddress']);
     Route::get('/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
     Route::get('/shipping/create', [ShippingController::class, 'showShippingForm']);
     Route::post('/shipping/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
@@ -135,8 +136,4 @@ Route::group([
     Route::get('/get-chart-data', [AdminDashboardController::class, 'getChartData']);
 
     Route::get('impersonate/{user_id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
-});
-
-Route::group(['middleware' => ['auth']], function() {
-    
 });
