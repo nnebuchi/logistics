@@ -136,4 +136,6 @@ Route::group([
     Route::get('/get-chart-data', [AdminDashboardController::class, 'getChartData']);
 
     Route::get('impersonate/{user_id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+
+    Route::get('/admin/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
 });
