@@ -289,7 +289,7 @@
                     "X-Requested-With": "XMLHttpRequest"
                 }
             };
-            axios.get(`${baseUrl}/shipping/${$id}/track`, config)
+            axios.get(`${baseUrl}/admin/shipping/${$id}/track`, config)
             .then((res) => {
                 let shipment = res.data.results;
                 let items = "";
