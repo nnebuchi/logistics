@@ -295,3 +295,11 @@ if (Object.keys(errors).length === 0) {
             <a class="" data-id="${user.id}" type="button" href="${impersonateBaseUrl.replace(':id', user.id)}">
                                 Impersonate
                             </a>
+
+
+                            <td scope="row">
+                            <button data-id="${user.id}" data-email="${user.email}" 
+                            data-name="${user.firstname+" "+user.lastname}" 
+                            class="btn btn-light fund-user" type="button">Fund
+                            </button>
+                        </td>

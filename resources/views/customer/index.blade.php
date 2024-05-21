@@ -68,9 +68,9 @@
                             <div class="h-100 pl-3 pt-3 bg-white d-flex align-items-center justify-content-between" style="border-radius:20px;">
                                 <div class="">
                                     <h5>Wallet Account Details</h5>
-                                    <h6 style="color:#1E1E1E66">Account Name: <span class="" style="color:black">John Doe</span></h6>
-                                    <h6 style="color:#1E1E1E66">Account Number: <span class=""  style="color:black">2044556248</span></h6>
-                                    <h6 style="color:#1E1E1E66">Bank Name: <span class=""  style="color:black">Ziga Bank</span></h6>
+                                    <h6 style="color:#1E1E1E66">Account Name: <span class="" style="color:black"><?=$wallet?->account_name?></span></h6>
+                                    <h6 style="color:#1E1E1E66">Account Number: <span class=""  style="color:black"><?=$wallet?->account_number?></span></h6>
+                                    <h6 style="color:#1E1E1E66">Bank Name: <span class=""  style="color:black"><?=$wallet?->bank_name?></span></h6>
                                 </div>
                             </div>
                         </div>

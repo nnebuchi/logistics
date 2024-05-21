@@ -138,4 +138,8 @@ Route::group([
     Route::get('impersonate/{user_id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
 
     Route::get('/admin/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
+
+    Route::post('/admin/customer/vitual-account/{userId}', [AdminController::class, 'updateUserVirtualAccount'])->name("virtual-account.save");
+
+    Route::post('/admin/customer/send-notification', [AdminController::class, 'broadcastToCustomer'])->name("broadcast.send");
 });

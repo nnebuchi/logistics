@@ -279,7 +279,6 @@
             }
         });
 
-        alert(JSON.stringify(inputs));
         let errorEl = $('#broadcastModal .error');
         let msg = $('#broadcastModal .message');
         errorEl.text('');
@@ -290,7 +289,8 @@
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    Authorization: "Bearer "+ userToken
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             };
             axios.post(url, inputs, config)

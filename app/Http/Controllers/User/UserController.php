@@ -23,8 +23,9 @@ class UserController extends Controller
     public function index()
     {
         $user = User::find(Auth::user()->id);
+        $wallet = $user->wallet;
 
-        return view('customer.index', compact('user'));
+        return view('customer.index', compact('user', 'wallet'));
     }
 
     public function showShipments()

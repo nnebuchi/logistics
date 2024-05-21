@@ -13,6 +13,13 @@ use App\Util\ResponseFormatter;
 
 class WalletController extends Controller
 {
+    private Paystack $paystack;
+
+    public function __construct(Paystack $paystack)
+    {
+        $this->paystack = $paystack;
+    }
+
     public function index()
     {
         $user = User::find(Auth::user()->id);
@@ -86,8 +93,9 @@ class WalletController extends Controller
 
         $wallet = $transaction->wallet;
 
-        $payment = new Paystack;
-        $paymentData = $payment->getPaymentData($reference);
+        //$payment = new Paystack();
+        $paymentData = $this->paystack->getPaymentData($reference);
+        $paymentData = json_decode($paymentData, true);
 
         if($paymentData["status"]):
             if($paymentData["data"]["status"] == "success"):
@@ -139,14 +147,14 @@ class WalletController extends Controller
 
             if($request["data"]["status"] == "success"):
                 $user = User::where(["email" => $request["data"]["customer"]["email"]])->first();
-                $wallet = $user->wallet;
+                //$wallet = $user->wallet;
 
-                $payment = new Paystack;
-                $paymentData = $payment->getPaymentData($reference);
+                $paymentData = $this->paystack->getPaymentData($reference);
+                $paymentData = json_decode($paymentData, true);
                 if($paymentData["status"]):
                     if($paymentData["data"]["status"] == "success"):
-                        $wallet->balance += $paymentData["data"]["amount"] / 100;
-                        $wallet->save();
+                        //$wallet->balance += $paymentData["data"]["amount"] / 100;
+                        //$wallet->save();
                         
                         if($trx):
                             $trx->status = "success";
@@ -164,9 +172,21 @@ class WalletController extends Controller
                             $transaction->save();
                         endif;
                     elseif($paymentData["data"]["status"] == "failed"):
-                        //$transaction->status = "failed";
-                        //$transaction->verified = true;
-                        //$transaction->save();
+                        if($trx):
+                            $trx->status = "failed";
+                            $trx->verified = true;
+                            $trx->save();
+                        else:
+                            $transaction = new Transaction();
+                            $transaction->wallet_id = $wallet->id;
+                            $transaction->amount = $paymentData["data"]["amount"] / 100;
+                            $transaction->type = "Credit";
+                            $transaction->purpose = "Wallet Top up";
+                            $transaction->reference = $reference;
+                            $transaction->status = "failed";
+                            $transaction->verified = true;
+                            $transaction->save();
+                        endif;
                     endif;
                 endif;
             endif;
