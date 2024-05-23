@@ -40,7 +40,7 @@
                                             <label for="firstname" class="custom-input-label">First Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
-                                                <input type="text" id="firstname"name="firstname"placeholder="First name"class="custom-input" />
+                                                <input type="text" id="firstname" name="firstname" placeholder="First name" class="custom-input" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('firstname')
@@ -52,7 +52,7 @@
                                             <label for="lastname" class="custom-input-label">Last Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
-                                                <input type="text" id="lastname"name="lastname"placeholder="Last name"class="custom-input" />
+                                                <input type="text" id="lastname" name="lastname" placeholder="Last name" class="custom-input" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('lastname')
@@ -78,7 +78,7 @@
                                             <label for="email" class="custom-input-label">Email</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt=""></div>
-                                                <input type="email" id="email"name="email"placeholder="Email"class="custom-input" />
+                                                <input type="email" id="email" name="email" placeholder="Email" class="custom-input" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('email')
@@ -91,11 +91,11 @@
                                             <label for="account_type" class="custom-input-label">Account Type</label>
                                             <div class="select-box">
                                                 <select id="account_type" name="account_type" class="custom-select">
-                                                <option value="">--Select one---</option>
-                                                @foreach($accounts as $account)
-                                                <option value="{{$account->name}}">{{$account->name}}</option>
-                                                @endforeach
-                                            </select>
+                                                    <option value="">--Select one---</option>
+                                                    @foreach($accounts as $account)
+                                                    <option value="{{$account->name}}">{{$account->name}}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('account_type')
