@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class VerifyPaystackSignature
 {
@@ -15,14 +16,22 @@ class VerifyPaystackSignature
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!$request->hasHeader('x-paystack-signature')):
-            exit();
+        if(!$request->hasHeader('X-Paystack-Signature')):
+            Log::info('Missing Paystack Signature', ['input' => $request->all()]);
+            //exit();
+            abort(403, 'Forbidden');
         endif;
 
-        $input = json_encode($request->all());
-        if($request->header('x-paystack-signature') !== 
-        hash_hmac('sha512', $input, env('PAYSTACK_SECRET', ''))):
-            exit();
+        // Retrieve the request's raw body content
+        $input = $request->getContent();
+        // Verify the Paystack signature
+        $paystackSecret = env('PAYSTACK_SECRET', '');
+        $expectedSignature = hash_hmac('sha512', $input, $paystackSecret);
+
+        if($request->header('X-Paystack-Signature') !== $expectedSignature):
+            Log::info('Invalid Paystack Signature', ['input' => $input]);
+            // If the signature does not match, abort with a 403 Forbidden status
+            abort(403, 'Forbidden');
         endif;
 
         return $next($request);

@@ -399,8 +399,6 @@ class ShippingController extends Controller
     }
 
     public function trackShipment($shipmentId){
-        $user = User::find(Auth::user()->id);
-
         $shipment = $this->logistics->trackShipment($shipmentId);
         $shipment = json_decode($shipment);
         $shipment = $shipment->data;

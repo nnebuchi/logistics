@@ -15,7 +15,6 @@
                     id="searchUser" 
                     name="search" 
                     placeholder="Search options">
-                    <span class="error"> </span>
                 </div>
                 <div class="mt-2 position-relative">
                     <select class="w-100 form-control rounded-0" id="recipient" name="recipient">
@@ -51,7 +50,7 @@
                 </div>
                 <div class="mt-2">
                     <button type="button"
-                    data-url="{{url('/api/admin/user/send-push-notification')}}"
+                    data-url="<?=route("broadcast.send")?>"
                     class="btn btn-primary rounded-0 w-100 fw-bolder" 
                     id="send">Send Now</button>
                 </div>

@@ -42,7 +42,7 @@
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box">
                                                 <img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt="">
                                             </div>
-                                            <input type="email"  id="email" name="email" placeholder="Email" class="custom-input" />
+                                            <input value="<?=old('email')?>" type="email"  id="email" name="email" placeholder="Email" class="custom-input" />
                                         </div>
                                         <div class="text-danger backend-msg">
                                             @error('email')
@@ -56,7 +56,7 @@
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
                                                 <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
                                             </div>
-                                            <input type="password" id="password" name="password" placeholder="Enter Password" class="custom-input" />
+                                            <input value="<?=old('password')?>" type="password" id="password" name="password" placeholder="Enter Password" class="custom-input" />
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
                                                 <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
                                             </div>

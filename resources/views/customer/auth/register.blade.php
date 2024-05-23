@@ -40,7 +40,7 @@
                                             <label for="firstname" class="custom-input-label">First Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
-                                                <input type="text" id="firstname" name="firstname" placeholder="First name" class="custom-input" />
+                                                <input value="<?=old('firstname')?>" type="text" id="firstname"name="firstname"placeholder="First name"class="custom-input" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('firstname')
@@ -52,7 +52,7 @@
                                             <label for="lastname" class="custom-input-label">Last Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
-                                                <input type="text" id="lastname" name="lastname" placeholder="Last name" class="custom-input" />
+                                                <input value="<?=old('lastname')?>" type="text" id="lastname"name="lastname"placeholder="Last name"class="custom-input" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('lastname')
@@ -66,7 +66,7 @@
                                             <label for="phone" class="custom-input-label">Phone Number</label>
                                             <div class="d-flex position-relative input-box">
                                                 <select id="countrySelect" class="country_code" style="font-size: 14px;"></select>
-                                                <input  type="tel"  id="phone" name="phone" style="border-radius:0 15px 15px 0" placeholder="Phone Number" class="custom-input pl-2" />
+                                                <input value="<?=old('phone')?>" type="tel" id="phone" name="phone" style="border-radius:0 15px 15px 0" placeholder="Phone Number" class="custom-input pl-2" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('phone')
@@ -78,7 +78,7 @@
                                             <label for="email" class="custom-input-label">Email</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt=""></div>
-                                                <input type="email" id="email" name="email" placeholder="Email" class="custom-input" />
+                                                <input value="<?=old('email')?>" type="email" id="email"name="email"placeholder="Email"class="custom-input" />
                                             </div>
                                             <div class="text-danger backend-msg">
                                                 @error('email')
@@ -91,9 +91,9 @@
                                             <label for="account_type" class="custom-input-label">Account Type</label>
                                             <div class="select-box">
                                                 <select id="account_type" name="account_type" class="custom-select">
-                                                    <option value="">--Select one---</option>
+                                                    <option value="">Choose one...</option>
                                                     @foreach($accounts as $account)
-                                                    <option value="{{$account->name}}">{{$account->name}}</option>
+                                                        <option value="{{$account->name}}" <?= old('account_type') == $account->name ? 'selected' : ''?>>{{$account->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -109,7 +109,7 @@
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
                                                 <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
                                             </div>
-                                            <input type="password" id="password" name="password" placeholder="Enter Password" class="custom-input" />
+                                            <input value="<?=old('password')?>" type="password" id="password" name="password" placeholder="Enter Password" class="custom-input" />
                                             <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
                                                 <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
                                             </div>

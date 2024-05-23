@@ -5,16 +5,6 @@
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Customers</h5>
-                        <!--<div class="d-flex">
-                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary mr-2">
-                                <img src="{{asset('assets/images/icons/plus.svg')}}" class="mr-1" width="20" height="20" />
-                                Book Shipment
-                            </a>
-                            <a href="{{url('/users')}}" class="d-flex align-items-center btn btn-primary">
-                                <img src="{{asset('assets/images/icons/track.svg')}}" class="mr-1" width="20" height="20" />
-                                Track Shipment
-                            </a>
-                        </div>-->
                     </div>
 
                     <div class="my-3 px-2" style="">
@@ -63,9 +53,6 @@
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold">Status</h6>
-                                                    </th>
-                                                    <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold">Fund</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold">...</h6>
@@ -267,12 +254,6 @@
                         </td>
                         ${status}
                         <td scope="row">
-                            <button data-id="${user.id}" data-email="${user.email}" 
-                            data-name="${user.firstname+" "+user.lastname}" 
-                            class="btn btn-light fund-user" type="button">Fund
-                            </button>
-                        </td>
-                        <td scope="row">
                             <a class="btn btn-light" data-id="${user.id}" type="button" href="${impersonateBaseUrl.replace(':id', user.id)}">
                                 Login
                             </a>
@@ -363,22 +344,44 @@
             let user = res.data.results;
 
             let userData = $("#userModal input");
-            userData.eq(0).val(user?.firstname);
-            userData.eq(1).val(user?.lastname);
-            userData.eq(2).val(user?.email);
-            userData.eq(3).val(user?.phone);
-            userData.eq(4).val(user?.country);
+            userData.eq(0).val(user?.firstname+" "+user?.lastname);
+            userData.eq(1).val(user?.email);
+            userData.eq(2).val(user?.phone);
+            userData.eq(3).val(user?.country);
+            let fields = [
+                {field: userData.eq(4), value: user?.wallet?.bank_name},
+                {field: userData.eq(5), value: user?.wallet?.account_name},
+                {field: userData.eq(6), value: user?.wallet?.account_number}
+            ];
+            fields.forEach(item => {
+                item.field.val(item.value);
+                if (item.value) {
+                    item.field.prop("readonly", true);
+                } else {
+                    item.field.prop("readonly", false); // Optional, to ensure it's not readonly if empty
+                }
+            });
             $("#userModal select[name='account']").val(user?.account.id);
             $('#userModal .avatar').attr("src", user?.photo);
             $("#userModal").modal("show");
+            var url = "{{ route('virtual-account.save', ':id') }}";
+            $("#userModal button[type='submit']").data("url", url.replace(':id', user.id))
         });
     });
 
     // Attach change event listeners to input fields and select input
-    $('#userModal input, #userModal select').change(function() {
-        // Enable the submit button
-        $('#userModal button').prop('disabled', false);
-    });
+    function checkInputFields() {
+        let bankName = $("#userModal input[name='bank_name']").val().trim();
+        let accountName = $("#userModal input[name='account_name']").val().trim();
+        let accountNumber = $("#userModal input[name='account_number']").val().trim();
+
+        if (bankName && accountName && accountNumber) {
+            $("#userModal button[type='submit']").prop('disabled', false);
+        } else {
+            $("#userModal button[type='submit']").prop('disabled', true);
+        }
+    }
+    $("#userModal input[name='bank_name'], #userModal input[name='account_name'], #userModal input[name='account_number']").on('input', checkInputFields);
 
     $("#userModal .close").on("click", function(){
         $("#userModal").modal("hide");
@@ -537,5 +540,54 @@
         document.body.classList.remove('modal-open');
         $('.modal-backdrop').remove();  // Remove the backdrop*/
     }
+
+    // update customer virtual acount
+    $("#userModal button[type='submit']").on("click", function(event){
+        event.preventDefault();
+        let url = $(this).data("url");
+        let btn = $(this);
+        btn.html(`<img src="{{asset('assets/images/loader.gif')}}" id="loader-gif">`);
+        btn.attr("disabled", true);
+        let inputs = {
+            "bank_name": $("#userModal input").eq(4).val(),
+            "account_name": $("#userModal input").eq(5).val(),
+            "account_number": $("#userModal input").eq(6).val()
+        };
+        let errorEl = $('#userModal .error');
+        let msg = $('#userModal .message');
+        errorEl.text('');
+        msg.text('');
+        // Append loader immediately
+        setTimeout(() => {
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            };
+            axios.post(url, inputs, config)
+            .then(function(response){
+                let message = response.data.message;
+                msg.css("color", "green").text(message);
+                btn.attr("disabled", true).text("Submit");
+            })
+            .catch(function(error){
+                let errors = error.response.data.error;
+                if(errors.bank_name){
+                    errorEl.eq(0).text(errors.bank_name);
+                }
+                if(errors.account_name){
+                    errorEl.eq(1).text(errors.account_name);
+                }
+                if(errors.account_number){
+                    errorEl.eq(2).text(errors.account_number);
+                }
+
+                btn.attr("disabled", false).text("Submit");
+            });
+        }, 100); // Delay submission by 100 milliseconds
+    });
 </script>
 @include("admin.layouts.footer")

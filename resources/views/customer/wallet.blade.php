@@ -34,7 +34,7 @@
                                     <span class="text-white mb-2">Your transactions are secure with </span>
                                     <img src="{{asset('assets/images/icons/paystack.svg')}}">
                                 </div>
-                                <button class="btn btn-light text-center mx-auto d-block mt-3" type="button" data-toggle="modal" data-target="#paymentModal">Fund Your Wallet</button>
+                                <button disabled class="btn btn-light text-center mx-auto d-block mt-3" type="button" data-toggle="modal" data-target="#paymentModal">Fund Your Wallet</button>
                                 <div class="d-flex justify-content-end">
                                     <img src="{{asset('assets/images/logos/ziga-yellow.svg')}}">
                                 </div>

@@ -7,12 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Models\WebhookLog;
 use App\Models\Transaction;
 use App\Util\Paystack;
 use App\Util\ResponseFormatter;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class WalletController extends Controller
 {
+    private Paystack $paystack;
+
+    public function __construct(Paystack $paystack)
+    {
+        $this->paystack = $paystack;
+    }
+
     public function index()
     {
         $user = User::find(Auth::user()->id);
@@ -86,8 +96,9 @@ class WalletController extends Controller
 
         $wallet = $transaction->wallet;
 
-        $payment = new Paystack;
-        $paymentData = $payment->getPaymentData($reference);
+        //$payment = new Paystack();
+        $paymentData = $this->paystack->getPaymentData($reference);
+        $paymentData = json_decode($paymentData, true);
 
         if($paymentData["status"]):
             if($paymentData["data"]["status"] == "success"):
@@ -129,47 +140,79 @@ class WalletController extends Controller
 
     public function paymentWebhook(Request $request)
     {
-        http_response_code(200);
+        // Log the webhook payload
+        WebhookLog::create([
+            'event' => $request['event'],
+            'payload' => json_encode($request->all())
+        ]);
+        // Parse the event (which is a JSON string) as an object
+        $event = json_decode($request->getContent(), true); // Decoding JSON to array
+        Log::info('Paystack Webhook Signature Verified', $event);
 
-        if($request['event'] == "charge.success"): //If charge was successful
-            $reference = $request["data"]["reference"];
-            $trx = Transaction::where(['reference' => $reference])->first();
-            //if(!$trx) exit();
-            if($trx && $trx->verified) exit();
+        try{
+            if($request['event'] == "charge.success"): //If charge was successful
+                $reference = $request["data"]["reference"];
+                $trx = Transaction::where(['reference' => $reference])->first();
+                //if(!$trx) exit();
+                if($trx && $trx->verified) exit();
 
-            if($request["data"]["status"] == "success"):
-                $user = User::where(["email" => $request["data"]["customer"]["email"]])->first();
-                $wallet = $user->wallet;
+                if($request["data"]["status"] == "success"):
+                    $user = User::where(["email" => $request["data"]["customer"]["email"]])->first();
+                    $wallet = $user->wallet;
 
-                $payment = new Paystack;
-                $paymentData = $payment->getPaymentData($reference);
-                if($paymentData["status"]):
-                    if($paymentData["data"]["status"] == "success"):
-                        $wallet->balance += $paymentData["data"]["amount"] / 100;
-                        $wallet->save();
-                        
-                        if($trx):
-                            $trx->status = "success";
-                            $trx->verified = true;
-                            $trx->save();
-                        else:
-                            $transaction = new Transaction();
-                            $transaction->wallet_id = $wallet->id;
-                            $transaction->amount = $paymentData["data"]["amount"] / 100;
-                            $transaction->type = "Credit";
-                            $transaction->purpose = "Wallet Top up";
-                            $transaction->reference = $reference;
-                            $transaction->status = "success";
-                            $transaction->verified = true;
-                            $transaction->save();
+                    $paymentData = $this->paystack->getPaymentData($reference);
+                    $paymentData = json_decode($paymentData, true);
+                    if($paymentData["status"]):
+                        if($paymentData["data"]["status"] == "success"):
+                            $wallet->balance += $paymentData["data"]["amount"] / 100;
+                            $wallet->save();
+                            
+                            if($trx):
+                                $trx->status = "success";
+                                $trx->verified = true;
+                                $trx->save();
+                            else:
+                                $transaction = new Transaction();
+                                $transaction->wallet_id = $wallet->id;
+                                $transaction->amount = $paymentData["data"]["amount"] / 100;
+                                $transaction->type = "Credit";
+                                $transaction->purpose = "Wallet Top up";
+                                $transaction->reference = $reference;
+                                $transaction->status = "success";
+                                $transaction->verified = true;
+                                $transaction->save();
+                            endif;
+                        elseif($paymentData["data"]["status"] == "failed"):
+                            if($trx):
+                                $trx->status = "failed";
+                                $trx->verified = true;
+                                $trx->save();
+                            else:
+                                $transaction = new Transaction();
+                                $transaction->wallet_id = $wallet->id;
+                                $transaction->amount = $paymentData["data"]["amount"] / 100;
+                                $transaction->type = "Credit";
+                                $transaction->purpose = "Wallet Top up";
+                                $transaction->reference = $reference;
+                                $transaction->status = "failed";
+                                $transaction->verified = true;
+                                $transaction->save();
+                            endif;
                         endif;
-                    elseif($paymentData["data"]["status"] == "failed"):
-                        //$transaction->status = "failed";
-                        //$transaction->verified = true;
-                        //$transaction->save();
+                        http_response_code(200);
                     endif;
                 endif;
             endif;
-        endif;
+        }catch (Exception $e) {
+            // Log the error
+            WebhookLog::create([
+                'event' => $request['event'],
+                'payload' => json_encode($request->all()),
+                'error_message' => $e->getMessage()
+            ]);
+
+            Log::error('Error processing webhook: ' . $e->getMessage());
+            http_response_code(400);
+        }
     }
 }

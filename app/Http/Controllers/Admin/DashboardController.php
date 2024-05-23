@@ -58,7 +58,7 @@ class DashboardController extends Controller
 
     public function getUserData(Request $request, $userId)
     {
-        $user = User::find($userId);
+        $user = User::with("wallet")->where("id", $userId)->first();
         
         return ResponseFormatter::success(
             "User Data:", 

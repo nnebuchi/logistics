@@ -3,11 +3,13 @@
 namespace App\Util;
 
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 class Paystack
 {
     private $baseUrl;
     private $secretKey;
+    //private Client $client;
 
     public function __construct()
     {
@@ -18,6 +20,8 @@ class Paystack
     public function setKey()
     {
         $this->secretKey = env('PAYSTACK_SECRET', '');
+        $client = new Client;
+        $this->client = $client;
     }
 
     public function setBaseUrl()
@@ -27,11 +31,18 @@ class Paystack
 
     public function getPaymentData($reference)
     {
-        $url = $this->baseUrl.'transaction/verify/'.$reference;
+        /*$url = $this->baseUrl.'transaction/verify/'.$reference;
         $response = Http::acceptJson()
             ->withToken($this->secretKey)
                 ->get($url);
-        return $response;
+        return $response;*/
+        $url = $this->baseUrl.'transaction/verify/'.$reference;
+        $response = $this->client->request('GET', $url, [
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->secretKey
+            ]
+        ]);
+        return $response->getBody();
     }
 
     public function initiateDeposit(

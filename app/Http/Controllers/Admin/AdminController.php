@@ -13,6 +13,7 @@ use Spatie\Permission\Models\Role;
 use App\Rules\ContainsNumber;
 use App\Rules\HasSpecialCharacter;
 use Illuminate\Validation\Rule;
+use App\Notifications\SendCustomerNotification;
 
 class AdminController extends Controller
 {
@@ -90,6 +91,55 @@ class AdminController extends Controller
         $admins = Admin::all();
 
         return ResponseFormatter::success("admin:", $admins, 200);
+    }
+
+    public function updateUserVirtualAccount(Request $request, $userId){
+        $user = User::find($userId);
+
+        $wallet = $user->wallet;
+        $wallet->bank_name = $request["bank_name"];
+        $wallet->account_name = $request["account_name"];
+        $wallet->account_number = $request["account_number"];
+        $wallet->save();
+
+        return ResponseFormatter::success("Customer virtual account has been updated:", null, 200);
+    }
+
+    public function broadcastToCustomer(Request $request){
+        $validator = Validator::make($request->all(), [
+            'recipient' => 'required|string',
+            'title' => 'required|string',
+            'message' => 'required|string',
+        ]);
+
+        if($validator->fails()):
+            return response([
+                'message' => "Oops!, error in sending push notifications",
+                'error' => $validator->getMessageBag()->toArray()
+            ], 422);
+        endif;
+
+        $notificationData = [
+            "title" => $request["title"],
+            "message" => $request["message"]
+        ];
+
+        switch($request["recipient"]):
+            case "all":
+                $users = User::all();
+                foreach($users as $user):
+                    $user->notify(new SendCustomerNotification($notificationData));
+                endforeach;
+                $message = "notifications has been sent to all users";
+            break;
+            default:
+                $user = User::find($request["recipient"]);
+                $user->notify(new SendCustomerNotification($notificationData));
+                $message = "notifications has been sent to ".$user->name;
+            break;
+        endswitch;
+
+        return ResponseFormatter::success($message, null, 200);
     }
 
 
