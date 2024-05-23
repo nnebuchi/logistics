@@ -12,6 +12,7 @@ use App\Models\Transaction;
 use App\Util\Paystack;
 use App\Util\ResponseFormatter;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class WalletController extends Controller
 {
@@ -139,13 +140,14 @@ class WalletController extends Controller
 
     public function paymentWebhook(Request $request)
     {
-        http_response_code(200);
-
         // Log the webhook payload
         WebhookLog::create([
             'event' => $request['event'],
             'payload' => json_encode($request->all())
         ]);
+        // Parse the event (which is a JSON string) as an object
+        $event = json_decode($request->getContent(), true); // Decoding JSON to array
+        Log::info('Paystack Webhook Signature Verified', $event);
 
         try{
             if($request['event'] == "charge.success"): //If charge was successful
@@ -197,6 +199,7 @@ class WalletController extends Controller
                                 $transaction->save();
                             endif;
                         endif;
+                        http_response_code(200);
                     endif;
                 endif;
             endif;
@@ -207,6 +210,9 @@ class WalletController extends Controller
                 'payload' => json_encode($request->all()),
                 'error_message' => $e->getMessage()
             ]);
+
+            Log::error('Error processing webhook: ' . $e->getMessage());
+            http_response_code(400);
         }
     }
 }
