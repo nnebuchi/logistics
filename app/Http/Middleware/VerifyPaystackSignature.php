@@ -17,9 +17,9 @@ class VerifyPaystackSignature
     public function handle(Request $request, Closure $next): Response
     {
         if(!$request->hasHeader('X-Paystack-Signature')):
-            Log::info('Missing Paystack Signature', ['input' => $request->all()]);
-            //exit();
-            abort(403, 'Forbidden');
+            //Log::info('Missing Paystack Signature', ['input' => $request->all()]);
+            exit();
+            //abort(403, 'Forbidden');
         endif;
 
         // Retrieve the request's raw body content
@@ -29,9 +29,10 @@ class VerifyPaystackSignature
         $expectedSignature = hash_hmac('sha512', $input, $paystackSecret);
 
         if($request->header('X-Paystack-Signature') !== $expectedSignature):
-            Log::info('Invalid Paystack Signature', ['input' => $input]);
+            //Log::info('Invalid Paystack Signature', ['input' => $input]);
             // If the signature does not match, abort with a 403 Forbidden status
-            abort(403, 'Forbidden');
+            //abort(403, 'Forbidden');
+            exit();
         endif;
 
         return $next($request);

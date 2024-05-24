@@ -157,19 +157,51 @@
         cancelled: "custom-bg-danger"
     };
 
-    function renderData(shipments, currentPage, perPage, totalEntries){
+    function getIndex(per_page, current_page, index)
+    {
+        if(current_page == 1){
+            return index + 1
+        }else{
+            return (per_page * current_page) - per_page + 1 + index
+        }
+    }
+
+    const per_page = 10;
+    let current_page = 1;
+    let data = [];
+    function getShipments(url){
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        };
+        axios.get(url, config)
+        .then((res) => {
+            data = res.data.results;
+            renderData();
+        });
+    };
+    getShipments(`${baseUrl}/admin/get-all-shippings`);
+
+    function renderData(){
         $(".shipments-table tbody").empty();
+        const startIndex = (current_page - 1) * per_page;
+        const endIndex = startIndex + per_page;
+        shipments = data.slice(startIndex, endIndex);
         if(shipments.length == 0){
             $(".shipments-table tbody").append(`
                 <tr class="">
-                    <td colspan="7">No data available...</td>
-                </tr>
+                    <td scope="row">No data available...</td>
+                </tr> 
             `);
         }else{
             shipments.forEach(function(shipment, index){
                 $(".shipments-table tbody").append(`
                     <tr style="cursor:pointer;font-size" data-id="${shipment.external_shipment_id}">
-                        <td class="">${(currentPage - 1) * perPage + index + 1}.</td>
+                        <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.external_shipment_id}</td>
                         <td class="">
                             <span class="fw-semibold">${shipment.address_from.firstname+" "+shipment.address_from.lastname}</span><br>
@@ -188,101 +220,121 @@
                 `);
             });
         }
+
+        // Calculate last_page
+        const last_page = data.length > 0 ? Math.ceil(data.length / per_page) : 1;
+        // Enable or disable the button based on the condition
+        $(".paginate").eq(0).prop('disabled', current_page === 1);
+        $(".paginate").eq(1).prop('disabled', current_page === last_page);
+
+        $(".paginate").eq(0).data("page", current_page - 1);
+        $(".paginate").eq(1).data("page", current_page + 1);
+
+        $(".entries").eq(0).text((current_page - 1) * per_page + 1);
+        $(".entries").eq(1).text((current_page - 1) * per_page + shipments.length);
+        $(".entries").eq(2).text(data.length);
     }
 
-    const paginator = new Paginator(baseUrl, '/admin/get-all-shippings', 10, renderData);
-    
-    //Add event listeners for pagination buttons
-    $(".paginate").on('click', function () {
-        paginator.goToPage($(this).data('page'));
-    });
-    // Filter input event listener
-    $('#filterInput').on('keyup', function() {
-        let value = $(this).val().trim();
-        paginator.setSearchTerm(value);
-    });
-    $('#startDate, #endDate').on('input', function() {
-        let startDate = $("#startDate").val();
-        let endDate = $("#endDate").val();
-        paginator.setDateRange(startDate, endDate);
+    $('.paginate').on('click', function() {
+        current_page = $(this).data("page");
+        renderData();
     });
 
-    //Add shipment ID to clipboard text
-    $(document).on("click", ".shipments-table tbody tr", function(event){
-        event.preventDefault();
-        let $id = $(this).data("id");
-        // Create a temporary element to hold the text to copy
-        var $temp = $("<input>");
-        // Add the $id as the value of the temporary input element
-        $("body").append($temp);
-        $temp.val($id).select();
-        // Execute the copy command
-        document.execCommand("copy");
-        // Remove the temporary element
-        $temp.remove();
-        // Show a success message to the user
-        //alert("ID copied to clipboard: " + $id);
-
-        const config = {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                "X-Requested-With": "XMLHttpRequest"
+    // jQuery code for filtering
+    $(document).ready(function() {
+        $('#filterInput').on('keyup', function() {
+            //filterTable();
+            let value = $(this).val();
+            if(value == ""){
+                getShipments(`${baseUrl}/admin/get-all-shippings`);
+            }else{
+                getShipments(`${baseUrl}/admin/get-all-shippings?searchTerm=${value}`);
             }
-        };
-        axios.get(`${baseUrl}/admin/shipping/${$id}/track`, config)
-        .then((res) => {
-            let shipment = res.data.results;
-            let items = "";
-            for(const item of shipment.items){
-                items += `<div class="mt-2">
-                    <div class="d-flex justify-content-between">
-                        <p class="m-0">Item: <span class="fw-semibold">${item.name}</span></p>
-                        <p class="m-0">Weight: <span class="fw-semibold">${item.weight}Kg</span></p>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <p class="m-0">Quantity: <span class="fw-semibold">${item.quantity}pieces</span></p>
-                        <p class="m-0">Value: <span class="fw-semibold">₦${parseFloat(item.value).toLocaleString()}</span></p>
-                    </div>
-                </div>`;
-            }
-            $("#shipmentData").empty();
-            $("#shipmentData").append(`
-                <div class="p-2" style="border-radius:10px;border:1px solid #bbb">
-                    <h4>${shipment.shipment_id}</h4>
-                </div>
-                <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
-                    <h5>Customer Details</h5>
-                    <div class="px-2 small">
-                        <p class="m-0">Name: <span class="fw-semibold">${shipment.address_from.first_name+" "+shipment.address_from.last_name}</span></p>
-                        <p class="m-0">Email: <span class="fw-semibold">${shipment.address_from.email}</span></p>
-                        <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_from.phone}</span></p>
-                        <p class="m-0">Address: <span class="fw-semibold">${shipment.address_from.line1}</span></p>
-                    </div>
-                </div>
-                <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
-                    <h5>Delivery Details</h5>
-                    <div class="px-2 small">
-                        <p class="m-0">Name: <span class="fw-semibold">${shipment.address_to.first_name+" "+shipment.address_to.last_name}</span></p>
-                        <p class="m-0">Email: <span class="fw-semibold">${shipment.address_to.email}</span></p>
-                        <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_to.phone}</span></p>
-                        <p class="m-0">Address: <span class="fw-semibold">${shipment.address_to.line1}</span></p>
-                    </div>
-                </div>
-                <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
-                    <h5>Shipment Details</h5>
-                    <div class="px-2 small">
-                        ${items}
-                    </div>
-                </div>
-            `);
-            $("#shipmentDataModal").modal("show");
         });
-    });
 
-    $("#shipmentDataModal .close").on("click", function(){
-        $("#shipmentDataModal").modal("hide");
+        $('#startDate, #endDate').on('input', function() {
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            getShipments(`${baseUrl}/admin/get-all-shippings?startDate=${startDate}&endDate=${endDate}`);
+        });
+
+        //Add shipment ID to clipboard text
+        $(document).on("click", ".shipments-table tbody tr", function(event){
+            event.preventDefault();
+            let $id = $(this).data("id");
+            // Create a temporary element to hold the text to copy
+            var $temp = $("<input>");
+            // Add the $id as the value of the temporary input element
+            $("body").append($temp);
+            $temp.val($id).select();
+            // Execute the copy command
+            document.execCommand("copy");
+            // Remove the temporary element
+            $temp.remove();
+            // Show a success message to the user
+            //alert("ID copied to clipboard: " + $id);
+
+            const config = {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            };
+            axios.get(`${baseUrl}/admin/shipping/${$id}/track`, config)
+            .then((res) => {
+                let shipment = res.data.results;
+                let items = "";
+                for(const item of shipment.items){
+                    items += `<div class="mt-2">
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Item: <span class="fw-semibold">${item.name}</span></p>
+                            <p class="m-0">Weight: <span class="fw-semibold">${item.weight}Kg</span></p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Quantity: <span class="fw-semibold">${item.quantity}pieces</span></p>
+                            <p class="m-0">Value: <span class="fw-semibold">₦${parseFloat(item.value).toLocaleString()}</span></p>
+                        </div>
+                    </div>`;
+                }
+                $("#shipmentData").empty();
+                $("#shipmentData").append(`
+                    <div class="p-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h4>${shipment.shipment_id}</h4>
+                    </div>
+                    <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h5>Customer Details</h5>
+                        <div class="px-2 small">
+                            <p class="m-0">Name: <span class="fw-semibold">${shipment.address_from.first_name+" "+shipment.address_from.last_name}</span></p>
+                            <p class="m-0">Email: <span class="fw-semibold">${shipment.address_from.email}</span></p>
+                            <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_from.phone}</span></p>
+                            <p class="m-0">Address: <span class="fw-semibold">${shipment.address_from.line1}</span></p>
+                        </div>
+                    </div>
+                    <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h5>Delivery Details</h5>
+                        <div class="px-2 small">
+                            <p class="m-0">Name: <span class="fw-semibold">${shipment.address_to.first_name+" "+shipment.address_to.last_name}</span></p>
+                            <p class="m-0">Email: <span class="fw-semibold">${shipment.address_to.email}</span></p>
+                            <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_to.phone}</span></p>
+                            <p class="m-0">Address: <span class="fw-semibold">${shipment.address_to.line1}</span></p>
+                        </div>
+                    </div>
+                    <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                        <h5>Shipment Details</h5>
+                        <div class="px-2 small">
+                            ${items}
+                        </div>
+                    </div>
+                `);
+                $("#shipmentDataModal").modal("show");
+            });
+        });
+
+        $("#shipmentDataModal .close").on("click", function(){
+            $("#shipmentDataModal").modal("hide");
+        });
     });
 </script>
 @include("admin.layouts.footer")
