@@ -22,6 +22,13 @@ class ResponseFormatter
                 'error' => false,
             ], $statusCode);
         else:
+            if($data){
+                return response()->json([
+                    'message' => $message,
+                    'error' => true,
+                    'data'=>$data
+                ], $statusCode);
+            }
             return response()->json([
                 'message' => $message,
                 'error' => true,
