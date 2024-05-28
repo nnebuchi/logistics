@@ -31,13 +31,18 @@ class Paystack
 
     public function getPaymentData($reference)
     {
-        /*$url = $this->baseUrl.'transaction/verify/'.$reference;
-        $response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->get($url);
-        return $response;*/
         $url = $this->baseUrl.'transaction/verify/'.$reference;
         $response = $this->client->request('GET', $url, [
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->secretKey
+            ]
+        ]);
+        return $response->getBody();
+    }
+
+    public function getTransactions()
+    {
+        $response = $this->client->request('GET', $this->baseUrl.'transaction', [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->secretKey
             ]

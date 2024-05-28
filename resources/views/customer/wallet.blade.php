@@ -27,15 +27,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="height:161px">
+                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-3" style="min-height:161px">
                             <div class="h-100 px-3 pt-3 bg-primary" style="border-radius:20px;">
-                                <div class="d-flex flex-column align-items-center">
-                                    {{-- <h4 class="text-white">Fund Your Wallet</h4> --}}
-                                    <span class="text-white mb-2">Your transactions are secure with </span>
-                                    <img src="{{asset('assets/images/icons/paystack.svg')}}">
+                                <div class="text-white">
+                                    <h5 class="text-white m-0">Your Account Details</h5>
+                                    <h6 style="color:#FFFFFFB2" class="m-0">Account Name: <span class="text-white"><?=$wallet?->account_name?></span></h6>
+                                    <h6 style="color:#FFFFFFB2" class="m-0">Account Number: <span class="text-white"><?=$wallet?->account_number?></span></h6>
+                                    <h6 style="color:#FFFFFFB2" class="m-0">Bank Name: <span class="text-white"><?=$wallet?->bank_name?></span></h6>
                                 </div>
-                                <button disabled class="btn btn-light text-center mx-auto d-block mt-3" type="button" data-toggle="modal" data-target="#paymentModal">Fund Your Wallet</button>
-                                <div class="d-flex justify-content-end">
+                                <div class="bg-white p-2 mt-1" style="border-radius:10px;">
+                                    <h6 style="color:#CC841D;font-size:12px;margin:0" class="d-flex align-items-center"><span>How to Fund Your Wallet</span><img class="ml-2" src="{{asset('assets/images/icons/wallet5.svg')}}"></h6>
+                                    <p style="font-size:11px;margin:0">Transfer money from your bank account
+to your wallet using the account details above</p>
+                                </div>
+                                <div class="d-flex justify-content-end my-2">
                                     <img src="{{asset('assets/images/logos/ziga-yellow.svg')}}">
                                 </div>
                             </div>

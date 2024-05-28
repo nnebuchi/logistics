@@ -26,8 +26,9 @@ class WalletController extends Controller
     public function index()
     {
         $user = User::find(Auth::user()->id);
+        $wallet = $user->wallet;
 
-        return view('customer.wallet', compact('user'));
+        return view('customer.wallet', compact('user', 'wallet'));
     }
 
     public function getWallet()
@@ -146,8 +147,8 @@ class WalletController extends Controller
             'payload' => json_encode($request->all())
         ]);
         // Parse the event (which is a JSON string) as an object
-        $event = json_decode($request->getContent(), true); // Decoding JSON to array
-        Log::info('Paystack Webhook Signature Verified', $event);
+        //$event = json_decode($request->getContent(), true); // Decoding JSON to array
+        //Log::info('Paystack Webhook Signature Verified', $event);
 
         try{
             if($request['event'] == "charge.success"): //If charge was successful
@@ -211,8 +212,26 @@ class WalletController extends Controller
                 'error_message' => $e->getMessage()
             ]);
 
-            Log::error('Error processing webhook: ' . $e->getMessage());
+            //Log::error('Error processing webhook: ' . $e->getMessage());
             http_response_code(400);
         }
     }
+
+    /*protected function handleEvent($event)
+    {
+        // Handle different event types here
+        // Example:
+        switch ($event->event) {
+            case 'charge.success':
+                // Handle successful charge
+                break;
+            case 'transfer.success':
+                // Handle successful transfer
+                break;
+            // Add more cases as needed
+            default:
+                Log::warning('Unhandled Paystack Event', (array) $event);
+                break;
+        }
+    }*/
 }
