@@ -221,7 +221,7 @@ class ShippingController extends Controller
         // dd($pickup);
         
         if(!$pickup->status):
-            return ResponseFormatter::error("Oops!! Pickup Status not returned".$pickup?->message, 400, $pickup);
+            return ResponseFormatter::error("Oops!! Pickup Status not returned ".$pickup?->message, 400, $pickup);
         else:
             if($pickup?->data?->status == "confirmed"):
                 $wallet->save();
