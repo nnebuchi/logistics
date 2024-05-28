@@ -159,7 +159,7 @@ class WalletController extends Controller
                 if($request["data"]["status"] == "success"):
                     $user = User::where(["email" => $request["data"]["customer"]["email"]])->first();
                     $wallet = $user->wallet;
-
+                    
                     $paymentData = $this->paystack->getPaymentData($reference);
                     $paymentData = json_decode($paymentData, true);
                     if($paymentData["status"]):
