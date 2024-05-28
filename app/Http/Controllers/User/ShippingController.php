@@ -218,6 +218,7 @@ class ShippingController extends Controller
         //Arrange pickup for shipment
         $pickup = $this->logistics->arrangePickup($payload);
         $pickup = json_decode($pickup);
+        dd($pickup);
         
         if(!$pickup->status):
             return ResponseFormatter::error("Oops!! Pickup Status not returned", 400, $pickup);

@@ -186,7 +186,7 @@ class Logistics
                 //'purchase_insurance' => $data["purchase_insurance"]
             ] 
         ]);
-        dd($response);
+        // dd($response);
         return $response->getBody();
     }
 
