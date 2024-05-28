@@ -193,6 +193,7 @@ class ShippingController extends Controller
 
     public function makePayment(Request $request)
     {
+        dd($request);
         $user = User::find(Auth::user()->id);
         $wallet = $user->wallet;
         if($wallet->balance <= $request->total):
