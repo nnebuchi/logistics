@@ -219,7 +219,7 @@ class ShippingController extends Controller
         $pickup = json_decode($pickup);
         
         if(!$pickup->status):
-            return ResponseFormatter::error("Oops!! Pickup Status not returned", $pickup, 400);
+            return ResponseFormatter::error("Oops!! Pickup Status not returned", 400, $pickup);
         else:
             if($pickup->data->status == "confirmed"):
                 $wallet->save();

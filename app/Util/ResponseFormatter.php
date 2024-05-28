@@ -41,7 +41,7 @@ class ResponseFormatter
         return self::coreResponse($message, $data, $statusCode);
     }
 
-    public static function error($message, $statusCode = 500)
+    public static function error($message, $statusCode = 500, $data=null)
     {
         return self::coreResponse($message, null, $statusCode, false);
     }
