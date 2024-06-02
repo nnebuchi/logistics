@@ -54,7 +54,7 @@
                         <img src="{{asset('assets/images/logos/ziga-yellow.svg')}}">
                     </div>
                     <h4 class="mt-2 text-center">Checkout</h4>
-                    <p class="text-center fs-2 m-0">Subcharge: <span class="subcharge fw-semibold" style="color:#233E83;"> </span></p>
+                    <!--<p class="text-center fs-2 m-0">Subcharge: <span class="subcharge fw-semibold" style="color:#233E83;"> </span></p>-->
                     <p class="text-center fs-2 m-0">Total Charges</p>
                     <div class="text-center m-2">
                         <span class="total py-2 px-4 rounded fw-semibold" style="color:#233E83;background-color:#DAE3FE;"> </span>

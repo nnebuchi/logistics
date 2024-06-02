@@ -24,8 +24,17 @@ class Transaction extends Model
     protected function createdAt(): Attribute
     {
         return Attribute::make(
-            //get: fn ($value) => Carbon::parse($value)->format('M j, Y g:ia')
-            get: fn ($value) => Carbon::parse($value)->format('d/m/y'),
+            get: fn ($value) => Carbon::parse($value)->format('M j, Y g:ia'),
+            //get: fn ($value) => Carbon::parse($value)->format('d/m/y'),
+            set: fn ($value) => $value
+        );
+    }
+
+    protected function updatedAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Carbon::parse($value)->format('M j, Y g:ia'),
+            //get: fn ($value) => Carbon::parse($value)->format('d/m/y'),
             set: fn ($value) => $value
         );
     }

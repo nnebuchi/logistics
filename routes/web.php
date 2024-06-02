@@ -65,6 +65,9 @@ Route::group([
     Route::get('/cities/{stateId}', [ShippingController::class, 'getCities']);
     Route::get('/states/{countryId}', [ShippingController::class, 'getStates']);
 
+    Route::get('/categories', [ShippingController::class, 'getCategories']);
+    Route::get('/hs_codes', [ShippingController::class, 'getHsCodes']);
+
     Route::post("/change-password", [UserController::class, "changePassword"]);
     //users endpoint
     Route::group([
@@ -109,6 +112,7 @@ Route::group([
     [AdminDashboardController::class, 'showUsers'])->name('admin.users');
     Route::get('/admin/users/{uuid}', 
     [AdminDashboardController::class, 'showUser'])->name('admin.user');
+    Route::get('/admin/users/{uuid}/verify-kyc', [AdminController::class, 'verifyCustomerAccount']);
 
     Route::get('/admin/shippings', 
     [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');

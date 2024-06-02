@@ -157,7 +157,7 @@
 
                     <?php if(!$customer->is_verified):?>    
                         <div class="mt-2">
-                            <button class="custom-btn" type="button">Verify User</button>
+                            <a href="<?=url('/admin/users/'.$customer->uuid.'/verify-kyc')?>" class="custom-btn">Verify User</a>
                         </div>
                     <?php endif; ?>
 

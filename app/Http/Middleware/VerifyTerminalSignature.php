@@ -19,9 +19,13 @@ class VerifyTerminalSignature
             exit();
         endif;
 
-        $input = json_encode($request->all());
-        if($request->header('X-Terminal-Signature') !== 
-        hash_hmac('sha512', $input, env('TERMINAL_AFRICA_SECRET_KEY', ''))):
+        // Retrieve the request's raw body content
+        $input = $request->getContent();
+        // Verify the Terminal signature
+        $secret = env('TERMINAL_AFRICA_SECRET_KEY', '');
+        $expectedSignature = hash_hmac('sha512', $input, $secret);
+
+        if($request->header('X-Terminal-Signature') !== $expectedSignature):
             exit();
         endif;
 
