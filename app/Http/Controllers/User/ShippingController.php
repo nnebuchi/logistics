@@ -456,14 +456,16 @@ class ShippingController extends Controller
         endif;
     }
 
-    public function getCategories(Request $request){
+    public function getCategories(Request $request)
+    {
         $categories = $this->logistics->getCategories($request->chapter);
         $categories = json_decode($categories);
 
         return ResponseFormatter::success($categories->message, $categories->data, 200);
     }
 
-    public function getHsCodes(Request $request){
+    public function getHsCodes(Request $request)
+    {
         $hs_codes = $this->logistics->getHsCodes($request->chapter, $request->category);
         $hs_codes = json_decode($hs_codes);
 
