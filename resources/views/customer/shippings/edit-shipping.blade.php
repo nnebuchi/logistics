@@ -378,9 +378,10 @@
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
                     "X-Requested-With": "XMLHttpRequest"
-                }
+                },
+                params: {chapter: $chapter}
             };
-            axios.get(`${baseUrl}/categories`, config, {"chapter": $chapter})
+            axios.get(`${baseUrl}/categories`, config)
             .then((res) => {
                 let categories = res.data.results;
                 // Update the state select input in the specified form
@@ -412,9 +413,10 @@
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
                     "X-Requested-With": "XMLHttpRequest"
-                }
+                },
+                params: {chapter: $chapter, category: $category}
             };
-            axios.get(`${baseUrl}/hs_codes`, config, {"chapter": $chapter, "category": $category})
+            axios.get(`${baseUrl}/hs_codes`, config)
             .then((res) => {
                 let hs_codes = res.data?.results?.hs_codes;
                 // Update the state select input in the specified form
