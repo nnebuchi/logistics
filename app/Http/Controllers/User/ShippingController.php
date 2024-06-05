@@ -246,7 +246,8 @@ class ShippingController extends Controller
         if(!$pickup->status):
             return ResponseFormatter::error("Oops!! ".$pickup?->message, 400, $pickup);
         else:
-            if($pickup?->data?->status == "confirmed"):
+            $statuses = ["confirmed", "in-transit"];
+            if(in_array($pickup->data->status, $statuses)):
                 $wallet->save();
                 $transaction->save();
 
@@ -255,11 +256,11 @@ class ShippingController extends Controller
                 $data = $response->data;
 
                 $shipment = Shipment::where("external_shipment_id", $request->shipment_id)->first();
-                $shipment->status = "confirmed";
+                $shipment->status = $pickup->data->status;
                 $shipment->pickup_date = $data->pickup_date;
                 $shipment->save();
 
-                if($data->extras):
+                /*if($data->extras):
                     $notificationData = [
                         "subject" => "Customer Invoice & Waybill",
                         "title" => "Ziga Afrika Invoice & Waybill",
@@ -268,7 +269,7 @@ class ShippingController extends Controller
                         "attachment2" => $data->extras->shipping_label_url
                     ];
                     $user->notify(new SendInvoice($notificationData));
-                endif;
+                endif;*/
             endif;
         endif;
 
