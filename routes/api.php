@@ -41,7 +41,7 @@ Route::group([
 
 //shipment updates webhook
 Route::group([
-    'middleware' => ['terminal.verify']
+    //'middleware' => ['terminal.verify']
 ], function () {
     Route::post("/shipment/webhook", [ShippingController::class, "shipmentWebhook"]);
 });
