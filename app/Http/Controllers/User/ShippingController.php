@@ -166,10 +166,10 @@ class ShippingController extends Controller
 
     public function shipmentWebhook(Request $request)
     {
-        $input = $request->getContent();
+        /*$input = $request->getContent();
         // Verify the Terminal signature
         $secret = env('TERMINAL_AFRICA_SECRET_KEY', '');
-        return $expectedSignature = hash_hmac('sha512', $input, $secret);
+        return $expectedSignature = hash_hmac('sha512', $input, $secret);*/
 
         // Log the webhook payload
         WebhookLog::create([
