@@ -166,14 +166,19 @@ class ShippingController extends Controller
 
     public function shipmentWebhook(Request $request)
     {
+        /*$input = $request->getContent();
+        // Verify the Terminal signature
+        $secret = env('TERMINAL_AFRICA_SECRET_KEY', '');
+        return $expectedSignature = hash_hmac('sha512', $input, $secret);*/
+
         // Log the webhook payload
         WebhookLog::create([
             'event' => $request['event'],
             'payload' => json_encode($request->all())
         ]);
-
+        
         try{
-            $id = $request["data"]["id"] ?? $request["data"]["shipment_id"];
+            $id = $request["data"]["shipment_id"];
             $shipment = Shipment::where(['external_shipment_id' => $id ])->first();
 
             switch($request["event"]):
@@ -192,7 +197,9 @@ class ShippingController extends Controller
                 default:
                     //Handle unknown event received
             endswitch;
+            $shipment->pickup_date = $request["data"]["pickup_date"];
             $shipment->save();
+
             http_response_code(200);
         }catch (Exception $e) {
             // Log the error
