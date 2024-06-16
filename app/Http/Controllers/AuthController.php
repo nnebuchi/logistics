@@ -94,18 +94,22 @@ class AuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'email' => 'required|email|exists:users,email'
         ]);
 
-        if($validator->fails()):
-            return response([
-                'message' => "Password Reset failed",
-                'error' => $validator->getMessageBag()->toArray()
-            ], 422);
-        endif;
+        // if($validator->fails()):
+        //     return response([
+        //         'message' => "Password Reset failed",
+        //         'error' => $validator->getMessageBag()->toArray()
+        //     ], 422);
+        // endif;
 
         return $this->authService->forgotPassword($request->all());
+    }
+
+    public function forgotPasswordResponse(){
+        return view('customer.auth.forgot-password-response');
     }
 
     public function resetPassword(ResetPasswordRequest $request)

@@ -20,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             //'ziga.admin' => \App\Http\Middleware\CheckIfIsAdmin::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'paystack.verify' => \App\Http\Middleware\VerifyPaystackSignature::class,
-            'terminal.verify' => \App\Http\Middleware\VerifyTerminalSignature::class
+            'terminal.verify' => \App\Http\Middleware\VerifyTerminalSignature::class,
+            'kyc' => \App\Http\Middleware\Kyc::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

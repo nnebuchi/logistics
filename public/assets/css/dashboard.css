@@ -27,6 +27,7 @@
     --bs-font-sans-serif: "Red Hat Display", sans-serif;
     --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --bs-gradient: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+    --primary:#233E83;
 }
 *,*::before,*::after{
     -webkit-box-sizing: border-box;
@@ -72,10 +73,24 @@ h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6{
     border-top-left-radius: 30px;
     border-bottom-left-radius: 30px
 }
+
+#auth-heading{
+    text-align: center!important;
+    margin-bottom: 30px;
+}
+
+.auth-form-group{
+    margin-bottom: 20px;
+}
+
 @media (max-width: 768px) {
     .box1{
         background-color:#4f659c;
         display: none;
+    }
+    .box2{
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px
     }
 }
 @media (min-width: 768px) {
@@ -480,9 +495,9 @@ span.error, span.message{
 }
 
 .btn-primary{
-    color: #233E83;
+    color: #ffff;
     border: 2px solid #233E83;
-    background-color: #233E831A;
+    background-color: var(--primary);
 }
 
 .btn-light{

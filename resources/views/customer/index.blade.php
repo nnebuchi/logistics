@@ -1,20 +1,21 @@
 @include("customer.layouts.header")
         <div class="container-fluid" style="background-color:#F6F6F7;">
+
             <!--  Row 1 -->
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Dashboard</h5>
+                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard </h5>
                         <div class="d-flex">
                             @php
                                 $isVerified = auth()->user()->is_verified; // Assuming `verified` is the column that checks if a user is verified
                             @endphp
-                            <a href="<?= $isVerified ? url('/shipping/create') : "/shippings" ?>" class="btn btn-primary mr-2 <?= $isVerified ? "" : "disabled" ?>">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="<?= $isVerified ? route('add-shipment') : route('shippings') ?>" class="btn btn-primary mr-2">
+                                <img src="{{asset('assets/images/icons/plus.svg')}}" />
                                 Book Shipment
                             </a>
-                            <a href="<?= $isVerified ? url('/shipping/track') : "/shippings" ?>" class="btn btn-primary <?= $isVerified ? "" : "disabled" ?>">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="<?= $isVerified ? route('track-shipments') : route('shippings') ?>" class="btn btn-outline-primary">
+                                <img src="{{asset('assets/images/icons/track.svg')}}" />
                                 Track Shipment
                             </a>
                         </div>

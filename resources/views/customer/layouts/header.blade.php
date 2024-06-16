@@ -31,7 +31,7 @@
 				<!-- Sidebar scroll-->
 				<div style="background-image: linear-gradient(to bottom, #4F659C, #233E83);">
 					<div class="brand-logo d-flex align-items-center justify-content-between">
-						<a href="{{url('/')}}" class="text-nowrap logo-img">
+						<a href="{{route('dashboard')}}" class="text-nowrap logo-img">
 							<img src="{{asset('assets/images/logos/ziga-blue2.svg')}}" width="180" alt="" />
 						</a>
 						<div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -39,33 +39,27 @@
 						</div>
 					</div>
 					<!-- Sidebar navigation-->
-					<nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+					<nav class="sidebar-nav scroll-sidebar mt-3" data-simplebar="">
 						<ul id="sidebarnav">
-							<li class="nav-small-cap">
-								<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-								<span class="hide-menu">Home</span>
-							</li>
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/')}}" aria-expanded="false">
+							
+							<li class="sidebar-item mb-3">
+								<a class="sidebar-link" href="{{route('dashboard')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/icons/circle-gauge.svg')}}" />
 									</span>
 									<span class="hide-menu">Dashboard</span>
 								</a>
 							</li>
-							<li class="nav-small-cap">
-								<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-								<span class="hide-menu">UI COMPONENTS</span>
-							</li>
-							<li class="sidebar-item">
-								<a class="sidebar-link" href="{{url('/shippings')}}" aria-expanded="false">
+							
+							<li class="sidebar-item mb-3">
+								<a class="sidebar-link" href="{{route('shippings')}}" aria-expanded="false">
 									<span>
 										<img style="" src="{{asset('assets/images/sidebar/shipping.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Shipping</span>
 								</a>
 							</li>
-							<li class="sidebar-item">
+							<li class="sidebar-item mb-3">
 								<a class="sidebar-link" href="{{url('/wallet')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/sidebar/wallet.svg')}}" width="20" />
@@ -73,7 +67,7 @@
 									<span class="hide-menu">Wallet</span>
 								</a>
 							</li>
-							<li class="sidebar-item">
+							<li class="sidebar-item mb-3">
 								<a class="sidebar-link" href="{{url('/profile')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/sidebar/profile.svg')}}" width="20" />
@@ -81,7 +75,7 @@
 									<span class="hide-menu">Profile</span>
 								</a>
 							</li>
-							<li class="sidebar-item">
+							<li class="sidebar-item mb-3">
 								<a class="sidebar-link" href="{{url('/logout')}}" aria-expanded="false">
 									<span>
 										<img class="" src="{{asset('assets/images/sidebar/logout.svg')}}" width="20" />
@@ -92,8 +86,8 @@
 						</ul>
 						<div class="unlimited-access hide-menu mb-7 mt-5">
 							<div class="">
-								<h6 class="fs-2 text-center">Copyright &copy; 2024</h6>
-								<h6 class="fs-2 text-center">Ziga Afrika All Rights Reserved</h6>
+								<h6 class="fs-2 text-center text-white">Copyright &copy; <script>document.write(new Date().getFullYear());</script></h6>
+								<h6 class="fs-2 text-center text-white">{{env('APP_NAME')}} All Rights Reserved</h6>
 							</div>
 						</div>
 						
@@ -145,6 +139,7 @@
 								</div>
 							</div>
 						</div>
+						
 						<!--<div class="navbar-collapse justify-content-end px-0" id="navbarNav">
 							<ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
 								<li class="nav-item dropdown">
@@ -179,6 +174,9 @@
 							</ul>
 						</div>-->
 					</nav>
+					<div>
+						@include('layouts.shared.alert')
+					</div>
 				</header>
 				<!--  Header End -->
 			

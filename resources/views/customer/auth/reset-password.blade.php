@@ -20,11 +20,7 @@
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
                     <div class="h-100 d-flex flex-column justify-content-center w-100">
-                        <div class="mb-4 dynamic-logo">
-                            <a href="{{url('/')}}" class="">
-                                <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
-                            </a>
-                        </div>
+                        @include("customer.auth.layouts.auth-nav")
                         <div class="row justify-content-center">
                             <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
                                 <h4 style="font-weight:700">Enter New Password</h4>

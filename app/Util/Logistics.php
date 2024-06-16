@@ -15,7 +15,7 @@ class Logistics
     {
         // $this->setBaseUrl();
         // $this->setKey();
-        $this->secretKey = env('TERMINAL_AFRICA_SECRET_KEY', '');
+        $this->secretKey = env('TERMINAL_AFRICA_SECRET_KEY');
         $this->baseUrl = env('TERMINAL_AFRICA_URI', '');
         $this->client = $client;
     }

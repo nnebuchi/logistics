@@ -18,17 +18,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
-                    <div class="h-100 d-flex flex-column justify-content-center w-100">
-                        <div class="mb-4 dynamic-logo">
-                            <a href="{{url('/')}}" class="">
-                                <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
-                            </a>
-                        </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2 pt-3" style="overflow:auto">
+                    @include("customer.auth.layouts.auth-nav")
+                    <div class="h-10 d-flex flex-column justify-content-center w-100">
                         <div class="row justify-content-center">
-                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8">
-                                <h4 style="font-weight:700">Reset Password</h4>
-                                <form id="forgot-pwd" action="{{url('/forgot-password')}}" method="POST">
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-8 pt-2">
+                                <h4 style="font-weight:700"id="auth-heading">Reset Password</h4>
+                                <form id="forgot-pwd" action="{{route('forgot-password')}}" method="POST">
                                     @csrf
                                     <p class="message text-center"></p>
                                     <div class="">
@@ -42,14 +38,15 @@
                                             placeholder="Email"
                                             class="custom-input" />
                                         </div>
-                                        <span class="error"> </span>
+                                        <div class="text-danger backend-msg">
+                                            @error('email')
+                                                {{ $message }}
+                                            @enderror
+                                        </div>
                                     </div>
 
                                     <div class="d-flex justify-content-center mt-4">
-                                        <button 
-                                        type="submit" 
-                                        class="custom-btn fs-4 mb-2">
-                                        Submit <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
+                                        <button type="submit" class="custom-btn fs-4 mb-2 login-btn" onclick="validateForm()">Submit <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt="">
                                         </button>
                                     </div>
                                     <h5 style="font-size:14px;" class="mt-2 text-center">Already have an account? <a href="{{url('/login')}}" class="custom-text-secondary fw-bold">Login</a></h5>
@@ -67,49 +64,43 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
-    <script>
-        $('#forgot-pwd').on("submit", function (event) {
-            event.preventDefault();
-            let btn = $(this).find("button[type='submit']");
-            btn.html(`<img src="/assets/images/loader.gif" id="loader-gif">`);
-            btn.attr("disabled", true);
-            const form = event.target;
-            const url = form.action;
-            const inputs = { email: $("#email").val() };
 
-            $("#email").css("borderColor", "transparent");
-            $('.error').text('');
-            $('.message').text('');
-            // Append loader immediately
-            setTimeout(() => {
-                const config = {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                };
-                axios.post(url, inputs, config)
-                .then(function(response){
-                    let message = response.data.message;
-                    $(".message").css("color", "green").text(message);
-                    toast(message);
-                    btn.attr("disabled", false)
-                    .html("Submit <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-                })
-                .catch(function(error){
-                    let errors = error.response.data.error;
-                    if(errors.email){
-                        $('.error').eq(0).text(errors.email);
-                        $("#email").css("border", "1px solid #FA150A");
-                    }
-        
-                    btn.attr("disabled", false)
-                    .html("Submit <img src='/assets/images/icons/auth/cil_arrow-right.svg' width='20' class='ml-2' alt=''/>");
-                });
-            }, 100); // Delay submission by 100 milliseconds
-        });
+
+    <script>
+
+        const submitForm = () => {
+            document.querySelector("#forgot-pwd").submit();
+        }
+
+        const validateForm = () => {
+            document.querySelectorAll(".backend-msg").forEach(function(field, index){
+                field.innerHTML = '';
+            })
+            const submitBtn = document.querySelector(".login-btn");
+            const oldBtnHTML = submitBtn.innerHTML;
+            setBtnLoading(submitBtn);
+
+            const validation = runValidation([
+                {
+                    id:"email",
+                    rules: {'required':true, 'email':true}
+                }
+                
+            ]);
+
+            if(validation === true){
+                submitForm();
+                setBtnNotLoading(submitBtn, oldBtnHTML)
+            }else{
+                setBtnNotLoading(submitBtn, oldBtnHTML)
+            }
+        }
+
+        const submitLoginForm = () => {
+            document.querySelector("#login").submit();
+        }
+    </script>
+    <script>
 
         function toast(message){
             const Toast = Swal.mixin({
@@ -132,5 +123,10 @@
             });
         }
     </script>
+
+    {{-- <script>
+        const 
+        const submitBtn = document.querySelector(".login-btn");
+    </script> --}}
     </body>
 </html>

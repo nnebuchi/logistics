@@ -11,7 +11,7 @@
                         </div>
                         <div class="d-flex flex-column align-items-center">
                             <img src="{{asset('assets/images/icons/auth/illustration4.svg')}}" width="350" height="300" alt="">
-                            <h5 class="text-white">Our Prices Are Affordable</h5>
+                            <h5 class="text-white">Your Best Delivery Option</h5>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <h6 class="text-white">Privacy Policy</h6>
@@ -25,8 +25,10 @@
                         <div class="text-center">
                             <img src="{{asset('assets/images/icons/auth/success-icon.svg')}}" width="120" height="120" alt="">
                         </div>
-                        <p class="text-center mt-2">Your account registration was successful</p>
-                        <h5 class="text-center custom-text-primary" style="font-weight:bold">Please verify your account on your email. Thank you!</h5>
+                        <p class="text-center mt-2">Password Reset Email Sent Successfully</p>
+                        <h5 class="text-center custom-text-primary" style="font-weight:bold">Visit your email and follow the instructions. </h5>
+                        <div  class="text-center"><a href="{{url('/')}}" class="btn btn-primary custom-btn">Back Home</a></div>
+                        
                     </div>
                 </div>
             </div>

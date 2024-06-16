@@ -20,23 +20,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2" style="overflow:auto">
-                    <div style="margin-top:80px;margin-bottom:60px">
-                        <div class="mb-4 dynamic-logo">
-                            <a href="{{url('/')}}" class="">
-                                <img src="{{asset('assets/images/logos/ziga-blue.png')}}" width="180" alt="">
-                            </a>
-                        </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 h-100 box2 pt-3" style="overflow:auto">
+                    @include("customer.auth.layouts.auth-nav")
+                    <div class="" style="margin-top:80px;margin-bottom:60px">
+                        
                         <div class="row justify-content-center">
                             <div class="col-xl-11 col-lg-11 col-md-12 col-sm-10">
                                 <div class="text-center main-div">
                                     @include('layouts.shared.alert')
                                 </div>
-                                <h4 style="font-weight:700">Create Account</h4>
+                                <h4 style="font-weight:700" id="auth-heading">Create Account</h4>
                                 <form id="signup" action="{{route('user-signup')}}" method="POST">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                        <div class="col-xl-6 col-lg-6 col-md-12 auth-form-group">
                                             <label for="firstname" class="custom-input-label">First Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
@@ -48,7 +45,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                        <div class="col-xl-6 col-lg-6 col-md-12 auth-form-group">
                                             <label for="lastname" class="custom-input-label">Last Name</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/ooui_user-avatar.svg')}}" width="15" alt=""></div>
@@ -62,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div class="row mt-3">
-                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                        <div class="col-xl-6 col-lg-6 col-md-12 auth-form-group">
                                             <label for="phone" class="custom-input-label">Phone Number</label>
                                             <div class="d-flex position-relative input-box">
                                                 <select id="countrySelect" class="country_code" style="font-size: 14px;"></select>
@@ -74,7 +71,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                        <div class="col-xl-6 col-lg-6 col-md-12 auth-form-group">
                                             <label for="email" class="custom-input-label">Email</label>
                                             <div class="d-flex position-relative input-box">
                                                 <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2 icon-box"><img src="{{asset('assets/images/icons/auth/iconamoon_email-thin.svg')}}" width="15" alt=""></div>
@@ -86,8 +83,8 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="mt-3">
+
+                                        <div class="col-xl-6 col-lg-6 col-md-12 auth-form-group">
                                             <label for="account_type" class="custom-input-label">Account Type</label>
                                             <div class="select-box">
                                                 <select id="account_type" name="account_type" class="custom-select">
@@ -103,23 +100,25 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    <div class="mt-3">
-                                        <label for="password" class="custom-input-label">Password</label>
-                                        <div class="d-flex position-relative input-box">
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
-                                                <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
+                                        <div class="col-xl-6 col-lg-6 col-md-12 auth-form-group">
+                                            <label for="password" class="custom-input-label">Password</label>
+                                            <div class="d-flex position-relative input-box">
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;left:0">
+                                                    <img src="{{asset('assets/images/icons/auth/mdi_password-outline.svg')}}" width="15" alt="">
+                                                </div>
+                                                <input value="<?=old('password')?>" type="password" id="password" name="password" placeholder="Enter Password" class="custom-input" />
+                                                <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
+                                                    <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                                                </div>
                                             </div>
-                                            <input value="<?=old('password')?>" type="password" id="password" name="password" placeholder="Enter Password" class="custom-input" />
-                                            <div class="d-flex align-items-center justify-content-center p-l-10 p-r-10 position-absolute h-100 px-2" style="top:0;right:0">
-                                                <img src="{{asset('assets/images/icons/auth/ion_eye.svg')}}" class="show-hide" width="15" alt="">
+                                            <div class="text-danger backend-msg">
+                                                @error('password')
+                                                    {{ $message }}
+                                                @enderror
                                             </div>
-                                        </div>
-                                        <div class="text-danger backend-msg">
-                                            @error('password')
-                                                {{ $message }}
-                                            @enderror
                                         </div>
                                     </div>
+                                    
                                     <input type="hidden" id="country" value="" name="country">
 
                                     <p style="font-size:14px;color:#1E1E1E;" class="mt-3">By clicking the Sign Up button below, you agree to ZIga Afrika's 

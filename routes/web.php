@@ -16,14 +16,17 @@ use App\Http\Controllers\Admin\ImpersonateController;
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/reset-password/{email}/{token}', [AuthController::class, 'showPasswordResetForm'])->name('password.reset');
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::get('/forgot-password-success', [AuthController::class, 'forgotPasswordResponse'])->name('password.request.success');
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name("login");
     Route::get('/register', [AuthController::class, 'showSignupForm'])->name("signup");
+
+    Route::post('/login', [AuthController::class, 'login'])->name('user-signin');
+    Route::post('/register', [AuthController::class, 'register'])->name('user-signup');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-Route::post('/login', [AuthController::class, 'login'])->name('user-signin');
-Route::post('/register', [AuthController::class, 'register'])->name('user-signup');
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
 
 Route::get('/email/verify', function () {
     return view('customer.auth.verify-email');
@@ -49,15 +52,22 @@ Route::get('/test', [AuthController::class, 'test']);
 Route::group([
     'middleware' => ['auth', 'verified']
 ], function () {
-    Route::get('/', [UserController::class, 'index'])->name('dashboard');
-    Route::get('/shipping/track', [ShippingController::class, 'showTrackingForm']);
+    
+    Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+    Route::group([
+        'prefix' => 'user', 'prefix'=>'shipping', 'middleware'=>'kyc'
+    ], function () {
+        Route::get('/track', [ShippingController::class, 'showTrackingForm'])->name('track-shipments');
+        Route::get('/create', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
+        Route::post('/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
+        Route::get('/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
+        Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
+        Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
+        Route::get('/shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
+    });
+    
     Route::post('/address', [ShippingController::class, 'createAddress']);
-    Route::get('/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
-    Route::get('/shipping/create', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
-    Route::post('/shipping/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
-    Route::post('/shipping/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
-    Route::get('/shippings', [ShippingController::class, 'showShippings']);
-    Route::get('/shippings/{shipmentId}', [ShippingController::class, 'editShipping']);
+
     Route::get('/wallet', [WalletController::class, 'index']);
     Route::get('/profile', [UserController::class, 'showProfile']);
     Route::get('/logout', [AuthController::class, 'logOut']);

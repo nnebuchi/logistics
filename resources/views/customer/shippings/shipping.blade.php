@@ -280,7 +280,7 @@
                 // Get the data-id attribute of the clicked row
                 let shipmentId = $(this).data("id");
                 // Construct the URL
-                let url = `/shippings/${shipmentId}`;
+                let url = `/shipping/${shipmentId}`;
                 //window.open(url, '_blank');  // Open the URL in a new tab
                 // Redirect to the desired page with the shipment ID
                 window.location.href = url;
