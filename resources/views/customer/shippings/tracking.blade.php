@@ -15,7 +15,7 @@
                                     <div class="p-3 mb-4">
                                         <h5 class="card-title fw-semibold text-center">Track Your Shipment</h5>
                                         <div class="row justify-content-center mt-4">
-                                            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6">
+                                            <div class="col-xl-5 col-lg-5 col-md-6 col-sm-8">
                                                 <div id="formBox" class="">
                                                     <h5 style="color:#1E1E1E80">Shipment ID</h5>
                                                     <div class="w-100">
@@ -68,6 +68,36 @@
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
 
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        
+        // Get day, month, year
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getUTCFullYear();
+        
+        // Get hours, minutes, seconds
+        let hours = date.getUTCHours();
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+        
+        // Determine AM/PM and format hours
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // The hour '0' should be '12'
+        const formattedHours = String(hours).padStart(2, '0');
+
+        // Format the final date and time string
+        const formattedDate = `${day}/${month}/${year}`;
+        const formattedTime = `${formattedHours}:${minutes}:${seconds} ${ampm}`;
+
+        return [formattedDate, formattedTime];
+    }
+
+const dateString = "2024-05-28T14:23:07.129Z";
+console.log(formatDate(dateString)); // Output: 28/05/2024 02:23:07 PM
+
+
     // jQuery code for filtering
     $(document).ready(function() {
         $('#track').on('click', function(event) {
@@ -91,6 +121,7 @@
                     $("#formBox").addClass("d-none");
                     let shipment = res.data.results;
                     let items = "";
+                    let events = "";
                     for(const item of shipment.items){
                         items += `<div class="mt-2">
                             <div class="d-flex justify-content-between">
@@ -103,10 +134,29 @@
                             </div>
                         </div>`;
                     }
+                    for(const event of shipment.events){
+                        events += `<div class="d-flex mt-2" style="font-size:14px">
+                            <div class="mr-2 d-flex flex-column align-items-center" style="">
+                                <img src="{{asset('assets/images/icons/auth/success-icon.png')}}" width="20" height="20" />
+                                <div style="height:50px;width:7.5px;background-color:#F79D1D;margin-top:5px;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between w-100">
+                                <div class="">
+                                    <p class="fw-bold" style="color:#F79D1D">${event.location}</p>
+                                    <p>${event.description}</p>
+                                </div>
+                                <div class="">
+                                    <p class="fw-bold">${formatDate(event.created_at)[0]}</p>
+                                    <p class="fw-bold">${formatDate(event.created_at)[1]}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    }
                     $("#shipping-data").empty();
                     $("#shipping-data").append(`
                         <div class="p-2" style="border-radius:10px;border:1px solid #bbb">
                             <h4>${shipment.shipment_id}</h4>
+                            ${events}
                         </div>
                         <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
                             <h5>Customer Details</h5>

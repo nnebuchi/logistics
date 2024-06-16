@@ -14,6 +14,7 @@ use App\Rules\ContainsNumber;
 use App\Rules\HasSpecialCharacter;
 use Illuminate\Validation\Rule;
 use App\Notifications\SendCustomerNotification;
+use App\Notifications\SendInvoice;
 
 class AdminController extends Controller
 {
@@ -140,6 +141,17 @@ class AdminController extends Controller
         endswitch;
 
         return ResponseFormatter::success($message, null, 200);
+    }
+
+    public function verifyCustomerAccount($uuid)
+    {
+        $user = User::where("uuid", $uuid)->first();
+        if($user):
+            $user->is_verified = true;
+            $user->save();
+
+            return redirect('/admin/users/'.$user->uuid);
+        endif;
     }
 
 

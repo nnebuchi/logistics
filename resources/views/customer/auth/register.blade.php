@@ -242,6 +242,7 @@
             document.getElementById("country").value = optionInfo; // Set the country text in the input field with id "country"
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         async function getCountries(){
             const response = await axios.get("https://restcountries.com/v3.1/all");

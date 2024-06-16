@@ -376,12 +376,14 @@
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
-                }
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                params: {chapter: $chapter}
             };
-            axios.get(`https://api.terminal.africa/v1/hs-codes/simplified/category?chapter=${$chapter}`, config)
+            axios.get(`${baseUrl}/categories`, config)
             .then((res) => {
-                let categories = res.data.data;
+                let categories = res.data.results;
                 // Update the state select input in the specified form
                 $(`${formIdentifier} select[name='sub_category']`).empty(); // Clear previous options
                 $(`${formIdentifier} select[name='sub_category']`).append(`
@@ -409,12 +411,14 @@
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    Authorization: "Bearer sk_live_HYNPAz62alrkgOI3E3Nj1mB0uojcRFWJ"
-                }
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                params: {chapter: $chapter, category: $category}
             };
-            axios.get(`https://api.terminal.africa/v1/hs-codes/simplified?chapter=${$chapter}&category_code=${$category}`, config)
+            axios.get(`${baseUrl}/hs_codes`, config)
             .then((res) => {
-                let hs_codes = res.data?.data?.hs_codes;
+                let hs_codes = res.data?.results?.hs_codes;
                 // Update the state select input in the specified form
                 $(`${formIdentifier} select[name='hs_code']`).empty(); // Clear previous options
                 hs_codes.forEach(hs_code => {

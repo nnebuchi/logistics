@@ -6,12 +6,15 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Dashboard</h5>
                         <div class="d-flex">
-                            <a href="{{url('/shipping/create')}}" class="d-flex align-items-center btn btn-primary mr-2">
-                                <img src="{{asset('assets/images/icons/plus.svg')}}" class="mr-1" width="20" height="20" />
+                            @php
+                                $isVerified = auth()->user()->is_verified; // Assuming `verified` is the column that checks if a user is verified
+                            @endphp
+                            <a href="<?= $isVerified ? url('/shipping/create') : "/shippings" ?>" class="btn btn-primary mr-2 <?= $isVerified ? "" : "disabled" ?>">
+                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
                                 Book Shipment
                             </a>
-                            <a href="{{url('/shipping/track')}}" class="d-flex align-items-center btn btn-primary">
-                                <img src="{{asset('assets/images/icons/track.svg')}}" class="mr-1" width="20" height="20" />
+                            <a href="<?= $isVerified ? url('/shipping/track') : "/shippings" ?>" class="btn btn-primary <?= $isVerified ? "" : "disabled" ?>">
+                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
                                 Track Shipment
                             </a>
                         </div>

@@ -217,10 +217,6 @@ class Logistics
 
     public function trackShipment($shipment_id)
     {
-        /*$response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->get($this->baseUrl.'shipments/track/'.$shipment_id);
-        return $response;*/
         $response = $this->client->request('GET', $this->baseUrl.'shipments/track/'.$shipment_id, [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->secretKey
@@ -238,5 +234,33 @@ class Logistics
         ]);
         return $response->getBody();
     }
+
+    public function getCategories($chapter)
+    {
+        $response = $this->client->request('GET', $this->baseUrl.'hs-codes/simplified/category', [
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->secretKey
+            ],
+            'query' => [
+                'chapter' => $chapter
+            ]
+        ]);
+        return $response->getBody();
+    }
+
+    public function getHsCodes($chapter, $category)
+    {
+        $response = $this->client->request('GET', $this->baseUrl.'hs-codes/simplified', [
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->secretKey
+            ],
+            'query' => [
+                'chapter' => $chapter,
+                'category_code' => $category
+            ]
+        ]);
+        return $response->getBody();
+    }
+
 
 }

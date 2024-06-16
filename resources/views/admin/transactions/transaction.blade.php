@@ -227,7 +227,7 @@
                         <td scope="row"><b>${transaction.wallet.user.email}</b></td>
                         <td scope="row">${transaction.reference}</td>
                         <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
-                        <td scope="row">${transaction.created_at}</td>
+                        <td scope="row">${transaction.updated_at}</td>
                         <td scope="row">${transaction.purpose}</td>
                         <td scope="row">${transaction.type}</td>
                         <td scope="row">
