@@ -8,6 +8,9 @@
                         <div class="parcel-box">
                             <div class="mb-1 d-flex align-items-center justify-content-between">
                                 <h5 class="m-0">Parcel <?=$parcelIndex + 1?></h5>
+                                <?php if($parcelIndex > 0): ?>
+                                    <button class="btn btn-danger" id="delete-parcel" data-parcel="<?=$parcelIndex?>" type="button">X Delete Parcel</button>
+                                <?php endif; ?>
                             </div>
                             <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                                 <div class="table-responsive">
@@ -76,7 +79,7 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-between p-2" style="background-color:#FCE4C2F7;">
                     <h5 class="m-0">Click to add new parcel</h5>
-                    <button id="add-parcel" data-parcel="<?=count($shipment->parcels)?>" class="custom-btn" type="button">Add new parcel</button>
+                    <button id="add-parcel" data-parcel="<?=count($shipment->parcels)?>" class="btn bg-white" type="button" style="background-color:#FCE4C2F7;">+ Add new parcel</button>
                 </div>
 
                 @include('customer.modals.add-item-modal')

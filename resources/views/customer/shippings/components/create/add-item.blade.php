@@ -67,7 +67,7 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-between p-2" style="background-color:#FCE4C2F7;">
                     <h5 class="m-0">Click to add new parcel</h5>
-                    <button id="add-parcel" data-parcel="1" class="custom-btn" type="button">Add new parcel</button>
+                    <button id="add-parcel" data-parcel="1" class="btn bg-white" type="button" style="background-color:#FCE4C2F7;">+ Add new parcel</button>
                 </div>
 
                 @include('customer.modals.add-item-modal')
