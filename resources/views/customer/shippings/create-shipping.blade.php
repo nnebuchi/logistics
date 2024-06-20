@@ -122,6 +122,7 @@
                 console.error('An error occurred:', error);
             }
         }
+
         $(".next").on("click", async function(event){
             event.preventDefault();
            
@@ -254,7 +255,7 @@
                 <div class="parcel-box" data-id="${$parcel}">
                     <div class="mb-1 d-flex align-items-center justify-content-between">
                         <h5 class="m-0">Parcel ${$parcel + 1}</h5>
-                        <button class="btn btn-secondary" id="delete-parcel" data-parcel="${$parcel}" type="button">Delete Parcel</button>
+                        <button class="btn btn-danger" id="delete-parcel" data-parcel="${$parcel}" type="button">X Delete Parcel</button>
                     </div>
                     <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                         <div class="table-responsive">
@@ -311,6 +312,20 @@
             formData.items = formData.items.filter(item => item.parcel_id !== $parcel_id);
             $("#add-parcel").data("parcel", $parcel_id);
             $(this).parent().parent().remove();
+
+            $('.parcel-box').each(function(index) {
+                $(this).find('h5').eq(0).text('Parcel ' + (index + 1)); // Update the parcel number in the heading
+                //$(this).find('#delete-parcel').data('parcel', index); // Update the delete button data-parcel
+                //$(this).find('.update-item').data('parcel', index); // Update the item data-parcel attributes
+                //$(this).find('.openAddItemModal').data('parcel', index); // Update the add item button data-parcel
+                //$(this).find('.proof-of-purchase-form').data('parcel', index); // Update the proof of purchase form data-parcel
+                //$(this).find('.document-file').data('parcel', index).attr('id', 'document-' + index); // Update the file input id and data-parcel
+                //$(this).find('label[for^="document-"]').attr('for', 'document-' + index); // Update the label for attribute
+            });
+
+            // Update the data-parcel attribute on the add new parcel button
+            const newParcelCount = $('.parcel-box').length;
+            $('#add-parcel').data('parcel', newParcelCount);
         });
 
         $("#addItem").on("click", async function(event) {

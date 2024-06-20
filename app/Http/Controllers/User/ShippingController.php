@@ -302,7 +302,8 @@ class ShippingController extends Controller
             $parcel = $this->logistics->createParcel([
                 "description" => $description,
                 "items" => $item["items"],
-                "docs" => $item["docs"]
+                "docs" => array_column($item["docs"], 'photo'),
+                //"metadata" => $item["docs"]
             ]);
             $parcel = json_decode($parcel);
             $parcel = $parcel->data;
@@ -541,5 +542,27 @@ class ShippingController extends Controller
 
         return ResponseFormatter::success($hs_codes->message, $hs_codes->data, 200);
     }
+
+    public function uploadParcelDocument(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'photo' => 'required|mimes:jpeg,png,jpg,gif,svg,pdf,docx|max:2048',
+        ]);
+
+        if($validator->fails()):
+            return response([
+                'message' => "Failed to update document",
+                'error' => $validator->getMessageBag()->toArray()
+            ], 422);
+        endif;
+
+        if($request->hasFile("photo")):
+            $photo = $request->file("photo");
+            $url = cloudinary()->upload($photo->getRealPath())->getFileName();
+        endif;
+
+        return ResponseFormatter::success("Parcel doc uploaded successfully", ["photo" => $url], 200);
+    }
+
 
 }

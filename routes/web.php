@@ -74,6 +74,7 @@ Route::group([
             Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
             Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
             Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
+            Route::post('/upload-docs', [ShippingController::class, 'uploadParcelDocument'])->name('upload-parcel-docs');
         });
         
         Route::post('/address', [ShippingController::class, 'createAddress']);
