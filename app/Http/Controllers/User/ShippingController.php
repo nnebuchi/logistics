@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Exception;
 use App\Models\WebhookLog;
 use App\Notifications\SendInvoice;
+use App\Services\ShippingService;
 
 class ShippingController extends Controller
 {
@@ -167,40 +168,50 @@ class ShippingController extends Controller
 
     public function shipmentWebhook(Request $request)
     {
-        /*$input = $request->getContent();
-        // Verify the Terminal signature
-        $secret = env('TERMINAL_AFRICA_SECRET_KEY', '');
-        return $expectedSignature = hash_hmac('sha512', $input, $secret);*/
-
-        // Log the webhook payload
-        WebhookLog::create([
-            'event' => $request['event'],
-            'payload' => json_encode($request->all())
-        ]);
         
         try{
+
+            WebhookLog::create([
+                'event' => $request['event'],
+                'payload' => json_encode($request->all())
+            ]);
+            // dd($request["event"]);
             $id = $request["data"]["shipment_id"];
             $shipment = Shipment::where(['external_shipment_id' => $id ])->first();
-
+            
             switch($request["event"]):
+                case "shipment.created":
+                    //Handle shipment in-transit event
+                    $status = "in-transit";
+                    $shipment->status = $status;
+                break;
                 case "shipment.in-transit":
                     //Handle shipment in-transit event
-                    $shipment->status = "in-transit";
+                    $status = "in-transit";
+                    $shipment->status = $status;
                 break;
+
                 case "shipment.delivered":
                     //Handle shipment delivered update event
-                    $shipment->status = "delivered";
+                    $status = "delivered";
+                    $shipment->status = $status;
                 break;
                 case "shipment.cancelled":
                     //Handle shipment cancelled update event
-                    $shipment->status = "cancelled";
+                    $status = "cancelled";
+                    $shipment->status = $status;
                 break;
                 default:
-                    //Handle unknown event received
+                   return;
             endswitch;
             $shipment->pickup_date = $request["data"]["pickup_date"];
             $shipment->save();
 
+            ShippingService::reportShippingUpdate([
+                'type'=>'success', 
+                'event' => $status,
+                'data' => $request->all()
+            ]);
             http_response_code(200);
         }catch (Exception $e) {
             // Log the error
@@ -210,10 +221,10 @@ class ShippingController extends Controller
                 'error_message' => $e->getMessage()
             ]);
 
-            //Log::error('Error processing webhook: ' . $e->getMessage());
+            ShippingService::reportShippingUpdate(['type'=>'error', 'data'=>$e]);
             http_response_code(400);
         }
-    }
+    }   
 
     public static function showTrackingForm()
     {
