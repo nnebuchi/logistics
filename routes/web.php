@@ -63,7 +63,7 @@ Route::group([
         Route::get('/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
         Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
         Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
-        Route::get('/shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
+        Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
     });
     
     Route::post('/address', [ShippingController::class, 'createAddress']);

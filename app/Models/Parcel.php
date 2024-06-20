@@ -5,19 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Item extends Model
+class Parcel extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         "shipment_id",
-        "parcel_id",
-        "name",
-        "description",
-        "currency",
-        "value",
-        "quantity",
-        "weight"
+        "external_parcel_id",
+        "weight",
+        "weight_unit"
     ];
 
     protected $hidden = [
@@ -25,4 +21,10 @@ class Item extends Model
         'updated_at'
     ];
 
+    protected $with = ["items"];
+
+    public function items()
+    {
+        return $this->hasMany(Item::class, "parcel_id");
+    }
 }

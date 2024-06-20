@@ -69,14 +69,6 @@ class Logistics
 
     public function createParcel($payload)
     {
-        /*$response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->post($this->baseUrl.'parcels', [
-                    'description' => $payload["description"],
-                    'items' => $payload["items"],
-                    'weight_unit' => 'kg'
-                ]);
-        return $response;*/
         $response = $this->client->request('POST', $this->baseUrl.'parcels', [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->secretKey
@@ -92,14 +84,6 @@ class Logistics
 
     public function createShipment($payload)
     {
-        /*$response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->post($this->baseUrl.'shipments', [
-                    'address_from' => $payload["address_from"],
-                    'address_to' => $payload["address_to"],
-                    'parcel' => $payload["parcel"]
-                ]);
-        return $response;*/
         $response = $this->client->request('POST', $this->baseUrl.'shipments', [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->secretKey
@@ -107,7 +91,7 @@ class Logistics
             'json' => [
                 'address_from' => $payload["address_from"],
                 'address_to' => $payload["address_to"],
-                'parcel' => $payload["parcel"]
+                'parcels' => $payload["parcels"]
             ]
         ]);
         return $response->getBody();
@@ -115,14 +99,6 @@ class Logistics
 
     public function updateShipment($shipment_id, $payload)
     {
-        /*$response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->put($this->baseUrl.'shipments/'.$shipment_id, [
-                    'address_from' => $payload["address_from"],
-                    'address_to' => $payload["address_to"],
-                    'parcel' => $payload["parcel"]
-                ]);
-        return $response;*/
         $response = $this->client->request('PUT', $this->baseUrl.'shipments/'.$shipment_id, [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->secretKey
@@ -130,7 +106,7 @@ class Logistics
             'json' => [
                 'address_from' => $payload["address_from"],
                 'address_to' => $payload["address_to"],
-                'parcel' => $payload["parcel"]
+                'parcels' => $payload["parcels"]
             ]
         ]);
         return $response->getBody();
@@ -192,20 +168,11 @@ class Logistics
 
     public function getRateForShipment($data)
     {
-        /*$response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->get($this->baseUrl.'rates/shipment', [
-                    'currency' => 'NGN',
-                    'shipment_id' => $data["shipment_id"],
-                    'pickup_address' => $data["address_from"],
-                    'delivery_address' => $data["address_to"]
-                ]);
-        return $response;*/
-        $response = $this->client->request('GET', $this->baseUrl.'rates/shipment', [
+        $response = $this->client->request('POST', $this->baseUrl.'rates/multi/shipment', [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->secretKey
             ],
-            'query' => [
+            'json' => [
                 'currency' => 'NGN',
                 'shipment_id' => $data["shipment_id"],
                 'pickup_address' => $data["address_from"],

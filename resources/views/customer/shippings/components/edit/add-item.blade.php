@@ -1,64 +1,63 @@
-<div class="row justify-content-center step" style="display:none;" id="shipping">
+<div class="row justify-content-center step" style="display:non;" id="shipping">
     <div class="col-xl-9 col-lg-9 col-md-10">
         <div class="card w-100">
             <div class="card-body">
-                <div class="" style="background-color:#E9EFFD;border-radius:10px;">
-                    <div class="table-responsive">
-                        <table class="items-table table table-borderless text-nowrap align-middle">
-                            <thead class="text-dark fs-4">
-                                <tr>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Items</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Quantity</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Weight</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Value</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Edit</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Delete</h6>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>   
-                                <?php foreach($shipment->items as $index => $item): ?>
-                                    <tr style="">
-                                        <td scope="row"><?=$item->name?></td>
-                                        <td scope="row"><?=$item->quantity?>pieces</td>
-                                        <td scope="row"><?=$item->weight?>kg</td>
-                                        <td scope="row"><b>₦</b><?= number_format($item->value, 2, '.', ',') ?></td>
-                                        <td scope="row">
-                                            <a class="update-item" data-id="<?=$index?>" data-action="edit" type="button">
-                                                <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
-                                            </a>
-                                        </td>
-                                        <td scope="row">
-                                            <a class="update-item" data-id="<?=$index?>" data-action="delete" type="button">
-                                                <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
-                                            </a>
-                                        </td>
-                                    </tr>  
-                                <?php endforeach;?>                      
-                            </tbody>
-                        </table>
-                    </div>
+                <div id="parcel-container">
+                    <!-- Table starts here -->
+                    <?php foreach($shipment->parcels as $parcelIndex => $parcel): ?>
+                        <div class="parcel-box">
+                            <div class="mb-1 d-flex align-items-center justify-content-between">
+                                <h5 class="m-0">Parcel <?=$parcelIndex + 1?></h5>
+                            </div>
+                            <div class="mb-2" style="background-color:#E9EFFD;border-radius:10px;">
+                                <div class="table-responsive">
+                                    <table class="mb-0 items-table table table-borderless text-nowrap align-middle">
+                                        <thead class="text-dark fs-3">
+                                            <tr>
+                                                <th>Items</th>
+                                                <th>Quantity</th>
+                                                <th>Weight</th>
+                                                <th>Value</th>
+                                                <th>Edit</th>
+                                                <th>Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>   
+                                            <?php foreach($parcel->items as $index => $item): ?>
+                                                <tr style="">
+                                                    <td class="pt-0 pb-2"><?=$item->name?></td>
+                                                    <td class="pt-0 pb-2"><?=$item->quantity?>pieces</td>
+                                                    <td class="pt-0 pb-2"><?=$item->weight?>kg</td>
+                                                    <td class="pt-0 pb-2"><b>₦</b><?= number_format($item->value, 2, '.', ',') ?></td>
+                                                    <td class="pt-0 pb-2">
+                                                        <a class="update-item" data-id="<?=$item->id?>" data-parcel="<?=$parcelIndex?>" data-action="edit" type="button">
+                                                            <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
+                                                        </a>
+                                                    </td>
+                                                    <td class="pt-0 pb-2">
+                                                        <a class="update-item" data-id="<?=$item->id?>" data-parcel="<?=$parcelIndex?>" data-action="delete" type="button">
+                                                            <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
+                                                        </a>
+                                                    </td>
+                                                </tr>  
+                                            <?php endforeach;?>              
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-center p-3">
+                                    <button type="button" data-parcel="<?=$parcelIndex?>"
+                                    class="btn bg-whit px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
+                                    + Add Item
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                    <!-- Table starts here -->
                 </div>
-
-                <div class="text-center pt-4 mt-2" style="height:130px;background-color:#FCE4C2F7;border-radius:10px;">
-                    <p class="fw-semibold">What's inside your shipment</p>
-                    <div>
-                        <button type="button"
-                        class="btn bg-white px-4 openAddItemModal">
-                            Add Item to your Shipment
-                        </button>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between p-2" style="background-color:#FCE4C2F7;">
+                    <h5 class="m-0">Click to add new parcel</h5>
+                    <button id="add-parcel" data-parcel="<?=count($shipment->parcels)?>" class="custom-btn" type="button">Add new parcel</button>
                 </div>
 
                 @include('customer.modals.add-item-modal')

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('webhook_logs', function (Blueprint $table) {
-            $table->id();
-            $table->string('event');
-            $table->json('payload');
-            $table->text('error_message')->nullable();
-            $table->timestamps();
+        Schema::table('items', function (Blueprint $table) {
+            $table->unsignedBigInteger('parcel_id')->after("shipment_id");
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('webhook_logs');
+        Schema::table('items', function (Blueprint $table) {
+            $table->dropColumn('parcel_id');
+        });
     }
 };

@@ -2,46 +2,61 @@
     <div class="col-xl-9 col-lg-9 col-md-10">
         <div class="card w-100">
             <div class="card-body">
-                <div class="" style="background-color:#E9EFFD;border-radius:10px;">
-                    <div class="table-responsive">
-                        <table class="items-table table table-borderless text-nowrap align-middle">
-                            <thead class="text-dark fs-4">
-                                <tr>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Items</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Quantity</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Weight</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Value</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Edit</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold">Delete</h6>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>   
+                <div id="parcel-container">
+                    <!-- Table starts here -->
+                    <div class="parcel-box">
+                        <div class="mb-1 d-flex align-items-center justify-content-between">
+                            <h5 class="m-0">Parcel 1</h5>
+                        </div>
+                        <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
+                            <div class="table-responsive">
+                                <table class="mb-0 items-table table table-borderless text-nowrap align-middle">
+                                    <thead class="text-dark fs-3">
+                                        <tr>
+                                            <th>Items</th>
+                                            <th>Quantity</th>
+                                            <th>Weight</th>
+                                            <th>Value</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>   
                                                         
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center p-3">
+                                <button type="button" data-parcel="0"
+                                class="btn bg-whit px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
+                                + Add Item
+                                </button>
+                            </div>
+                            <!--<div class="p-3 bg-white d-fle justify-content-betwee align-items-cente">
+                                <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
+                                <div class="w-100 mr-2 d-flex flex-column">
+                                    <label class="custom-input-label">Title</label>
+                                    <input type="text" name="document" placeholder="Title" class="custom-input" />
+                                </div>
+                                <button type="button" data-parcel="0"
+                                class="btn bg-whit px-4" style="background-color:#FCE4C2F7;">
+                                Upload
+                                </button>
+                            </div>
+                            <div class="p-3 mt-2 bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="m-0">Add an image of your parcel on a scale or with measuring tape</h5>
+                                <button type="button" data-parcel="0"
+                                class="btn bg-whit px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
+                                Upload
+                                </button>
+                            </div>-->
+                        </div>
                     </div>
+                    <!-- Table starts here -->
                 </div>
-
-                <div class="text-center pt-4 mt-2" style="height:130px;background-color:#FCE4C2F7;border-radius:10px;">
-                    <p class="fw-semibold">What's inside your shipment</p>
-                    <div>
-                        <button type="button"
-                        class="btn bg-white px-4 openAddItemModal">
-                            Add Item to your Shipment
-                        </button>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between p-2" style="background-color:#FCE4C2F7;">
+                    <h5 class="m-0">Click to add new parcel</h5>
+                    <button id="add-parcel" data-parcel="1" class="custom-btn" type="button">Add new parcel</button>
                 </div>
 
                 @include('customer.modals.add-item-modal')

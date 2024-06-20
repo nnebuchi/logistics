@@ -32,7 +32,7 @@
                             <div class="w-100 mt-2">
                                 <label class="custom-input-label">Sub-Category</label>
                                 <select
-                                    name="sub_category"
+                                    name="sub_category" disabled
                                     class="custom-select">
                                     <option value="">--Select one---</option>
                                 </select>
@@ -41,7 +41,7 @@
                             <div class="w-100 mt-2">
                                 <label class="custom-input-label">HS Code</label>
                                 <select
-                                    name="hs_code"
+                                    name="hs_code" disabled
                                     class="custom-select">
                                     <option value="">--Select one---</option>
                                 </select>
@@ -64,45 +64,6 @@
                                 <input type="text" name="value" placeholder="NGN" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
-                            <!--<div class="d-flex flex-column flex-md-row mt-2 justify-content-between">
-                                <div class="w-100 mr-2">
-                                    <label class="custom-input-label">Country</label>
-                                    <select
-                                        name="country"
-                                        class="custom-select">
-                                        <option value="">--Select one---</option>
-                                        @foreach($countries as $country)
-                                            <option value="{{$country->id}}">{{$country->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <span class="error"> </span>
-                                </div>
-                                <div class="w-100 mt-md-0 mt-3">
-                                    <label class="custom-input-label">State</label>
-                                    <select
-                                        name="state"
-                                        class="custom-select">
-                                        <option value="">--Select one---</option>
-                                    </select>
-                                    <span class="error"> </span>
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column flex-md-row mt-2 justify-content-between">
-                                <div class="w-100 mr-2">
-                                    <label class="custom-input-label">City</label>
-                                    <select
-                                        name="city"
-                                        class="custom-select">
-                                        <option value="">--Select one---</option>
-                                    </select>
-                                    <span class="error"> </span>
-                                </div>
-                                <div class="w-100 mt-md-0 mt-3">
-                                    <label class="custom-input-label">Zip Code</label>
-                                    <input type="text" name="zip_code" placeholder="xyz@gmail.com" class="custom-input" />
-                                    <span class="error"> </span>
-                                </div>
-                            </div>-->
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-5">
@@ -111,6 +72,7 @@
                             type="button"
                             id="addItem"
                             data-item=""
+                            data-parcel=""
                             data-action="create"
                             data-type="shipping"
                             class="custom-btn fs-4 fw-bold">

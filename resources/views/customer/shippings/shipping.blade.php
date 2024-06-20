@@ -9,12 +9,12 @@
                             @php
                                 $isVerified = auth()->user()->is_verified; // Assuming `verified` is the column that checks if a user is verified
                             @endphp
-                            <a href="<?= $isVerified ? url('/shipping/create') : "/shippings" ?>" class="btn btn-primary mr-2 <?= $isVerified ? "" : "disabled" ?>">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="<?= $isVerified ? route('add-shipment') : route('shippings') ?>" class="btn btn-primary mr-2">
+                                <img src="{{asset('assets/images/icons/plus.svg')}}" />
                                 Book Shipment
                             </a>
-                            <a href="<?= $isVerified ? url('/shipping/track') : "/shippings" ?>" class="btn btn-primary <?= $isVerified ? "" : "disabled" ?>">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                            <a href="<?= $isVerified ? route('track-shipments') : route('shippings') ?>" class="btn btn-outline-primary">
+                                <img src="{{asset('assets/images/icons/track.svg')}}" />
                                 Track Shipment
                             </a>
                         </div>

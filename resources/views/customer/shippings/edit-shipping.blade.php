@@ -50,84 +50,32 @@
 <script src="{{asset('assets/libs/simplebar/dist/simplebar.js')}}"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="{{asset('assets/js/shipping/validate.js')}}"></script>
+<script src="{{asset('assets/js/shipping/countries.js')}}"></script>
+<script src="{{asset('assets/js/shipping/categories.js')}}"></script>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
 
-    const displayError = (formId, index, fieldName, errorMessage) => {
-        $(`#${formId} .error`).eq(index).text(errorMessage);
-        $(`#${formId} input[name='${fieldName}']`).css("border", "1px solid #FA150A");
-    };
-
-    const validate = (formId, inputsArray) => {
-        const errors = {};
-    
-        inputsArray.forEach(({ inputName, inputValue, constraints }, index) => {
-            const { 
-                required, string, min_length, max_length, email, phone, 
-                has_special_character, must_have_number, match, numeric, integer 
-            } = constraints;
-            const inputField = $(`#${formId} input[name='${inputName}']`);
-
-            const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/;
-            const numberRegex = /\d/;
-        
-            const validationRules = {
-                required: required ? !!inputValue : true,
-                string: string ? typeof inputValue === 'string' || !inputValue : true,
-                phone: phone ? /^\+?[0-9]+$/.test(inputValue) || !inputValue : true,
-                min_length: inputValue.length >= min_length || !min_length,
-                max_length: inputValue.length <= max_length || !max_length,
-                email: email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue) || !inputValue : true,
-                has_special_character: has_special_character ? specialCharsRegex.test(inputValue) || !inputValue : true,
-                must_have_number: must_have_number ? numberRegex.test(inputValue) || !inputValue : true,
-                match: match ? (inputValue === match) || !inputValue : true,
-                numeric: numeric ? !isNaN(parseFloat(inputValue)) && isFinite(inputValue) || !inputValue : true,
-                integer: integer ? Number.isInteger(Number(inputValue)) || !inputValue : true,
-            };
-            
-            // If underscore is present, replace it with a space
-            if(inputName.includes("_")){
-                inputName = inputName.replace("_", " ");
-            }
-            const errorMessages = {
-                required: inputName+' field is required',
-                string: inputName + ' must be a string',
-                phone: inputName + ' must be a valid phone number',
-                min_length: inputName+` must have at least ${min_length} characters`,
-                max_length: inputName+` must not exceed ${max_length} characters`,
-                email: inputName+' must be a valid email',
-                has_special_character: inputName+' must have special characters',
-                must_have_number: inputName+' must have a number',
-                match: 'Does not match the specified field',
-                numeric: "Please enter a valid number.",
-                integer: "Please enter a valid integer."
-            };
-        
-            /*const failedRules = Object.entries(validationRules)
-            .filter(([rule, pass]) => !pass)
-            .map(([rule]) => errorMessages[rule]);
-
-            if (failedRules.length > 0) {
-                errors[inputName] = failedRules;
-            }*/
-            
-            Object.entries(validationRules)
-            .filter(([rule, pass]) => !pass)
-            .forEach(([rule]) => {
-                if (!errors[inputName]) {
-                    errors[inputName] = [];
-                }
-                errors[inputName].push(errorMessages[rule]);
-                displayError(formId, index, inputName, errorMessages[rule]);
+    function modifyItems() {
+        let parcels = <?= json_encode($shipment->parcels) ?>;
+        let groupedItems = [];
+        // Iterate over each parcel
+        parcels.forEach((parcel, parcelIndex) => {
+            // Iterate over each item in the parcel
+            parcel.items.forEach((item, itemIndex) => {
+                item.parcel_id = parcelIndex; // Assign the parcel index as the parcel_id
+                groupedItems.push(item); // Add the item to the groupedItems array
             });
         });
-    
-        return errors;
-    };
+
+        return groupedItems;
+    }
 
     $(document).ready(function(){
-        let formData = { "sender": {}, "receiver": {}, "items": <?=$shipment->items?>, "shipment": {}, "total": "" };
+        // Call the function to get the modified items
+        let modifiedItems = modifyItems();
+        let formData = { "sender": {}, "receiver": {}, "items": modifiedItems, "shipment": {}, "total": "" };
         let parcel = {};
         let carriers = [];
         let selectedCarrier = {};
@@ -140,9 +88,15 @@
                 "address_to": formData.receiver.address_id,
                 "shipment_id": "<?=$shipment->external_shipment_id?>"
             };
+            // Create a map to group items by parcel_id
+            let parcelsMap = {};
             // Loop through the items array and construct payload items
             items.forEach(item => {
-                payload.items.push({
+                if (!parcelsMap[item.parcel_id]) {
+                    parcelsMap[item.parcel_id] = [];
+                }
+                parcelsMap[item.parcel_id].push({
+                //payload.items.push({
                     "name": item.name,
                     "hs_code": item.hs_code,
                     "description": item.description,
@@ -150,9 +104,20 @@
                     "currency": "NGN",
                     "value": parseFloat(item.value),
                     "quantity": parseInt(item.quantity),
-                    "weight": parseFloat(item.weight)
+                    "weight": parseFloat(item.weight),
+                    //"parcel_id": item.parcel_id
                 });
             });
+
+            // Construct the payload.parcels array
+            for (let parcel_id in parcelsMap) {
+                if (parcelsMap.hasOwnProperty(parcel_id)) {
+                    payload.items.push({
+                        "parcel_id": parcel_id,
+                        "items": parcelsMap[parcel_id]
+                    });
+                }
+            }
             
             try{
                 const config = {
@@ -281,161 +246,6 @@
             }
         });
 
-        function fetchStates(formIdentifier, countryId) {
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            };
-            axios.get(`${baseUrl}/states/${countryId}`, config)
-            .then((res) => {
-                let states = res.data.results;
-                // Update the state select input in the specified form
-                $(`${formIdentifier} select[name='state']`).empty(); // Clear previous options
-                $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
-                $(`${formIdentifier} select[name='city']`).append(`
-                    <option value="">Choose one...</option>
-                `);
-                $(`${formIdentifier} select[name='state']`).append(`
-                    <option value="">Choose one...</option>
-                `);
-                states.forEach(state => {
-                    $(`${formIdentifier} select[name='state']`).append(`
-                        <option value="${state.name}" data-id="${state.id}">${state.name}</option>`
-                    );
-                });
-            });
-        }
-        // Event handler for country select change for sender form
-        $("#sender select[name='country']").on("change", function(event) {
-            event.preventDefault();
-            //let countryId = $(this).val();
-            let countryId = $(this).find('option:selected').data('id');
-            // Attach country code
-            var countryCode = $(this).find('option:selected').data('phonecode');
-            $("input[name='phone']").val(countryCode);
-            $("input[name='phone']").data("phone", countryCode);
-            fetchStates("#sender", countryId);
-        });
-        // Event handler for country select change for receiver form
-        $("#receiver select[name='country']").on("change", function(event) {
-            event.preventDefault();
-            //let countryId = $(this).val();
-            let countryId = $(this).find('option:selected').data('id');
-            // Attach country code
-            var countryCode = $(this).find('option:selected').data('phonecode');
-            $("input[name='phone']").val(countryCode);
-            $("input[name='phone']").data("phone", countryCode);
-            fetchStates("#receiver", countryId);
-        });
-
-        function fetchCities(formIdentifier, stateId) {
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            };
-            axios.get(`${baseUrl}/cities/${stateId}`, config)
-            .then((res) => {
-                let cities = res.data.results;
-                // Update the state select input in the specified form
-                $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
-                $(`${formIdentifier} select[name='city']`).append(`
-                    <option value="">Choose one...</option>
-                `);
-                cities.forEach(city => {
-                    $(`${formIdentifier} select[name='city']`).append(`
-                        <option value="${city.name}" data-id="${city.id}">${city.name}</option>`
-                    );
-                });
-            });
-        }
-        // Event handler for state select change for sender form
-        $("#sender select[name='state']").on("change", function(event) {
-            event.preventDefault();
-            //let stateId = $(this).val();
-            let stateId = $(this).find('option:selected').data('id');
-            fetchCities("#sender", stateId);
-        });
-        // Event handler for state select change for receiver form
-        $("#receiver select[name='state']").on("change", function(event) {
-            event.preventDefault();
-            //let stateId = $(this).val();
-            let stateId = $(this).find('option:selected').data('id');
-            fetchCities("#receiver", stateId);
-        });
-
-        function fetchSubCategories(formIdentifier, $chapter) {
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                params: {chapter: $chapter}
-            };
-            axios.get(`${baseUrl}/categories`, config)
-            .then((res) => {
-                let categories = res.data.results;
-                // Update the state select input in the specified form
-                $(`${formIdentifier} select[name='sub_category']`).empty(); // Clear previous options
-                $(`${formIdentifier} select[name='sub_category']`).append(`
-                    <option value="">Choose one...</option>
-                `); // Clear previous options
-                $(`${formIdentifier} select[name='hs_code']`).empty(); // Clear previous options
-                $(`${formIdentifier} select[name='hs_code']`).append(`
-                    <option value="">Choose one...</option>
-                `);
-                categories.forEach(category => {
-                    $(`${formIdentifier} select[name='sub_category']`).append(`
-                        <option value="${category._id}" data-id="${$chapter}">${category.category}</option>`
-                    );
-                });
-            });
-        }
-        // Event handler for state select change for sender form
-        $("#addItemForm select[name='category']").on("change", function(event) {
-            event.preventDefault();
-            let $id = $(this).val();
-            fetchSubCategories("#addItemForm", $id);
-        });
-        function fetchHsCode(formIdentifier, $chapter, $category) {
-            const config = {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                params: {chapter: $chapter, category: $category}
-            };
-            axios.get(`${baseUrl}/hs_codes`, config)
-            .then((res) => {
-                let hs_codes = res.data?.results?.hs_codes;
-                // Update the state select input in the specified form
-                $(`${formIdentifier} select[name='hs_code']`).empty(); // Clear previous options
-                hs_codes.forEach(hs_code => {
-                    $(`${formIdentifier} select[name='hs_code']`).append(`
-                        <option value="${hs_code.hs_code}" data-description="${hs_code.sub_category}">${hs_code.sub_category}</option>`
-                    );
-                });
-            });
-        }
-        // Event handler for state select change for sender form
-        $("#addItemForm select[name='sub_category']").on("change", function(event) {
-            event.preventDefault();
-            let $category = $(this).val();
-            let $chapter = $(this).find('option:selected').data('id');
-            fetchHsCode("#addItemForm", $chapter, $category);
-        });
-
         $("#addItemForm input[name='quantity'], #addItemForm input[name='value'], #addItemForm input[name='weight']").on("input", function() {
             // Get the input value
             let value = $(this).val();
@@ -447,10 +257,58 @@
             $(this).val(sanitizedValue);
         });
 
+        $("#add-parcel").on("click", function(event){
+            event.preventDefault();
+            $parcel = $(this).data("parcel");
+            $("#parcel-container").append(`
+                <div class="parcel-box" data-id="${$parcel}">
+                    <div class="mb-1 d-flex align-items-center justify-content-between">
+                        <h5 class="m-0">Parcel ${$parcel + 1}</h5>
+                        <button class="btn btn-secondary" id="delete-parcel" data-parcel="${$parcel}" type="button">Delete Parcel</button>
+                    </div>
+                    <div class="mb-2" style="background-color:#E9EFFD;border-radius:10px;">
+                        <div class="table-responsive">
+                            <table data-id="0" class="mb-0 items-table table table-borderless text-nowrap align-middle">
+                                <thead class="text-dark fs-3">
+                                    <tr>
+                                        <th>Items</th>
+                                        <th>Quantity</th>
+                                        <th>Weight</th>
+                                        <th>Value</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>   
+                                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center p-3">
+                            <button type="button" data-parcel="${$parcel}"
+                            class="btn px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
+                            + Add Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+            $(this).data("parcel", $parcel + 1);
+        });
+
+        $(document).on("click", "#delete-parcel", function(event){
+            event.preventDefault();
+            $parcel_id = $(this).data("parcel");
+            formData.items = formData.items.filter(item => item.parcel_id !== $parcel_id);
+            $("#add-parcel").data("parcel", $parcel_id);
+            $(this).parent().parent().remove();
+        });
+
         $("#addItem").on("click", async function(event) {
             event.preventDefault();
             let item = {};
             const action = $(this).data("action");
+            let table = $(this).data("parcel");
             let $currentForm = $(this).closest("form");
             $currentForm.find("input, select").each(function(){
                 var fieldName = $(this).attr("name");
@@ -463,9 +321,10 @@
                     }
                 }
             });
+            item["parcel_id"] = table;
             $(`#shipping .error`).text('');
             $(`#shipping input`).css("borderColor", "transparent");
-            inputs = [
+            let inputs = [
                 { inputName: 'name', inputValue: $("#shipping input[name='name']").val(), constraints: { required: true } },
                 { inputName: 'category', inputValue: $("#shipping select[name='category']").val(), constraints: { required: true } },
                 { inputName: 'sub_category', inputValue: $("#shipping select[name='sub_category']").val(), constraints: { required: true } },
@@ -478,56 +337,104 @@
             if (Object.keys(errors).length === 0) {
                 switch(action){
                     case "create":
+                        let highestId = formData.items.reduce((maxId, currentItem) => Math.max(maxId, currentItem.id), 0);
+                        // Assign the new item a unique ID
+                        item["id"] = highestId + 1;
                         formData.items.push(item);
                     break;
                     case "update":
-                        formData.items[parseInt($(this).data("item"))] = item;
+                        index = parseInt($(this).data("item"));
+                        item["id"] = index;
+                        formData.items = replaceItemById(index, item);
                         $(this).data("action", "create");
                         $(this).data("item", "");
                     break;
                 };
-                $(".items-table tbody").empty();
-                formData.items.forEach((item, index) => {
-                    $(".items-table tbody").append(`
-                        <tr style="">
-                            <td scope="row">${item.name}</td>
-                            <td scope="row">${item.quantity}pieces</td>
-                            <td scope="row">${item.weight}kg</td>
-                            <td scope="row"><b>₦</b>${item?.value.toLocaleString()}</td>
-                            <td scope="row">
-                                <a class="update-item" data-id="${index}" data-action="edit" type="button">
-                                    <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
-                                </a>
-                            </td>
-                            <td scope="row">
-                                <a class="update-item" data-id="${index}" data-action="delete" type="button">
-                                    <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
-                                </a>
-                            </td>
-                        </tr>  
-                    `);
+                $(".items-table tbody").eq(table).empty();
+                formData.items.forEach((item) => {
+                    if(item.parcel_id == table){
+                        renderTableData(item, table);
+                    }
                 });
                 $currentForm[0].reset();
                 $("#addItemModal").modal('hide');
             } else {
                 //alert("Sender validation failed!");
             }
-            
         });
+
+        function renderTableData(item, table){
+            $(".items-table tbody").eq(table).append(`
+                <tr class="">
+                    <td class="pt-0 pb-2">${item.name}</td>
+                    <td class="pt-0 pb-2">${item.quantity}pieces</td>
+                    <td class="pt-0 pb-2">${item.weight}kg</td>
+                    <td class="pt-0 pb-2"><b>₦</b>${item?.value.toLocaleString()}</td>
+                    <td class="pt-0 pb-2">
+                        <a class="update-item" data-id="${item.id}" data-parcel="${table}" data-action="edit" type="button">
+                            <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
+                        </a>
+                    </td>
+                    <td class="pt-0 pb-2">
+                        <a class="update-item" data-id="${item.id}" data-parcel="${table}" data-action="delete" type="button">
+                            <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
+                        </a>
+                    </td>
+                </tr>  
+            `);
+        }
+
+        // Function to find item by ID
+        function getItemById(id) {
+            return formData.items.find(item => item.id === id);
+        }
+        // Function to delete item by ID
+        function deleteItemById(id) {
+            return formData.items.filter(item => item.id !== id);
+        }
+        // Function to replace item by ID
+        function replaceItemById(id, newItem) {
+            return formData.items.map(item => item.id === id ? newItem : item);
+        }
 
         $(document).on("click", ".update-item", function(event){
             event.preventDefault();
             const itemId = $(this).data("id");
             const action = $(this).data("action");
+            const table = $(this).data("parcel");
+            $("#addItem").data("parcel", table);
             switch(action){
                 case "edit":
-                    let item = formData.items[itemId];
+                    //let item = formData.items[itemId];
+                    let item = getItemById(itemId);
                     var $form = $("#addItemForm");
+                    // Variable to track when the second dropdown should be populated
+                    let populateSecondDropdown = false;
+                    // Variable to track when the third dropdown should be populated
+                    let populateThirdDropdown = false;
                     $form.find("input, select").each(function(){
                         let fieldName = $(this).attr("name");  // Get the name attribute of the input/select element
                         // Check if the current input/select element exists in the item object
                         if(fieldName && item.hasOwnProperty(fieldName)) {
                             $(this).val(item[fieldName]);   // Set the value of the input/select element to the corresponding property of the item object
+                            // Check for the first dropdown and trigger change event
+                            if (fieldName === 'category') {
+                                $(this).val(item[fieldName]).trigger('change');
+                                populateSecondDropdown = true; // Indicate that the second dropdown should be populated next
+                            }
+                            
+                            // Check for the second dropdown and trigger change event
+                            if (populateSecondDropdown && fieldName === 'sub_category') {
+                                $(this).val(item[fieldName]).trigger('change');
+                                populateSecondDropdown = false; // Reset the flag
+                                populateThirdDropdown = true; // Indicate that the third dropdown should be populated next
+                            }
+                            
+                            // Set the third dropdown value
+                            if (populateThirdDropdown && fieldName === 'hs_code') {
+                                $(this).val(item[fieldName]);
+                                populateThirdDropdown = false; // Reset the flag
+                            }
                         }
                     });
                     $("#addItem").data("action", "update");
@@ -535,41 +442,27 @@
                     $("#addItemModal").modal("show");
                 break;
                 case "delete":
-                    // Delete the object at the specified index
-                    formData.items.splice(itemId, 1);
-                    $(".items-table tbody").empty();
-                    formData.items.forEach((item, index) => {
-                        $(".items-table tbody").append(`
-                            <tr style="">
-                            <td scope="row">${item.name}</td>
-                            <td scope="row">${item.quantity}pieces</td>
-                            <td scope="row">${item.weight}kg</td>
-                            <td scope="row"><b>₦</b>${item?.value.toLocaleString()}</td>
-                                <td scope="row">
-                                    <a class="update-item" data-id="${index}" data-action="edit" type="button">
-                                        <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                                    </a>
-                                </td>
-                                <td scope="row">
-                                    <a class="update-item" data-id="${index}" data-action="delete" type="button">
-                                        <img src="{{asset('assets/images/icons/file-edit.svg')}}" />
-                                    </a>
-                                </td>
-                            </tr>  
-                        `);
+                    formData.items = deleteItemById(itemId);  //Delete the object at the specified index
+                    $(".items-table tbody").eq(table).empty();
+                    formData.items.forEach((item) => {
+                        if(item.parcel_id == table){
+                            renderTableData(item, table);
+                        }
                     });
                     $("#step3Btn").prop("disabled", !(formData.items.length != 0));
                 break;
             }
         });
 
-        $(".openAddItemModal").click(function() {
-           $("#addItemModal").modal("show");
+        $(document).on("click", ".openAddItemModal", function() {
+            let $parcel = $(this).data("parcel");
+            $("#addItem").data("parcel", $parcel);
+            $("#addItemModal").modal("show");
         });
-        $("#addItemModal .close").on("click", function(){
-            //$("#addItemModal").modal("hide");
+        $(document).on("click", "#addItemModal .close", function(){
+            $("#addItemModal").modal("hide");
         });
-        $('#addItemModal').on('hidden.bs.modal', function (e) {
+        $(document).on('hidden.bs.modal', '#addItemModal', function (e) {
             $("#addItemModal").modal("hide");
         });
 

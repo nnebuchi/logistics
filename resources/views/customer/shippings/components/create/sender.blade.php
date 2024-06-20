@@ -1,4 +1,4 @@
-<div class="row justify-content-center step" style="displa:none;" id="sender">
+<div class="row justify-content-center step" style="display:non;" id="sender">
     <div class="col-xl-9 col-lg-9">
         <div class="card w-100">
             <div class="card-body">
@@ -55,7 +55,7 @@
                                 <div class="w-100 mt-md-0 mt-3">
                                     <label class="custom-input-label">State</label>
                                     <select
-                                        name="state"
+                                        name="state" disabled
                                         class="custom-select">
                                         <option value="">Choose one...</option>
                                     </select>
@@ -66,7 +66,7 @@
                                 <div class="w-100 mr-2">
                                     <label class="custom-input-label">City</label>
                                     <select
-                                        name="city"
+                                        name="city" disabled
                                         class="custom-select">
                                         <option value="">Choose one...</option>
                                     </select>
