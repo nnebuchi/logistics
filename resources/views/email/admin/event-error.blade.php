@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ziga Afrika - Verify Email</title>
+        <title>Ziga Afrika - Event Error</title>
     </head>
     <style>
         .btn{
@@ -28,15 +28,14 @@
         }
     </style>
     <body style="font-family: 'Open Sans', sans-serif;">
-        <div style="padding-top:20px;">
+        <div style="">
             <a href="{{url('/')}}"><img src="{{asset('assets/images/logos/ziga-blue.png')}}" style="display:block;margin-left:auto;margin-right:auto;" width="180" alt=""></a>
-            <h3 style="text-align: center; font-size: 30px; color: rgba(0, 46, 102, 1); font-family: Montserrat; margin-top: 3%;">Account Verification</h3>
+            <h3 style="text-align: center; font-size: 30px; color: rgba(0, 46, 102, 1); font-family: Montserrat; margin-top: 3%;">Event Error</h3>
 
-            <div style="background-color: #F79D1D1A; padding: 5% 5%; text-align: left;">
-                <p>Hello!, </p>
-                <p>Welcome to our platform! To get started, please verify your email address by clicking the button below:</p>
-                <div style="margin-top:40px;" class="hor-center">
-                    <a href="<?=$actionUrl?>" class="btn">Verify Email <img style="margin-left:10px" src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="ml-2" alt=""></a>
+            <div style="background-color: #F79D1D1A; padding: 5% 5%; text-align: center;">
+                <p>You are receiving this email because shipping process update report encoutered an error Check the log below.</p>
+                <div style="margin-top:40px; max-height:600px margin-left:10px; overflow:scroll; padding-right:20px;" class="hor-center">
+                    <pre><code>{{$mail_data['data']}}</code></pre>
                 </div>
             </div>
 

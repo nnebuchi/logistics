@@ -13,6 +13,11 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ImpersonateController;
 
+
+Route::get('/', function(){
+    return redirect()->route('dashboard');
+})->name('home');
+
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/reset-password/{email}/{token}', [AuthController::class, 'showPasswordResetForm'])->name('password.reset');
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
@@ -27,73 +32,80 @@ Route::group(['middleware' => ['guest']], function () {
 });
 
 
-
-Route::get('/email/verify', function () {
-    return view('customer.auth.verify-email');
-})->middleware('auth')->name('verification.notice');
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
- 
-    return redirect('/email-verification-success');
-})->middleware(['auth', 'signed'])->name('verification.verify');
 Route::get('/email-verification-success', function() {
     return view('customer.auth.email-verification-success');
 });
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
- 
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
 Route::get('/password-change-success', function() {
     return view('customer.auth.password-change-success');
 });
+
 Route::get('/test', [AuthController::class, 'test']);
 
 Route::group([
-    'middleware' => ['auth', 'verified']
+    'middleware' => ['auth']
 ], function () {
+    Route::get('/email/verify', function () {
+        return view('customer.auth.verify-email');
+    })->name('verification.notice');
     
-    Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
-    Route::group([
-        'prefix' => 'user', 'prefix'=>'shipping', 'middleware'=>'kyc'
-    ], function () {
-        Route::get('/track', [ShippingController::class, 'showTrackingForm'])->name('track-shipments');
-        Route::get('/create', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
-        Route::post('/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
-        Route::get('/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
-        Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
-        Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
-        Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
-    });
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+     
+        return redirect('/email-verification-success');
+    })->middleware(['signed'])->name('verification.verify');
     
-    Route::post('/address', [ShippingController::class, 'createAddress']);
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    })->middleware(['throttle:6,1'])->name('verification.send');
 
-    Route::get('/wallet', [WalletController::class, 'index']);
-    Route::get('/profile', [UserController::class, 'showProfile']);
-    Route::get('/logout', [AuthController::class, 'logOut']);
-
-    Route::get('/cities/{stateId}', [ShippingController::class, 'getCities']);
-    Route::get('/states/{countryId}', [ShippingController::class, 'getStates']);
-
-    Route::get('/categories', [ShippingController::class, 'getCategories']);
-    Route::get('/hs_codes', [ShippingController::class, 'getHsCodes']);
-
-    Route::post("/change-password", [UserController::class, "changePassword"]);
-    //users endpoint
     Route::group([
-        'prefix' => 'user'
+        'middleware' => ['verified']
     ], function () {
-        Route::get('/', [UserController::class, 'getUser']);
-        Route::post('/', [UserController::class, 'updateProfile']);
-        Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
-        Route::get('/{userId}/shipments', [ShippingController::class, 'getUserShipments']);
-        Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
-        Route::post('/{userId}/transaction', [WalletController::class, 'createTransaction']);
-        Route::get('/{userId}/notifications', [UserController::class, 'fetchNotifications']);
-         //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
+        Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+        Route::group([
+            'prefix' => 'user', 'prefix'=>'shipping', 'middleware'=>'kyc'
+        ], function () {
+            Route::get('/track', [ShippingController::class, 'showTrackingForm'])->name('track-shipments');
+            Route::get('/create', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
+            Route::post('/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
+            Route::get('/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
+            Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
+            Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
+            Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
+        });
+        
+        Route::post('/address', [ShippingController::class, 'createAddress']);
+    
+        Route::get('/wallet', [WalletController::class, 'index']);
+        Route::get('/profile', [UserController::class, 'showProfile']);
+        Route::get('/logout', [AuthController::class, 'logOut']);
+    
+        Route::get('/cities/{stateId}', [ShippingController::class, 'getCities']);
+        Route::get('/states/{countryId}', [ShippingController::class, 'getStates']);
+    
+        Route::get('/categories', [ShippingController::class, 'getCategories']);
+        Route::get('/hs_codes', [ShippingController::class, 'getHsCodes']);
+    
+        Route::post("/change-password", [UserController::class, "changePassword"]);
+        //users endpoint
+        Route::group([
+            'prefix' => 'user'
+        ], function () {
+            Route::get('/', [UserController::class, 'getUser']);
+            Route::post('/', [UserController::class, 'updateProfile']);
+            Route::get('/{userId}/wallet', [WalletController::class, 'getWallet']);
+            Route::get('/{userId}/shipments', [ShippingController::class, 'getUserShipments']);
+            Route::get('/{userId}/transactions', [TransactionController::class, 'getUserTransactions']);
+            Route::post('/{userId}/transaction', [WalletController::class, 'createTransaction']);
+            Route::get('/{userId}/notifications', [UserController::class, 'fetchNotifications']);
+             //Route::post('/{userId}/send-push-notifications', [UserController::class, 'sendPushNotifications']);
+        });
+    
+        Route::get('impersonate/leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
     });
 
-    Route::get('impersonate/leave', [ImpersonateController::class, 'leave'])->name('impersonate.leave');
 });
 
 Route::group([

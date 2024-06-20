@@ -5,6 +5,16 @@
                 <div id="parcel-container">
                     <!-- Table starts here -->
                     <div class="parcel-box">
+                        <div class="alert alert-info">
+                            <h6>Important Tips:</h6>
+                            <ul type="disc">
+                                <li><span><i class="fa fa-check"></i></span>Your Shipments are made up of parcels.  </li>
+                                <li><span><i class="fa fa-check"></i></span>A parcel is like a box</li>
+                                <li><span><i class="fa fa-check"></i></span>We have created the first parcel for you by default.</li>
+                                <li><span><i class="fa fa-check"></i></span>You can add as many items you want to a parcel</li>
+                                <li><span><i class="fa fa-check"></i></span>To add another parcel, click on "Add new parcel"</li>
+                            </ul>
+                        </div>
                         <div class="mb-1 d-flex align-items-center justify-content-between">
                             <h5 class="m-0">Parcel 1</h5>
                         </div>
