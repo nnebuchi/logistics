@@ -56,6 +56,7 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
+    var parcelDoc = {};
 
     $(document).ready(function(){
         let formData = { "sender": {}, "receiver": {}, "items": [], "shipment": {}, "total": "" };
@@ -97,7 +98,8 @@
                 if (parcelsMap.hasOwnProperty(parcel_id)) {
                     payload.items.push({
                         "parcel_id": parcel_id,
-                        "items": parcelsMap[parcel_id]
+                        "items": parcelsMap[parcel_id],
+                        "docs": parcelDoc[parcel_id] ?? []
                     });
                 }
             }
@@ -254,7 +256,7 @@
                         <h5 class="m-0">Parcel ${$parcel + 1}</h5>
                         <button class="btn btn-secondary" id="delete-parcel" data-parcel="${$parcel}" type="button">Delete Parcel</button>
                     </div>
-                    <div class="mb-2" style="background-color:#E9EFFD;border-radius:10px;">
+                    <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                         <div class="table-responsive">
                             <table data-id="0" class="mb-0 items-table table table-borderless text-nowrap align-middle">
                                 <thead class="text-dark fs-3">
@@ -277,6 +279,25 @@
                             class="btn px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
                             + Add Item
                             </button>
+                        </div>
+                        <div class="p-3 bg-white">
+                            <form class="proof-of-purchase-form" data-parcel="${$parcel}" 
+                            action="" method="POST" enctype="multipart/form-data">
+                                <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
+                                <div class="mt-2 d-flex align-items-center">
+                                    <div class="w-10" style="border:2px solid #FCE4C2F7">
+                                        <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />
+                                    </div>
+                                    <label for="document-${$parcel}" type="button" class="m-0 ml-2 rounded-circle d-flex align-items-center justify-content-center" style="background-color:#FCE4C2F7;height:50px;width:50px">
+                                        <img src="{{asset('assets/images/icons/cloud-upload.svg')}}" width="25" >
+                                        <input type="file" id="document-${$parcel}" data-parcel="${$parcel}" data-count="0" class="d-none document-file" />
+                                    </label>
+                                </div>
+                                <span class="document-count"> </span>
+                                <div class="mt-1 document-preview">
+                                    
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -608,6 +629,6 @@
         });
 
     });
-
 </script>
+<script src="{{asset('assets/js/shipping/parceldoc.js')}}"></script>
 @include("customer.layouts.footer")

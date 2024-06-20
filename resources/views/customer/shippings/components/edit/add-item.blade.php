@@ -1,4 +1,4 @@
-<div class="row justify-content-center step" style="display:non;" id="shipping">
+<div class="row justify-content-center step" style="display:none;" id="shipping">
     <div class="col-xl-9 col-lg-9 col-md-10">
         <div class="card w-100">
             <div class="card-body">
@@ -9,7 +9,7 @@
                             <div class="mb-1 d-flex align-items-center justify-content-between">
                                 <h5 class="m-0">Parcel <?=$parcelIndex + 1?></h5>
                             </div>
-                            <div class="mb-2" style="background-color:#E9EFFD;border-radius:10px;">
+                            <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                                 <div class="table-responsive">
                                     <table class="mb-0 items-table table table-borderless text-nowrap align-middle">
                                         <thead class="text-dark fs-3">
@@ -49,6 +49,25 @@
                                     class="btn bg-whit px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
                                     + Add Item
                                     </button>
+                                </div>
+                                <div class="p-3 bg-white">
+                                    <form class="proof-of-purchase-form" data-parcel="<?=$parcelIndex?>" 
+                                    action="" method="POST" enctype="multipart/form-data">
+                                        <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
+                                        <div class="mt-2 d-flex align-items-center">
+                                            <div class="w-10" style="border:2px solid #FCE4C2F7">
+                                                <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />
+                                            </div>
+                                            <label for="document-<?=$parcelIndex?>" type="button" class="m-0 ml-2 rounded-circle d-flex align-items-center justify-content-center" style="background-color:#FCE4C2F7;height:50px;width:50px">
+                                                <img src="{{asset('assets/images/icons/cloud-upload.svg')}}" width="25" >
+                                                <input type="file" id="document-<?=$parcelIndex?>" data-parcel="<?=$parcelIndex?>" data-count="0" class="d-none document-file" />
+                                            </label>
+                                        </div>
+                                        <span class="document-count"> </span>
+                                        <div class="mt-1 document-preview">
+                                            
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

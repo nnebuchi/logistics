@@ -1,4 +1,4 @@
-<div class="row justify-content-center step" style="display:none;" id="shipping">
+<div class="row justify-content-center step" style="display:non;" id="shipping">
     <div class="col-xl-9 col-lg-9 col-md-10">
         <div class="card w-100">
             <div class="card-body">
@@ -32,24 +32,25 @@
                                 + Add Item
                                 </button>
                             </div>
-                            <!--<div class="p-3 bg-white d-fle justify-content-betwee align-items-cente">
-                                <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
-                                <div class="w-100 mr-2 d-flex flex-column">
-                                    <label class="custom-input-label">Title</label>
-                                    <input type="text" name="document" placeholder="Title" class="custom-input" />
-                                </div>
-                                <button type="button" data-parcel="0"
-                                class="btn bg-whit px-4" style="background-color:#FCE4C2F7;">
-                                Upload
-                                </button>
+                            <div class="p-3 bg-white">
+                                <form class="proof-of-purchase-form" data-parcel="0" 
+                                action="" method="POST" enctype="multipart/form-data">
+                                    <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
+                                    <div class="mt-2 d-flex align-items-center">
+                                        <div class="w-10" style="border:2px solid #FCE4C2F7">
+                                            <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />
+                                        </div>
+                                        <label for="document-0" type="button" class="m-0 ml-2 rounded-circle d-flex align-items-center justify-content-center" style="background-color:#FCE4C2F7;height:50px;width:50px">
+                                            <img src="{{asset('assets/images/icons/cloud-upload.svg')}}" width="25" >
+                                            <input type="file" id="document-0" data-parcel="0" data-count="0" class="d-none document-file" />
+                                        </label>
+                                    </div>
+                                    <span class="document-count"> </span>
+                                    <div class="mt-1 document-preview">
+
+                                    </div>
+                                </form>
                             </div>
-                            <div class="p-3 mt-2 bg-white d-flex justify-content-between align-items-center">
-                                <h5 class="m-0">Add an image of your parcel on a scale or with measuring tape</h5>
-                                <button type="button" data-parcel="0"
-                                class="btn bg-whit px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
-                                Upload
-                                </button>
-                            </div>-->
                         </div>
                     </div>
                     <!-- Table starts here -->

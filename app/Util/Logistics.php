@@ -76,7 +76,8 @@ class Logistics
             'json' => [
                 'description' => $payload["description"],
                 'items' => $payload["items"],
-                'weight_unit' => 'kg'
+                'weight_unit' => 'kg',
+                'rec_docs' => $payload["docs"]
             ]
         ]);
         return $response->getBody();

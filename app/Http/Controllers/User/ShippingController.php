@@ -290,7 +290,8 @@ class ShippingController extends Controller
         foreach($items as $item):
             $parcel = $this->logistics->createParcel([
                 "description" => $description,
-                "items" => $item["items"]
+                "items" => $item["items"],
+                "docs" => $item["docs"]
             ]);
             $parcel = json_decode($parcel);
             $parcel = $parcel->data;
