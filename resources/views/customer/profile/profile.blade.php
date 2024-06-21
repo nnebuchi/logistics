@@ -206,15 +206,24 @@
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script>
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const tab = urlParams.get('tab');
-    if(tab == 'kyc'){
-        document.querySelector('#kyc-btn').click();
-    }
+    
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
     var userToken = localStorage.getItem('token');
+
+    window.addEventListener('load', function() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const tab = urlParams.get('tab');
+        
+        if(tab == 'kyc'){
+            console.log(document.querySelector('#kyc-btn'));
+            document.querySelector('#kyc-btn').click();
+        }
+    })
+    
+    // add an onload event listener
+
 
     //Preview the images before uploading
     $("#image").change(function(event){
