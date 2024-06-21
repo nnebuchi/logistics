@@ -20,7 +20,8 @@ class Kyc
             return $next($request);
         }else{
             Session(['msg'=>'Complete your KYC to proceed!', 'alert'=>'warning']);
-            return redirect()->back()->with('error', 'Complete your KYC to proceed!');
+            $redirectUrl = route('profile').'?tab=kyc';
+            return redirect(url($redirectUrl))->with('error', 'Complete your KYC to proceed!');
         }
         
     }

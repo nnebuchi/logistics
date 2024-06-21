@@ -42,7 +42,9 @@
                             type="button" data-bs-toggle="collapse" 
                             data-bs-target="#collapseExample2" 
                             aria-expanded="false" 
-                            aria-controls="collapseExample2">
+                            aria-controls="collapseExample2"
+                            id="kyc-btn"
+                        >
                             Know Your Customer(KYC)
                         </button>
                     </div>
@@ -204,6 +206,12 @@
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const tab = urlParams.get('tab');
+    if(tab == 'kyc'){
+        document.querySelector('#kyc').click();
+    }
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
     var userToken = localStorage.getItem('token');
