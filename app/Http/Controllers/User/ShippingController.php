@@ -321,61 +321,70 @@ class ShippingController extends Controller
             "description"=> "white paper",
             "items"=> [
                 [
-                        "items" => [
-                            [
-                            "name"=> "Books",
-                            "description"=> "white coloured wrapped with a cellophane paper",
-                            "type"=> "parcel",
-                            "currency"=> "NGN",
-                            "value"=> 125.50,
-                            "quantity"=> 2,
-                            "weight"=> 1,
-                            "hs_code"=> "071290"
-                        ]
+                    "items" => [
+                        [
+                        "name"=> "Books",
+                        "description"=> "white coloured wrapped with a cellophane paper",
+                        "type"=> "parcel",
+                        "currency"=> "NGN",
+                        "value"=> 125.50,
+                        "quantity"=> 2,
+                        "weight"=> 1,
+                        "hs_code"=> "071290"
+                        ],
+                    ],
+                    "docs" => [
+                        ["title" => "Homebook", "photo" => "https://imgcrop/savage.png"]
                     ]
                 ],
                 [
-                        "items" => [
-                            [
-                            "name"=> "Books",
-                            "description"=> "white coloured wrapped with a cellophane paper",
-                            "type"=> "parcel",
-                            "currency"=> "NGN",
-                            "value"=> 125.50,
-                            "quantity"=> 2,
-                            "weight"=> 1,
-                            "hs_code"=> "071290"
-                        ]
+                    "items" => [
+                        [
+                        "name"=> "Books",
+                        "description"=> "white coloured wrapped with a cellophane paper",
+                        "type"=> "parcel",
+                        "currency"=> "NGN",
+                        "value"=> 125.50,
+                        "quantity"=> 2,
+                        "weight"=> 1,
+                        "hs_code"=> "071290"
+                        ],
+                    ],
+                    "docs" => [
+                        ["title" => "Homebook", "photo" => "https://imgcrop/savage.png"]
                     ]
                 ],
             ],
-            //"shipment_id" => "SH-SK52SQLQEC38EE36"
+            //"shipment_id" => "SH-CNZQK9GKE40ZKX2U"
         ];
         $request = new Request();
-        $request->merge($payload);*/
+        $request->merge($payload);
 
         //Create parcel
         $parcels = $this->createParcel($request->items, $request->description);
+        */
 
         if($request->has("shipment_id")):
-            $shipment = $this->logistics->updateShipment($request->shipment_id, [
+            /*$shipment = $this->logistics->updateShipment($request->shipment_id, [
                 "parcels" => array_column($parcels, "parcel_id"),
                 'address_from' => $request->address_from,
                 'address_to' => $request->address_to
             ]);
             $shipment = json_decode($shipment);
-            $shipment = $shipment->data;
-            $this->editShipment($shipment);
+            $shipment = $shipment->data;*/
+            $response = $this->editShipment($request->all(), $request->description);
         else:
-            $shipment = $this->logistics->createShipment([
+            /*$shipment = $this->logistics->createShipment([
                 "parcels" => array_column($parcels, "parcel_id"),
                 'address_from' => $request->address_from,
                 'address_to' => $request->address_to
             ]);
             $shipment = json_decode($shipment);
-            $shipment = $shipment->data;
-            $this->saveShipment($shipment, $user);
+            $shipment = $shipment->data;*/
+            $response = $this->saveShipment($request->all(), $user, $request->description);
         endif;
+        $parcels = $response["parcels"];
+        $shipment = $response["shipment"];
 
         //get Rates for Shipment
         $rates = $this->logistics->getRateForShipment([
@@ -392,118 +401,6 @@ class ShippingController extends Controller
             "rates" => $rates
         ];
         return ResponseFormatter::success("Rates:", $data, 200);
-    }
-
-    public function saveShipment($data, User $user){
-        $shipment = new Shipment;
-        $shipment->user_id = $user->id;
-        $shipment->external_shipment_id = $data->shipment_id;
-        $shipment->pickup_date = $data->pickup_date;
-        $shipment->save();
-
-        foreach($data->parcels as $parcel):
-            $newParcel = new Parcel;
-            $newParcel->shipment_id = $shipment->id;
-            $newParcel->external_parcel_id = $parcel->parcel_id;
-            $newParcel->weight = $parcel->total_weight;
-            $newParcel->weight_unit = $parcel->weight_unit;
-            $newParcel->save();
-
-            foreach($parcel->items as $item):
-                $newItem = new Item;
-                $newItem->shipment_id = $shipment->id;
-                $newItem->parcel_id = $newParcel->id;
-                $newItem->name = $item->name;
-                $newItem->currency = $item->currency;
-                $newItem->description = $item->description;
-                $newItem->value = $item->value;
-                $newItem->quantity = $item->quantity;
-                $newItem->weight = $item->weight;
-                $newItem->save();
-            endforeach;
-        endforeach;
-
-        $from = new Address;
-        $from->shipment_id = $shipment->id;
-        $from->firstname = $data->address_from->first_name;
-        $from->lastname = $data->address_from->last_name;
-        $from->email = $data->address_from->email;
-        $from->phone = $data->address_from->phone;
-        $from->country = $data->address_from->country;
-        $from->state = $data->address_from->state;
-        $from->city = $data->address_from->city;
-        $from->zip = $data->address_from->zip;
-        $from->line1 = $data->address_from->line1;
-        $from->type = "from";
-        $from->save();
-
-        $to = new Address;
-        $to->shipment_id = $shipment->id;
-        $to->firstname = $data->address_to->first_name;
-        $to->lastname = $data->address_to->last_name;
-        $to->email = $data->address_to->email;
-        $to->phone = $data->address_to->phone;
-        $to->country = $data->address_to->country;
-        $to->state = $data->address_to->state;
-        $to->city = $data->address_to->city;
-        $to->zip = $data->address_to->zip;
-        $to->line1 = $data->address_to->line1;
-        $to->type = "to";
-        $to->save();
-    }
-
-    public function editShipment($data){
-        $shipment = Shipment::where("external_shipment_id", $data->shipment_id)->first();
-        $shipment->parcels()->delete();
-        $shipment->items()->delete();
-
-        foreach($data->parcels as $parcel):
-            $newParcel = new Parcel;
-            $newParcel->shipment_id = $shipment->id;
-            $newParcel->external_parcel_id = $parcel->parcel_id;
-            $newParcel->weight = $parcel->total_weight;
-            $newParcel->weight_unit = $parcel->weight_unit;
-            $newParcel->save();
-
-            foreach($parcel->items as $item):
-                $newItem = new Item;
-                $newItem->shipment_id = $shipment->id;
-                $newItem->parcel_id = $newParcel->id;
-                $newItem->name = $item->name;
-                $newItem->currency = $item->currency;
-                $newItem->description = $item->description;
-                $newItem->value = $item->value;
-                $newItem->quantity = $item->quantity;
-                $newItem->weight = $item->weight;
-                $newItem->save();
-            endforeach;
-        endforeach;
-
-        $from = Address::where(["shipment_id" => $shipment->id, "type" => "from"])->first();
-        $from->firstname = $data->address_from->first_name;
-        $from->lastname = $data->address_from->last_name;
-        $from->email = $data->address_from->email;
-        $from->phone = $data->address_from->phone;
-        $from->country = $data->address_from->country;
-        $from->state = $data->address_from->state;
-        $from->city = $data->address_from->city;
-        $from->zip = $data->address_from->zip;
-        $from->line1 = $data->address_from->line1;
-        $from->type = "from";
-        $from->save();
-
-        $to = Address::where(["shipment_id" => $shipment->id, "type" => "to"])->first();;
-        $to->firstname = $data->address_to->first_name;
-        $to->lastname = $data->address_to->last_name;
-        $to->email = $data->address_to->email;
-        $to->phone = $data->address_to->phone;
-        $to->country = $data->address_to->country;
-        $to->state = $data->address_to->state;
-        $to->city = $data->address_to->city;
-        $to->zip = $data->address_to->zip;
-        $to->line1 = $data->address_to->line1;
-        $to->type = "to";
-        $to->save();
     }
 
     public function trackShipment($shipmentId){
@@ -558,10 +455,175 @@ class ShippingController extends Controller
 
         if($request->hasFile("photo")):
             $photo = $request->file("photo");
-            $url = cloudinary()->upload($photo->getRealPath())->getFileName();
+            $url = cloudinary()->upload($photo->getRealPath())->getSecurePath();
         endif;
 
         return ResponseFormatter::success("Parcel doc uploaded successfully", ["photo" => $url], 200);
+    }
+
+    public function saveShipment($data, User $user, $description){
+        $shipment = new Shipment;
+        $shipment->user_id = $user->id;
+        //$shipment->external_shipment_id = $data->shipment_id;
+        //$shipment->pickup_date = $data->pickup_date;
+        $shipment->save();
+    
+        $parcels = [];
+        foreach($data["items"] as $parcel):
+            $newParcel = new Parcel;
+            $newParcel->shipment_id = $shipment->id;
+            $newParcel->metadata = $parcel["docs"];
+    
+            $response = $this->logistics->createParcel([
+                "description" => $description,
+                "items" => $parcel["items"],
+                "docs" => array_column($parcel["docs"], 'photo')
+            ]);
+            $response = json_decode($response);
+            $response = $response->data;
+            
+            $newParcel->external_parcel_id = $response->parcel_id;
+            $newParcel->weight = $response->total_weight;
+            $newParcel->weight_unit = $response->weight_unit;
+            $newParcel->save();
+            array_push($parcels, $response);
+    
+            foreach($response->items as $item):
+                $newItem = new Item;
+                $newItem->shipment_id = $shipment->id;
+                $newItem->parcel_id = $newParcel->id;
+                $newItem->name = $item->name;
+                $newItem->currency = $item->currency;
+                $newItem->description = $item->description;
+                $newItem->value = $item->value;
+                $newItem->quantity = $item->quantity;
+                $newItem->weight = $item->weight;
+                $newItem->save();
+            endforeach;
+        endforeach;
+
+        $newShipment = $this->logistics->createShipment([
+            "parcels" => array_column($parcels, "parcel_id"),
+            'address_from' => $data["address_from"],
+            'address_to' => $data["address_to"]
+        ]);
+        $newShipment = json_decode($newShipment);
+        $newShipment = $newShipment->data;
+
+        // Update the shipment with external ID and pickup date
+        $shipment->external_shipment_id = $newShipment->shipment_id;
+        $shipment->pickup_date = $newShipment->pickup_date;
+        $shipment->save();
+    
+        $from = new Address;
+        $from->shipment_id = $shipment->id;
+        $from->firstname = $newShipment->address_from->first_name;
+        $from->lastname = $newShipment->address_from->last_name;
+        $from->email = $newShipment->address_from->email;
+        $from->phone = $newShipment->address_from->phone;
+        $from->country = $newShipment->address_from->country;
+        $from->state = $newShipment->address_from->state;
+        $from->city = $newShipment->address_from->city;
+        $from->zip = $newShipment->address_from->zip;
+        $from->line1 = $newShipment->address_from->line1;
+        $from->type = "from";
+        $from->save();
+    
+        $to = new Address;
+        $to->shipment_id = $shipment->id;
+        $to->firstname = $newShipment->address_to->first_name;
+        $to->lastname = $newShipment->address_to->last_name;
+        $to->email = $newShipment->address_to->email;
+        $to->phone = $newShipment->address_to->phone;
+        $to->country = $newShipment->address_to->country;
+        $to->state = $newShipment->address_to->state;
+        $to->city = $newShipment->address_to->city;
+        $to->zip = $newShipment->address_to->zip;
+        $to->line1 = $newShipment->address_to->line1;
+        $to->type = "to";
+        $to->save();
+
+        return ["parcels" => $parcels, "shipment" => $newShipment];
+    }
+
+    public function editShipment($data, $description){
+        $shipment = Shipment::where("external_shipment_id", $data["shipment_id"])->first();
+        $shipment->parcels()->delete();
+        $shipment->items()->delete();
+
+        $parcels = [];
+        foreach($data["items"] as $parcel):
+            $newParcel = new Parcel;
+            $newParcel->shipment_id = $shipment->id;
+            $newParcel->metadata = $parcel["docs"];
+    
+            $response = $this->logistics->createParcel([
+                "description" => $description,
+                "items" => $parcel["items"],
+                "docs" => array_column($parcel["docs"], 'photo')
+            ]);
+            $response = json_decode($response);
+            $response = $response->data;
+            
+            $newParcel->external_parcel_id = $response->parcel_id;
+            $newParcel->weight = $response->total_weight;
+            $newParcel->weight_unit = $response->weight_unit;
+            $newParcel->save();
+            array_push($parcels, $response);
+    
+            foreach($response->items as $item):
+                $newItem = new Item;
+                $newItem->shipment_id = $shipment->id;
+                $newItem->parcel_id = $newParcel->id;
+                $newItem->name = $item->name;
+                $newItem->currency = $item->currency;
+                $newItem->description = $item->description;
+                $newItem->value = $item->value;
+                $newItem->quantity = $item->quantity;
+                $newItem->weight = $item->weight;
+                $newItem->save();
+            endforeach;
+        endforeach;
+
+        $newShipment = $this->logistics->updateShipment($data["shipment_id"], [
+            "parcels" => array_column($parcels, "parcel_id"),
+            'address_from' => $data["address_from"],
+            'address_to' => $data["address_to"]
+        ]);
+        $newShipment = json_decode($newShipment);
+        $newShipment = $newShipment->data;
+
+        // Update the shipment with external ID and pickup date
+        $shipment->pickup_date = $newShipment->pickup_date;
+        $shipment->save();
+
+        $from = Address::where(["shipment_id" => $shipment->id, "type" => "from"])->first();
+        $from->firstname = $newShipment->address_from->first_name;
+        $from->lastname = $newShipment->address_from->last_name;
+        $from->email = $newShipment->address_from->email;
+        $from->phone = $newShipment->address_from->phone;
+        $from->country = $newShipment->address_from->country;
+        $from->state = $newShipment->address_from->state;
+        $from->city = $newShipment->address_from->city;
+        $from->zip = $newShipment->address_from->zip;
+        $from->line1 = $newShipment->address_from->line1;
+        $from->type = "from";
+        $from->save();
+
+        $to = Address::where(["shipment_id" => $shipment->id, "type" => "to"])->first();;
+        $to->firstname = $newShipment->address_to->first_name;
+        $to->lastname = $newShipment->address_to->last_name;
+        $to->email = $newShipment->address_to->email;
+        $to->phone = $newShipment->address_to->phone;
+        $to->country = $newShipment->address_to->country;
+        $to->state = $newShipment->address_to->state;
+        $to->city = $newShipment->address_to->city;
+        $to->zip = $newShipment->address_to->zip;
+        $to->line1 = $newShipment->address_to->line1;
+        $to->type = "to";
+        $to->save();
+
+        return ["parcels" => $parcels, "shipment" => $newShipment];
     }
 
 

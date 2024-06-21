@@ -392,6 +392,7 @@
                     }
                 });
                 $currentForm[0].reset();
+                //alert(JSON.stringify(item));
                 $("#addItemModal").modal('hide');
             } else {
                 //alert("Sender validation failed!");
@@ -472,6 +473,7 @@
                             }
                         }
                     });
+                    //alert(JSON.stringify(item));
                     $("#addItem").data("action", "update");
                     $("#addItem").data("item", itemId);
                     $("#addItemModal").modal("show");

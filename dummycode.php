@@ -417,3 +417,176 @@ if (Object.keys(errors).length === 0) {
         
     </div>
 </div>
+
+
+
+
+public function saveShipment($data, User $user){
+    $shipment = new Shipment;
+    $shipment->user_id = $user->id;
+    //$shipment->external_shipment_id = $data->shipment_id;
+    //$shipment->pickup_date = $data->pickup_date;
+    $shipment->save();
+
+    foreach($data->parcels as $parcel):
+        $newParcel = new Parcel;
+        $newParcel->shipment_id = $shipment->id;
+        //$newParcel->external_parcel_id = $parcel->parcel_id;
+        //$newParcel->weight = $parcel->total_weight;
+        //$newParcel->weight_unit = $parcel->weight_unit;
+        $newParcel->save();
+
+        foreach($parcel->items as $item):
+            $newItem = new Item;
+            $newItem->shipment_id = $shipment->id;
+            $newItem->parcel_id = $newParcel->id;
+            $newItem->name = $item->name;
+            $newItem->currency = $item->currency;
+            $newItem->description = $item->description;
+            $newItem->value = $item->value;
+            $newItem->quantity = $item->quantity;
+            $newItem->weight = $item->weight;
+            $newItem->save();
+        endforeach;
+    endforeach;
+
+    $from = new Address;
+    $from->shipment_id = $shipment->id;
+    $from->firstname = $data->address_from->first_name;
+    $from->lastname = $data->address_from->last_name;
+    $from->email = $data->address_from->email;
+    $from->phone = $data->address_from->phone;
+    $from->country = $data->address_from->country;
+    $from->state = $data->address_from->state;
+    $from->city = $data->address_from->city;
+    $from->zip = $data->address_from->zip;
+    $from->line1 = $data->address_from->line1;
+    $from->type = "from";
+    $from->save();
+
+    $to = new Address;
+    $to->shipment_id = $shipment->id;
+    $to->firstname = $data->address_to->first_name;
+    $to->lastname = $data->address_to->last_name;
+    $to->email = $data->address_to->email;
+    $to->phone = $data->address_to->phone;
+    $to->country = $data->address_to->country;
+    $to->state = $data->address_to->state;
+    $to->city = $data->address_to->city;
+    $to->zip = $data->address_to->zip;
+    $to->line1 = $data->address_to->line1;
+    $to->type = "to";
+    $to->save();
+}
+
+public function saShipment($data, User $user){
+        $shipment = new Shipment;
+        $shipment->user_id = $user->id;
+        //$shipment->external_shipment_id = $data->shipment_id;
+        //$shipment->pickup_date = $data->pickup_date;
+        $shipment->save();
+
+        foreach($data->parcels as $parcel):
+            $newParcel = new Parcel;
+            $newParcel->shipment_id = $shipment->id;
+            //$newParcel->external_parcel_id = $parcel->parcel_id;
+            //$newParcel->weight = $parcel->total_weight;
+            //$newParcel->weight_unit = $parcel->weight_unit;
+            $newParcel->save();
+
+            foreach($parcel->items as $item):
+                $newItem = new Item;
+                $newItem->shipment_id = $shipment->id;
+                $newItem->parcel_id = $newParcel->id;
+                $newItem->name = $item->name;
+                $newItem->currency = $item->currency;
+                $newItem->description = $item->description;
+                $newItem->value = $item->value;
+                $newItem->quantity = $item->quantity;
+                $newItem->weight = $item->weight;
+                $newItem->save();
+            endforeach;
+        endforeach;
+
+        $from = new Address;
+        $from->shipment_id = $shipment->id;
+        $from->firstname = $data->address_from->first_name;
+        $from->lastname = $data->address_from->last_name;
+        $from->email = $data->address_from->email;
+        $from->phone = $data->address_from->phone;
+        $from->country = $data->address_from->country;
+        $from->state = $data->address_from->state;
+        $from->city = $data->address_from->city;
+        $from->zip = $data->address_from->zip;
+        $from->line1 = $data->address_from->line1;
+        $from->type = "from";
+        $from->save();
+
+        $to = new Address;
+        $to->shipment_id = $shipment->id;
+        $to->firstname = $data->address_to->first_name;
+        $to->lastname = $data->address_to->last_name;
+        $to->email = $data->address_to->email;
+        $to->phone = $data->address_to->phone;
+        $to->country = $data->address_to->country;
+        $to->state = $data->address_to->state;
+        $to->city = $data->address_to->city;
+        $to->zip = $data->address_to->zip;
+        $to->line1 = $data->address_to->line1;
+        $to->type = "to";
+        $to->save();
+    }
+
+    public function edShipment($data){
+        $shipment = Shipment::where("external_shipment_id", $data->shipment_id)->first();
+        $shipment->parcels()->delete();
+        $shipment->items()->delete();
+
+        foreach($data->parcels as $parcel):
+            $newParcel = new Parcel;
+            $newParcel->shipment_id = $shipment->id;
+            $newParcel->external_parcel_id = $parcel->parcel_id;
+            $newParcel->weight = $parcel->total_weight;
+            $newParcel->weight_unit = $parcel->weight_unit;
+            $newParcel->save();
+
+            foreach($parcel->items as $item):
+                $newItem = new Item;
+                $newItem->shipment_id = $shipment->id;
+                $newItem->parcel_id = $newParcel->id;
+                $newItem->name = $item->name;
+                $newItem->currency = $item->currency;
+                $newItem->description = $item->description;
+                $newItem->value = $item->value;
+                $newItem->quantity = $item->quantity;
+                $newItem->weight = $item->weight;
+                $newItem->save();
+            endforeach;
+        endforeach;
+
+        $from = Address::where(["shipment_id" => $shipment->id, "type" => "from"])->first();
+        $from->firstname = $data->address_from->first_name;
+        $from->lastname = $data->address_from->last_name;
+        $from->email = $data->address_from->email;
+        $from->phone = $data->address_from->phone;
+        $from->country = $data->address_from->country;
+        $from->state = $data->address_from->state;
+        $from->city = $data->address_from->city;
+        $from->zip = $data->address_from->zip;
+        $from->line1 = $data->address_from->line1;
+        $from->type = "from";
+        $from->save();
+
+        $to = Address::where(["shipment_id" => $shipment->id, "type" => "to"])->first();;
+        $to->firstname = $data->address_to->first_name;
+        $to->lastname = $data->address_to->last_name;
+        $to->email = $data->address_to->email;
+        $to->phone = $data->address_to->phone;
+        $to->country = $data->address_to->country;
+        $to->state = $data->address_to->state;
+        $to->city = $data->address_to->city;
+        $to->zip = $data->address_to->zip;
+        $to->line1 = $data->address_to->line1;
+        $to->type = "to";
+        $to->save();
+    }
