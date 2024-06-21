@@ -210,7 +210,7 @@
     const urlParams = new URLSearchParams(queryString);
     const tab = urlParams.get('tab');
     if(tab == 'kyc'){
-        document.querySelector('#kyc').click();
+        document.querySelector('#kyc-btn').click();
     }
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
