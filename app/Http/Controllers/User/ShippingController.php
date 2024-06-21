@@ -180,9 +180,9 @@ class ShippingController extends Controller
             $shipment = Shipment::where(['external_shipment_id' => $id ])->first();
             
             switch($request["event"]):
-                case "shipment.created":
-                    //Handle shipment in-transit event
-                    $status = "in-transit";
+                case "shipment.confirmed":
+                    //Handle shipment confirmed event
+                    $status = "confirmed";
                     $shipment->status = $status;
                 break;
                 case "shipment.in-transit":
