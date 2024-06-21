@@ -1,4 +1,4 @@
-<div class="row justify-content-center step" style="display:non;" id="shipping">
+<div class="row justify-content-center step" style="display:none;" id="shipping">
     <div class="col-xl-9 col-lg-9 col-md-10">
         <div class="card w-100">
             <div class="card-body">
