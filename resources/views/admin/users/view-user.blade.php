@@ -154,11 +154,10 @@
                                                                 <a href="<?=$customer->profile->business_cac?>" target="_blank" class="btn btn-light kyc-doc-element" style="position: absolute; z-index:10; top:40%; left:30%; width:40%;">View</a>
 
                                                             </div>
-                                                            
+                                                            <?php else:?>
+                                                                <p style="color:#F79D1D;font-size:12px;font-weight:500">No file uploaded..</p>
+                                                            <?php endif;?>
                                                         </div>
-                                                        <?php else:?>
-                                                            <p style="color:#F79D1D;font-size:12px;font-weight:500">No file uploaded..</p>
-                                                        <?php endif;?>
                                                     <?php
                                                 endif;
                                             ?>
