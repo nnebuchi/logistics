@@ -153,7 +153,7 @@
                                                 <?php
                                                 endif;
                                             ?>
-                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
+                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-5">
                                                 <h5 style="color:#1E1E1E80">ID Number</h5>
                                                 <div class="w-100">
                                                     <input 
@@ -300,13 +300,13 @@
         $("#imagePreviewBox").empty();
         var inputs = event.target.files;
         var filesAmount = inputs.length;
-        if (filesAmount != 2) {
+        // if (filesAmount != 2) {
             // Clear the file input
-            $(this).val(null);
+            // $(this).val(null);
             // Display an error message
-            alert("Only two images are allowed.");
-            return; // Exit the function to prevent further execution
-        }else{
+            // alert("Only two images are allowed.");
+            // return; 
+        // }else{
             //Loop through each file
             for(var i = 0; i < filesAmount; i++) {
                 var reader = new FileReader();
@@ -325,7 +325,7 @@
                     `);
                 }
             }
-        }
+        // }
     });
 
     $(".upload-kyc-btn").on('click', function () {
@@ -367,7 +367,7 @@
                 console.log(data);
                 btn.attr("disabled", false).text("Upload File");
                 $("#imagePreviewModal").modal("hide");
-                window.location.href = "/profile";
+                window.location.href = "{{route('profile')}}";
             }).catch(function(error){
                 let errors = error.response.data.error;
                 /*if(errors.email){
@@ -403,7 +403,7 @@
                 let data = res.data.results;
                 console.log(data);
                 btn.attr("disabled", false).text("Save");
-                window.location.href = "/profile";
+                window.location.href = "{{route('profile')}}";
             });
         }, 100); // Delay submission by 100 milliseconds
     });

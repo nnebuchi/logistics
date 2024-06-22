@@ -81,35 +81,52 @@
                         <div class="col-12 d-flex align-items-stretch">
                             <div class="card w-100 px-3 pb-5 pt-3">
                                 <div class="card-body p-0">
-                                    <h4 style="font-weight:700" class="text-center">KYC</h4>
+                                    <h4 style="font-weight:700" class="text-center">KYC Documents</h4>
+                                    <hr>
                                     <form id="update-kyc" action="/api/v1/" method="POST" enctype="multipart/form-data">
                                         <div class="row justify-content-around">
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
-                                                <h5 style="color:#1E1E1E80">Utility Bill</h5>
+                                                <h5 class="text-center" style="color:#1E1E1E80">Utility Bill</h5>
                                                 <?php if($customer?->profile?->utility_bill):?>        
-                                                    <div class="">
-                                                        <img src="<?=$customer->profile->utility_bill?>"
-                                                        class="w-100" 
-                                                        height="161" 
-                                                        style="border-radius:15px;object-fit:cover;">
+                                                    <div style="position:relative;" class="kyc-doc">
+                                                        <img src="<?=$customer->profile->utility_bill?>" class="w-100"  height="161"  style="border-radius:15px;object-fit:cover;">
+                                                        <div class="kyc-doc-element" style="background-color:black; opacity:0.5; width:100%; height:100%;position:absolute; top:0; left:0; bottom:0;border-radius:15px;">
+                                                            
+                                                        </div>
+                                                        <a href="<?=$customer->profile->utility_bill?>" target="_blank" class="btn btn-light kyc-doc-element" style="position: absolute; z-index:10; top:40%; left:30%; width:40%;">View</a>
                                                     </div>
                                                 <?php else:?>
                                                     <p style="color:#F79D1D;font-size:12px;font-weight:500">No file uploaded..</p>
                                                 <?php endif;?>
                                             </div>
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-3">
-                                                <h5 style="color:#1E1E1E80">Government ID</h5>
+                                                <h5  class="text-center" style="color:#1E1E1E80">Government ID</h5>
                                                 <?php if($customer?->profile?->valid_govt_id):?>        
-                                                    <div class="">
+                                                    <div style="position:relative;" class="kyc-doc">
                                                         <img src="<?=$customer->profile->valid_govt_id[0]?>"
                                                         class="w-100" 
                                                         height="161" 
                                                         style="border-radius:15px;object-fit:cover;">
+                                                        <div class="kyc-doc-element" style="background-color:black; opacity:0.5; width:100%; height:100%;position:absolute; top:0; left:0; bottom:0;border-radius:15px;">
+                                                            
+                                                        </div>
+                                                        <a href="<?=$customer->profile->valid_govt_id[0]?>" target="_blank" class="btn btn-light kyc-doc-element" style="position: absolute; z-index:10; top:40%; left:30%; width:40%;">View</a>
+
+                                                    </div>
+
+                                                    @if(count($customer->profile->valid_govt_id) > 1)
+                                                    <div style="position:relative;" class="kyc-doc">
                                                         <img src="<?=$customer->profile->valid_govt_id[1]?>"
-                                                        class="w-100 mt-2" 
+                                                        class="w-100" 
                                                         height="161" 
                                                         style="border-radius:15px;object-fit:cover;">
+                                                        <div class="kyc-doc-element" style="background-color:black; opacity:0.5; width:100%; height:100%;position:absolute; top:0; left:0; bottom:0;border-radius:15px;">
+                                                            
+                                                        </div>
+                                                        <a href="<?=$customer->profile->valid_govt_id[0]?>" target="_blank" class="btn btn-light kyc-doc-element" style="position: absolute; z-index:10; top:40%; left:30%; width:40%;">View</a>
+                                                        
                                                     </div>
+                                                    @endif
                                                 <?php else:?>
                                                     <p style="color:#F79D1D;font-size:12px;font-weight:500">No file uploaded..</p>
                                                 <?php endif;?>

@@ -19,6 +19,9 @@
 		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
 		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 		<?php date_default_timezone_set("Africa/Lagos"); ?>
+		<script>
+			var url = "{{url('/')}}";
+		</script>
 	</head>
 	<body>
 		<!--  Body Wrapper -->

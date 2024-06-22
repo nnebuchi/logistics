@@ -204,9 +204,11 @@
                         <img src="{{asset('assets/images/icons/auth/warning-icon.svg')}}" width="20" height="20" />
                     </td>
                 `;
+                var userProfileUrl = "{{ route('admin.user', ':id') }}";
+               
                 const userCard = (user.photo == null ) ? `
                 <td scope="row">
-                    <a href="/admin/users/${user.uuid}" class="view-user" target="_blank" style="color:inherit">
+                    <a href="${userProfileUrl.replace(':id', user.uuid)}" class="view-user" target="_blank" style="color:inherit">
                     <div class="user-card">
                         <div class="user-avatar" style='background-color:${getRandomColor()}'>
                             <span>${getInitials(user.firstname+" "+user.lastname)}</span>
@@ -220,7 +222,7 @@
                 </td>
                 ` : `
                 <td scope="row">
-                    <a href="/admin/users/${user.uuid}" class="view-user" target="_blank" style="color:inherit">
+                    <a href="${userProfileUrl.replace(':id', user.uuid)}" class="view-user" target="_blank" style="color:inherit">
                     <div class="user-card">
                         <div class="user-avatar">
                             <img src="${user.photo}" class="w-100 h-100">
@@ -239,7 +241,7 @@
                     <tr style="cursor:pointer" data-id="${user.id}">
                         <td scope="row">${getIndex(per_page, current_page, index)}.</td>
                         ${userCard}
-                        <td scope="row"><a href="/admin/users/${user.uuid}" class="view-user" target="_blank" style="color:inherit">${user.phone}</a></td>
+                        <td scope="row"><a href="/admin/users/${user.uuid}${impersonateBaseUrl.replace(':id', user.id)}" class="view-user" target="_blank" style="color:inherit">${user.phone}</a></td>
                         <td scope="row">${user.account.name}</td>
                         <td scope="row">${user.country != null ? user.country: "" }</td>
                         <td scope="row">
