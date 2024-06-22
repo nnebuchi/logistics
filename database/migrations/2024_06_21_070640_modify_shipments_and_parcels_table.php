@@ -44,7 +44,7 @@ return new class extends Migration
 
         Schema::table('items', function (Blueprint $table) {
             // Revert the changes made in the up method
-            $table->string('currency');
+            $table->string('currency')->nullable(false)->change();
         });
     }
 };
