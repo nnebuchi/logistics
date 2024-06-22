@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('shipments', function (Blueprint $table) {
             // Drop the unique constraint
-            $table->dropUnique('shipments_external_shipment_id_unique');
+            // $table->dropUnique('shipments_external_shipment_id_unique');
             // Modify the column to be nullable
             $table->string('external_shipment_id')->nullable()->change();
         });
@@ -35,7 +35,7 @@ return new class extends Migration
         Schema::table('shipments', function (Blueprint $table) {
             // Revert the changes made in the up method
             $table->string('external_shipment_id')->nullable(false)->change();
-            $table->unique('external_shipment_id');
+            // $table->unique('external_shipment_id');
         });
 
         Schema::table('parcels', function (Blueprint $table) {
