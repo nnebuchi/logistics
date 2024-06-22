@@ -134,12 +134,12 @@
                                         </div>
 
                                         <div class="row justify-content-around">
-                                            <?php 
-                                                if($customer->account->name != "personal"):
-                                            ?>
+                                          
+                                            @if($customer->account->name != "personal")
+                                            
                                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-4">
                                                     <h5 style="color:#1E1E1E80">Business CAC(for businesses only)</h5>
-                                                    <?php if($customer?->profile?->business_cac):?>        
+                                                    @if($customer?->profile?->business_cac)        
                                                         <div class="">
                                                             <div style="position:relative;" class="kyc-doc">
                                                                 <img 
@@ -154,13 +154,13 @@
                                                                 <a href="<?=$customer->profile->business_cac?>" target="_blank" class="btn btn-light kyc-doc-element" style="position: absolute; z-index:10; top:40%; left:30%; width:40%;">View</a>
 
                                                             </div>
-                                                            <?php else:?>
-                                                                <p style="color:#F79D1D;font-size:12px;font-weight:500">No file uploaded..</p>
-                                                            <?php endif;?>
+                                                            
                                                         </div>
-                                                    <?php
-                                                endif;
-                                            ?>
+                                                    @else
+                                                        <p style="color:#F79D1D;font-size:12px;font-weight:500">No file uploaded..</p>
+                                                    @endif
+                                                </div>
+                                            @endif
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mt-2">
                                                 <h5 style="color:#1E1E1E80">ID Number</h5>
                                                 <div class="w-100">
