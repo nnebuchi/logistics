@@ -231,11 +231,11 @@
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.external_shipment_id}</td>
                         <td class="">${shipment.pickup_date ?? ""}</td>
-                        <td class="">${shipment.address_from.line1.substring(0, 15)+"..."}</td>
-                        <td class="">${shipment.address_to.line1.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment?.address_from?.line1?.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment?.address_to?.line1?.substring(0, 15)+"..."}</td>
                         <td class="">
                             <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
-                            ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
+                            ${shipment?.status?.charAt(0).toUpperCase() + shipment?.status?.slice(1)}
                             </span>
                         </td>
                     </tr> 

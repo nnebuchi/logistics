@@ -80,7 +80,7 @@ Route::group([
         Route::post('/address', [ShippingController::class, 'createAddress']);
     
         Route::get('/wallet', [WalletController::class, 'index']);
-        Route::get('/profile', [UserController::class, 'showProfile']);
+        Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
         Route::get('/logout', [AuthController::class, 'logOut']);
     
         Route::get('/cities/{stateId}', [ShippingController::class, 'getCities']);

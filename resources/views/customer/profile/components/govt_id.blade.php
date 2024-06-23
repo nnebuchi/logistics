@@ -8,18 +8,16 @@
         style="border-radius:15px;object-fit:cover;">
         <div class="d-flex justify-content-between mt-3">
             <button 
-            disabled
-            class="btn btn-light"
-            type="button">
+                disabled
+                class="btn btn-light"
+                type="button"
+            >
                 Update
             </button>
-            <button 
-            data-src="<?=$user->profile->valid_govt_id[0]?>"
-            class="custom-btn"
-            type="button">
+            <a href="<?=$user->profile->valid_govt_id[0]?>" class="custom-btn" type="button" target="_blank">
                 View File
                 <img src="{{asset('assets/images/icons/profile/file-eye.svg')}}" width="15" height="15">
-            </button>
+            </a>
         </div>
     </div>
 <?php 
@@ -31,7 +29,7 @@
                 Upload File 
                 <img src="{{asset('assets/images/icons/profile/file_10922205.svg')}}" width="15" height="15">
             </label>
-            <input type="file" class="form-control d-none" name="valid_govt_id" id="valid_govt_id" multiple>
+            <input type="file" class="form-control d-none" name="valid_govt_id" id="valid_govt_id" accept="image/jpeg, image/jpg, image/png">
         </div>
         <p style="color:#F79D1D;font-size:12px;font-weight:500">Front and Back upload of ID Card such as: National ID, Voter’s Card, Driver’s License and International Passport.</p>
     </div>
