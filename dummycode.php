@@ -590,3 +590,30 @@ public function saShipment($data, User $user){
         $to->type = "to";
         $to->save();
     }
+
+
+    $form.find("input, select").each(function(){
+                        let fieldName = $(this).attr("name");  // Get the name attribute of the input/select element
+                        // Check if the current input/select element exists in the item object
+                        if(fieldName && item.hasOwnProperty(fieldName)) {
+                            $(this).val(item[fieldName]);   // Set the value of the input/select element to the corresponding property of the item object
+                            // Check for the first dropdown and trigger change event
+                            if (fieldName === 'category') {
+                                $(this).val(item[fieldName]).trigger('change');
+                                populateSecondDropdown = true; // Indicate that the second dropdown should be populated next
+                            }
+                            
+                            // Check for the second dropdown and trigger change event
+                            if (populateSecondDropdown && fieldName === 'sub_category') {
+                                $(this).val(item[fieldName]).trigger('change');
+                                populateSecondDropdown = false; // Reset the flag
+                                populateThirdDropdown = true; // Indicate that the third dropdown should be populated next
+                            }
+                            
+                            // Set the third dropdown value
+                            if (populateThirdDropdown && fieldName === 'hs_code') {
+                                $(this).val(item[fieldName]);
+                                populateThirdDropdown = false; // Reset the flag
+                            }
+                        }
+                    });

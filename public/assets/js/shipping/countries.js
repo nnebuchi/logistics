@@ -12,13 +12,14 @@ function fetchStates(formIdentifier, countryId) {
         let states = res.data.results;
         // Update the state select input in the specified form
         $(`${formIdentifier} select[name='state']`).empty(); // Clear previous options
+        $(`${formIdentifier} select[name='state']`).html(`
+            <option value="">Choose one...</option>
+        `).prop("disabled", false);
         $(`${formIdentifier} select[name='city']`).empty(); // Clear previous options
         $(`${formIdentifier} select[name='city']`).html(`
             <option value="">Choose one...</option>
         `).prop("disabled", true);
-        $(`${formIdentifier} select[name='state']`).html(`
-            <option value="">Choose one...</option>
-        `).prop("disabled", false);
+        
         states.forEach(state => {
             $(`${formIdentifier} select[name='state']`).append(`
                 <option value="${state.name}" data-id="${state.id}">${state.name}</option>`
@@ -33,8 +34,8 @@ $("#sender select[name='country']").on("change", function(event) {
     let countryId = $(this).find('option:selected').data('id');
     // Attach country code
     var countryCode = $(this).find('option:selected').data('phonecode');
-    $("input[name='phone']").val(countryCode);
-    $("input[name='phone']").data("phone", countryCode);
+    $("#sender input[name='phone']").val(countryCode);
+    $("#sender input[name='phone']").data("phone", countryCode);
     $(`#sender select[name='state']`).html(`
         <option value="">Processing...</option>
     `).prop("disabled", true);
@@ -47,8 +48,8 @@ $("#receiver select[name='country']").on("change", function(event) {
     let countryId = $(this).find('option:selected').data('id');
     // Attach country code
     var countryCode = $(this).find('option:selected').data('phonecode');
-    $("input[name='phone']").val(countryCode);
-    $("input[name='phone']").data("phone", countryCode);
+    $("#receiver input[name='phone']").val(countryCode);
+    $("#receiver input[name='phone']").data("phone", countryCode);
     $(`#receiver select[name='state']`).html(`
         <option value="">Processing...</option>
     `).prop("disabled", true);

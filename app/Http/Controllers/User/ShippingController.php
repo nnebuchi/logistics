@@ -323,14 +323,16 @@ class ShippingController extends Controller
                 [
                     "items" => [
                         [
-                        "name"=> "Books",
-                        "description"=> "white coloured wrapped with a cellophane paper",
-                        "type"=> "parcel",
-                        "currency"=> "NGN",
-                        "value"=> 125.50,
-                        "quantity"=> 2,
-                        "weight"=> 1,
-                        "hs_code"=> "071290"
+                            "name" => "White canvas shoes",
+                            "description" => "white coloured wrapped with a cellophane paper",
+                            "type" => "parcel",
+                            "currency" => "NGN",
+                            "value" => 3850,
+                            "quantity" => 15,
+                            "weight" => 1.5,
+                            "hs_code" => "49111010",
+                            "category" => "06",
+                            "sub_category" => "0601"
                         ],
                     ],
                     "docs" => [
@@ -340,14 +342,16 @@ class ShippingController extends Controller
                 [
                     "items" => [
                         [
-                        "name"=> "Books",
-                        "description"=> "white coloured wrapped with a cellophane paper",
-                        "type"=> "parcel",
-                        "currency"=> "NGN",
-                        "value"=> 125.50,
-                        "quantity"=> 2,
-                        "weight"=> 1,
-                        "hs_code"=> "071290"
+                            "name"=> "MTN Spectranet",
+                            "description"=> "white coloured wrapped with a cellophane paper",
+                            "type"=> "parcel",
+                            "currency"=> "NGN",
+                            "value"=> 125.50,
+                            "quantity"=> 2,
+                            "weight"=> 1,
+                            "hs_code" => "49021000",
+                            "category" => "06",
+                            "sub_category" => "0601"
                         ],
                     ],
                     "docs" => [
@@ -361,9 +365,8 @@ class ShippingController extends Controller
         $request->merge($payload);
 
         //Create parcel
-        $parcels = $this->createParcel($request->items, $request->description);
-        */
-
+        //$parcels = $this->createParcel($request->items, $request->description);*/
+        
         if($request->has("shipment_id")):
             /*$shipment = $this->logistics->updateShipment($request->shipment_id, [
                 "parcels" => array_column($parcels, "parcel_id"),
@@ -488,16 +491,20 @@ class ShippingController extends Controller
             $newParcel->save();
             array_push($parcels, $response);
     
-            foreach($response->items as $item):
+            foreach($parcel["items"] as $item):
+                $item = json_decode(json_encode($item));
                 $newItem = new Item;
                 $newItem->shipment_id = $shipment->id;
                 $newItem->parcel_id = $newParcel->id;
                 $newItem->name = $item->name;
-                $newItem->currency = $item->currency;
+                $newItem->currency = $item->currency ?? NULL;
                 $newItem->description = $item->description;
                 $newItem->value = $item->value;
                 $newItem->quantity = $item->quantity;
                 $newItem->weight = $item->weight;
+                $newItem->category = $item->category;
+                $newItem->sub_category = $item->sub_category;
+                $newItem->hs_code = $item->hs_code;
                 $newItem->save();
             endforeach;
         endforeach;
@@ -571,16 +578,20 @@ class ShippingController extends Controller
             $newParcel->save();
             array_push($parcels, $response);
     
-            foreach($response->items as $item):
+            foreach($parcel["items"] as $item):
+                $item = json_decode(json_encode($item));
                 $newItem = new Item;
                 $newItem->shipment_id = $shipment->id;
                 $newItem->parcel_id = $newParcel->id;
                 $newItem->name = $item->name;
-                $newItem->currency = $item->currency;
+                $newItem->currency = $item->currency ?? NULL;
                 $newItem->description = $item->description;
                 $newItem->value = $item->value;
                 $newItem->quantity = $item->quantity;
                 $newItem->weight = $item->weight;
+                $newItem->category = $item->category;
+                $newItem->sub_category = $item->sub_category;
+                $newItem->hs_code = $item->hs_code;
                 $newItem->save();
             endforeach;
         endforeach;
@@ -625,6 +636,5 @@ class ShippingController extends Controller
 
         return ["parcels" => $parcels, "shipment" => $newShipment];
     }
-
 
 }

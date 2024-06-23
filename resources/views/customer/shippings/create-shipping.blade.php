@@ -89,6 +89,8 @@
                     "value": parseFloat(item.value),
                     "quantity": parseInt(item.quantity),
                     "weight": parseFloat(item.weight),
+                    "category": item.category,
+                    "sub_category": item.sub_category
                     //"parcel_id": item.parcel_id
                 });
             });
@@ -270,7 +272,7 @@
                                         <th>Delete</th>
                                     </tr>
                                 </thead>
-                                <tbody>   
+                                <tbody data-id="${$parcel}">   
                                                     
                                 </tbody>
                             </table>
@@ -369,11 +371,10 @@
                         formData.items[index] = item;
                         $(this).data("action", "create");
                         $(this).data("item", "");
-                        //$row = $(`.items-table tbody:eq(${table}) tr[data-parcel='${index}']`);
-                        //$row.remove();
                     break;
                 };
-                $(".items-table tbody").eq(table).empty();
+                $(".items-table tbody[data-id='" + table + "']").empty();
+                //$(".items-table tbody").eq(table).empty();
                 formData.items.forEach((item, index) => {
                     if(item.parcel_id == table){
                         renderTableData(item, index, table);
@@ -387,7 +388,7 @@
         });
 
         function renderTableData(item, index, table){
-            $(".items-table tbody").eq(table).append(`
+            $(".items-table tbody[data-id='" + table + "']").append(`
                 <tr class="">
                     <td class="pt-0 pb-2">${item.name}</td>
                     <td class="pt-0 pb-2">${item.quantity}pieces</td>
@@ -407,7 +408,7 @@
             `);
         }
 
-        $(document).on("click", ".update-item", function(event){
+        $(document).on("click", ".update-item", async function(event){
             event.preventDefault();
             const itemId = $(this).data("id");
             const action = $(this).data("action");
@@ -417,38 +418,10 @@
                 case "edit":
                     let item = formData.items[itemId];
                     var $form = $("#addItemForm");
-                    // Variable to track when the second dropdown should be populated
-                    let populateSecondDropdown = false;
-                    // Variable to track when the third dropdown should be populated
-                    let populateThirdDropdown = false;
-                    $form.find("input, select").each(function(){
-                        let fieldName = $(this).attr("name");  // Get the name attribute of the input/select element
-                        // Check if the current input/select element exists in the item object
-                        if(fieldName && item.hasOwnProperty(fieldName)) {
-                            $(this).val(item[fieldName]);   // Set the value of the input/select element to the corresponding property of the item object
-                            // Check for the first dropdown and trigger change event
-                            if (fieldName === 'category') {
-                                $(this).val(item[fieldName]).trigger('change');
-                                populateSecondDropdown = true; // Indicate that the second dropdown should be populated next
-                            }
-                            
-                            // Check for the second dropdown and trigger change event
-                            if (populateSecondDropdown && fieldName === 'sub_category') {
-                                $(this).val(item[fieldName]).trigger('change');
-                                populateSecondDropdown = false; // Reset the flag
-                                populateThirdDropdown = true; // Indicate that the third dropdown should be populated next
-                            }
-                            
-                            // Set the third dropdown value
-                            if (populateThirdDropdown && fieldName === 'hs_code') {
-                                $(this).val(item[fieldName]);
-                                populateThirdDropdown = false; // Reset the flag
-                            }
-                        }
-                    });
                     $("#addItem").data("action", "update");
                     $("#addItem").data("item", itemId);
                     $("#addItemModal").modal("show");
+                    await populateForm($('#addItemForm'), item);
                 break;
                 case "delete":
                     // Delete the object at the specified index

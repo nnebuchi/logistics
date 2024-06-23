@@ -25,7 +25,7 @@
                                                 <th>Delete</th>
                                             </tr>
                                         </thead>
-                                        <tbody>   
+                                        <tbody data-id="<?=$parcelIndex?>">
                                             <?php foreach($parcel->items as $index => $item): ?>
                                                 <tr style="">
                                                     <td class="pt-0 pb-2"><?=$item->name?></td>
