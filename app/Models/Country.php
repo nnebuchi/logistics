@@ -16,4 +16,8 @@ class Country extends Model
     ];
 
     public $timestamps = FALSE;
+
+    public function states(){
+        return $this->hasMany(State::class);
+    }
 }

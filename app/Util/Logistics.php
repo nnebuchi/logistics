@@ -11,13 +11,13 @@ class Logistics
     private $secretKey;
     private Client $client;
 
-    public function __construct(Client $client)
+    public function __construct()
     {
         // $this->setBaseUrl();
         // $this->setKey();
         $this->secretKey = env('TERMINAL_AFRICA_SECRET_KEY');
         $this->baseUrl = env('TERMINAL_AFRICA_URI', '');
-        $this->client = $client;
+        $this->client = new Client;
     }
 
     public function setKey()

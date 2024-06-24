@@ -603,7 +603,7 @@
 
         $("#checkoutBtn").on("click", function(event) {
             event.preventDefault();
-            let url = $(this).data("url");
+            let checkout_url = $(this).data("url");
             let btn = $(this);
             btn.html(`<img src="/assets/images/loader.gif" id="loader-gif">`);
             btn.attr("disabled", true);
@@ -623,7 +623,7 @@
                         "X-Requested-With": "XMLHttpRequest"
                     }
                 };
-                axios.post(url, payload, config)
+                axios.post(checkout_url, payload, config)
                 .then(function(response){
                     let message = response.data.message;
                     $("#checkout .message").css("color", "green").text(message);

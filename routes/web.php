@@ -68,12 +68,14 @@ Route::group([
             'prefix' => 'user', 'prefix'=>'shipping', 'middleware'=>'kyc'
         ], function () {
             Route::get('/track', [ShippingController::class, 'showTrackingForm'])->name('track-shipments');
-            Route::get('/create', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
+            Route::get('/create', [ShippingController::class, 'newShipment'])->name('create-shipment');
+            Route::get('/{slug}', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
+            Route::post('/save-address', [ShippingController::class, 'saveAddress'])->name('shipment.save-address');
             Route::post('/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
             Route::get('/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
             Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
+            // Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
             Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
-            Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
             Route::post('/upload-docs', [ShippingController::class, 'uploadParcelDocument'])->name('upload-parcel-docs');
         });
         
@@ -131,24 +133,18 @@ Route::group([
 
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::get('/admin/users', 
-    [AdminDashboardController::class, 'showUsers'])->name('admin.users');
-    Route::get('/admin/users/{uuid}', 
-    [AdminDashboardController::class, 'showUser'])->name('admin.user');
+    Route::get('/admin/users', [AdminDashboardController::class, 'showUsers'])->name('admin.users');
+    Route::get('/admin/users/{uuid}', [AdminDashboardController::class, 'showUser'])->name('admin.user');
     Route::get('/admin/users/{uuid}/verify-kyc', [AdminController::class, 'verifyCustomerAccount']);
 
-    Route::get('/admin/shippings', 
-    [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
-    Route::get('/admin/transactions', 
-    [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
+    Route::get('/admin/shippings', [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
+    Route::get('/admin/transactions', [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
     Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
 
     Route::get('/admin/accounts', [AdminDashboardController::class, 'showAccounts']);
-    Route::get('/admin/get-all-shippings', 
-    [AdminDashboardController::class, 'getAllShipment']);
+    Route::get('/admin/get-all-shippings', [AdminDashboardController::class, 'getAllShipment']);
 
-    Route::get('/admin/get-all-customers', 
-    [AdminDashboardController::class, 'getAllCustomers']);
+    Route::get('/admin/get-all-customers', [AdminDashboardController::class, 'getAllCustomers']);
     Route::get('/admin/customer/{userId}', [AdminDashboardController::class, 'getUserData']);
     Route::delete('/admin/customer/{userId}', [AdminDashboardController::class, 'deleteCustomer']);
 

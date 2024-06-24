@@ -53,4 +53,8 @@ class Shipment extends Model
         return $this->hasMany(Parcel::class, "shipment_id");
     }
 
+    public function address(){
+        return $this->hasMany(Address::class);
+    }
+
 }

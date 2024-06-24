@@ -7,32 +7,19 @@
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping > Create Shipment</h5>
                     </div>
                     
-                    <div class="row mt-3">
-                        <div class="col d-flex justify-content-center">
-                            <div class="d-flex flex-column align-items-center mr-2">
-                                <div class="progress bg-primary"></div>
-                                <p class="fw-semibold" style="color:#1E1E1EBF">Sender<p>
-                            </div>
-                            <div class="d-flex flex-column align-items-center mr-2">
-                                <div class="progress"></div>
-                                <p class="fw-semibold" style="color:#1E1E1EBF">Receiver<p>
-                            </div>
-                            <div class="d-flex flex-column align-items-center mr-2">
-                                <div class="progress"></div>
-                                <p class="fw-semibold" style="color:#1E1E1EBF">Item Details<p>
-                            </div>
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="progress"></div>
-                                <p class="fw-semibold" style="color:#1E1E1EBF">Carrier and Cost<p>
-                            </div>
-                        </div>
-                    </div>
-
-                    @include('customer.shippings.components.create.sender')
+                    @include('customer.shippings.components.step-indicator')
+                    
+                    {{-- @include('customer.shippings.components.create.sender')
                     @include('customer.shippings.components.create.receiver')
                     @include('customer.shippings.components.create.add-item')
                     @include('customer.shippings.components.create.add-carrier')
-                    @include('customer.shippings.components.create.checkout')
+                    @include('customer.shippings.components.create.checkout') --}}
+
+                    @include('customer.shippings.components.edit.sender')
+                    @include('customer.shippings.components.edit.receiver')
+                    @include('customer.shippings.components.edit.add-item')
+                    @include('customer.shippings.components.edit.add-carrier')
+                    @include('customer.shippings.components.edit.checkout')
 
                 </div>
             </div>
@@ -54,8 +41,9 @@
 <script src="{{asset('assets/js/shipping/countries.js')}}"></script>
 <script src="{{asset('assets/js/shipping/categories.js')}}"></script>
 <script>
+    var step = 2;
     let token = $("meta[name='csrf-token']").attr("content");
-    let baseUrl = $("meta[name='base-url']").attr("content");
+    
     var parcelDoc = {};
 
     $(document).ready(function(){
@@ -80,7 +68,7 @@
                     parcelsMap[item.parcel_id] = [];
                 }
                 parcelsMap[item.parcel_id].push({
-                //payload.items.push({
+                
                     "name": item.name,
                     "hs_code": item.hs_code,
                     "description": item.description,
@@ -89,11 +77,10 @@
                     "value": parseFloat(item.value),
                     "quantity": parseInt(item.quantity),
                     "weight": parseFloat(item.weight),
-                    //"parcel_id": item.parcel_id
                 });
             });
 
-            // Construct the payload.parcels array
+            
             for (let parcel_id in parcelsMap) {
                 if (parcelsMap.hasOwnProperty(parcel_id)) {
                     payload.items.push({
@@ -104,26 +91,27 @@
                 }
             }
             
-            try{
-                const config = {
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                };
-                const response = await axios.post("<?=route('shipment.create')?>", payload, config);
-                parcel = response.data.results.parcel;
-                formData.shipment = response.data.results.shipment;
-                carriers = response.data.results.rates;
-                console.log(response.data.results);
-            } catch (error) {
-                console.error('An error occurred:', error);
-            }
+            // try{
+            //     const config = {
+            //         headers: {
+            //             Accept: "application/json",
+            //             "Content-Type": "application/json",
+            //             "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"),
+            //             "X-Requested-With": "XMLHttpRequest"
+            //         }
+            //     };
+            //     const response = await axios.post("<?=route('shipment.create')?>", payload, config);
+            //     parcel = response.data.results.parcel;
+            //     formData.shipment = response.data.results.shipment;
+            //     carriers = response.data.results.rates;
+            //     console.log(response.data.results);
+            // } catch (error) {
+            //     console.error('An error occurred:', error);
+            // }
         }
 
         $(".next").on("click", async function(event){
+            
             event.preventDefault();
            
             let type = $(this).data("type");
@@ -186,6 +174,11 @@
                     "zip": formData[type].zip_code,
                     "line1": formData[type].address1
                 };
+                const address_data = {...payload}
+                console.log(address_data);
+                address_data.slug = "{{$slug}}";
+                // address_data._token = $("meta[name='csrf-token']").attr("content");
+                address_data.type = type;
                 const config = {
                     headers: {
                         Accept: "application/json",
@@ -194,7 +187,37 @@
                         "X-Requested-With": "XMLHttpRequest"
                     }
                 };
-                axios.post(`${baseUrl}/address`, payload, config)
+                axios.post("{{route('shipment.save-address')}}", address_data, config)
+                .then(function(response){
+                    setBtnNotLoading(event.target, innerHTML)
+                    
+                    let result = response.data;
+                   
+                    if(result?.status === "success"){
+                        currentStep.hide();
+                        nextStep.show();
+                        step = step + 1;
+                    }
+                   
+                    // formData[type] = results;
+                    // console.log(results);
+                    // currentStep.hide();
+                    // nextStep.show();
+                    // if(type == "sender"){
+                    //     $(".progress").removeClass("bg-primary");
+                    //     $(".progress").eq(1).addClass("bg-primary");
+                    // }else if(type == "receiver"){
+                    //     $(".progress").removeClass("bg-primary");
+                    //     $(".progress").eq(2).addClass("bg-primary");
+                    // }
+                }).catch(function(error){
+                    setBtnNotLoading(event.target, innerHTML)
+                    console.log(error);
+                    // let errors = error.response.data.error;
+                    // alert(error.response.data.message);
+                });
+                
+                axios.post(`${url}/address`, payload, config)
                 .then(function(response){
                     setBtnNotLoading(event.target, innerHTML)
                     let results = response.data.results;

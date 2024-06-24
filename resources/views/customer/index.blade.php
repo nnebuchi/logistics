@@ -10,11 +10,11 @@
                             @php
                                 $isVerified = auth()->user()->is_verified; // Assuming `verified` is the column that checks if a user is verified
                             @endphp
-                            <a href="<?= $isVerified ? route('add-shipment') : route('shippings') ?>" class="btn btn-primary mr-2">
+                            <a href="<?=route('create-shipment') ?>" class="btn btn-primary mr-2">
                                 <img src="{{asset('assets/images/icons/plus.svg')}}" />
                                 Book Shipment
                             </a>
-                            <a href="<?= $isVerified ? route('track-shipments') : route('shippings') ?>" class="btn btn-outline-primary">
+                            <a href="<?=route('track-shipments') ?>" class="btn btn-outline-primary">
                                 <img src="{{asset('assets/images/icons/track.svg')}}" />
                                 Track Shipment
                             </a>
@@ -113,19 +113,22 @@
                                                         <h6 class="fw-semibold mb-0">S/N</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Shipping ID</h6>
+                                                        <h6 class="fw-semibold mb-0">Title</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Date</h6>
+                                                        <h6 class="fw-semibold mb-0">From</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Pick Up</h6>
+                                                        <h6 class="fw-semibold mb-0">To</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Destination</h6>
+                                                        <h6 class="fw-semibold mb-0">Shipment ID</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Status</h6>
+                                                    </th>
+                                                    <th class="border-bottom-0">
+                                                        <h6 class="fw-semibold mb-0">Action</h6>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -217,14 +220,17 @@
                 $(".shipments-table tbody").append(`
                     <tr style="cursor:pointer">
                         <td class="">${index + 1}.</td>
-                        <td class="">${shipment.external_shipment_id}</td>
-                        <td class="">${shipment.pickup_date ?? ""}</td>
-                        <td class="">${shipment.address_from.line1.substring(0, 15)+"..."}</td>
-                        <td class="">${shipment.address_to.line1.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment.title}</td>
+                        <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment.address_to?.firstname?.substring(0, 15)+"..."}</td>
+                        
+                        <td class=""> ${shipment.external_shipment_id}</td>
                         <td class="">
                             <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
                             ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                             </span>
+                        </td>
+                        <td class=""><a href="${url+'/shipping/'+shipment.slug}">Edit</a>
                         </td>
                     </tr> 
                 `);

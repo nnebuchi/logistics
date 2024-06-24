@@ -86,12 +86,14 @@ class ShippingController extends Controller
                 "from" => $fromStates,
                 "to" => $toStates
             ];
+            
 
             $cities = [
                 "from" => $fromCities,
                 "to" => $toCities
             ];
 
+            dd($shipment);
             return view(
                 'customer.shippings.edit-shipping', 
                 compact('user', 'shipment', 'countries', 'chapters', 'states', 'cities')
@@ -138,18 +140,51 @@ class ShippingController extends Controller
         return ResponseFormatter::success("Shipments:", $shipments, 200);
     }
 
-    public function showShippingForm()
+    public function newShipment(){
+        return view('customer.shippings.new')->with(['user'=>Auth::user()]);
+    }
+
+    public function showShippingForm(Request $request)
     {
+        $slug = $request->slug;
+        $shipment = Shipment::with('address_from', 'address_to', 'items', 'parcels')->where("slug", $slug)->first();
+
+       
+        $fromStates = $shipment?->address_from?->nation()?->first()->states;
+        
+        $toStates = $shipment?->address_to?->nation()?->first()->states;
+       
+        $fromCities = $shipment?->address_from?->hostState()?->first()->cities;
+        
+        $toCities = $shipment?->address_to?->hostState()?->first()->cities;
+
+        
+
+        // City::where("state_id", $toState->id)->get();
+
+        // dd($shipment);
         $user = User::find(Auth::user()->id);
-        if($user->is_verified):
-            $countries = Country::all();
+       
+        $countries = Country::all();
 
-            $response = $this->logistics->getChapters();
-            $response = json_decode($response);
-            $chapters = $response->data;
+        $response = $this->logistics->getChapters();
+        $response = json_decode($response);
+        $chapters = $response->data;
 
-            return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters'));
-        endif;
+        // dd($fromStates->count());
+        $states = [
+            "from" => $fromStates,
+            "to" => $toStates
+        ];
+        
+
+        $cities = [
+            "from" => $fromCities,
+            "to" => $toCities
+        ];
+
+        return view('customer.shippings.create-shipping', compact('user', 'shipment', 'countries', 'chapters', 'states', 'cities', 'slug'));
+      
     }
 
     public static function getStates(int $countryId)
@@ -548,6 +583,10 @@ class ShippingController extends Controller
         return ["parcels" => $parcels, "shipment" => $newShipment];
     }
 
+    public static function saveAddress(Request $request){
+        return ShippingService::saveAddress($request);
+    }
+
     public function editShipment($data, $description){
         $shipment = Shipment::where("external_shipment_id", $data["shipment_id"])->first();
         $shipment->parcels()->delete();
@@ -599,18 +638,7 @@ class ShippingController extends Controller
         $shipment->pickup_date = $newShipment->pickup_date;
         $shipment->save();
 
-        $from = Address::where(["shipment_id" => $shipment->id, "type" => "from"])->first();
-        $from->firstname = $newShipment->address_from->first_name;
-        $from->lastname = $newShipment->address_from->last_name;
-        $from->email = $newShipment->address_from->email;
-        $from->phone = $newShipment->address_from->phone;
-        $from->country = $newShipment->address_from->country;
-        $from->state = $newShipment->address_from->state;
-        $from->city = $newShipment->address_from->city;
-        $from->zip = $newShipment->address_from->zip;
-        $from->line1 = $newShipment->address_from->line1;
-        $from->type = "from";
-        $from->save();
+        
 
         $to = Address::where(["shipment_id" => $shipment->id, "type" => "to"])->first();;
         $to->firstname = $newShipment->address_to->first_name;

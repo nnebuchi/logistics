@@ -9,20 +9,14 @@
       <div class="alert alert-{{ session('alert') }} alert-dismissible fade show mt-lg-3  mt-5" role="alert">
         <?= session('msg') ?>
       </div>
-     </div>
+    </div>
 
-     <script>
-
-      
-  </script>
    
     @php
       session()->forget('msg');
       session()->forget('alert');
       @endphp
-   
-  @endif 
-  
+
   <script>
     window.addEventListener('load', function() {
         setTimeout(() => {
@@ -33,3 +27,7 @@
     
     
   </script>
+   
+  @endif 
+  
+  

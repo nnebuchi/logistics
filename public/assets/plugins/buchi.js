@@ -6,8 +6,8 @@ const getOriginalWordFromCompoundWord = (compound_word) => {
 const buchi_validate =  (input, constraints, alias=null) => {
 
     // Remove existing validation message
-    $('.'+input.getAttribute('id')+'-validation-message').remove();
-    $('#'+input.getAttribute('id')).css('border-color', '#89ABD9')
+    $('.'+input?.getAttribute('id')+'-validation-message')?.remove();
+    $('#'+input?.getAttribute('id'))?.css('border-color', '#89ABD9')
     // console.log()
     
     // $('#'+response.targetId).css('border-color', 'red');

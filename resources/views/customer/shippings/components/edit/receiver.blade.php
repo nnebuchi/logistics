@@ -8,22 +8,22 @@
                             <h4 style="color:#1E1E1E66">Enter Receiver Details</h4>
                             <div class="w-100 mr-2">
                                 <label class="custom-input-label">First Name</label>
-                                <input value="<?=$shipment->address_to->firstname?>" type="text" name="firstname" placeholder="First Name" class="custom-input" />
+                                <input value="<?=$shipment?->address_to?->firstname?>" type="text" name="firstname" placeholder="First Name" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
                             <div class="w-100 mt-2">
                                 <label class="custom-input-label">Last Name</label>
-                                <input value="<?=$shipment->address_to->lastname?>" type="text" name="lastname" placeholder="Last Name" class="custom-input" />
+                                <input value="<?=$shipment?->address_to?->lastname?>" type="text" name="lastname" placeholder="Last Name" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
                             <div class="w-100 mt-2">
                                 <label class="custom-input-label">Email</label>
-                                <input value="<?=$shipment->address_to->email?>" type="email" name="email" placeholder="xyz@gmail.com" class="custom-input" />
+                                <input value="<?=$shipment?->address_to?->email?>" type="email" name="email" placeholder="xyz@gmail.com" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
                             <div class="w-100 mt-2">
                                 <label class="custom-input-label">Phone Number</label>
-                                <input value="<?=$shipment->address_to->phone?>" type="text" name="phone" data-phone="" placeholder="" class="custom-input" />
+                                <input value="<?=$shipment->address_to?->phone?>" type="text" name="phone" data-phone="" placeholder="" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
                             <h4 style="color:#1E1E1E66">Address</h4>
                             <div class="w-100 mr-2">
                                 <label class="custom-input-label">Address Line 1</label>
-                                <input value="<?=$shipment->address_to->line1?>" type="text" maxLength="45" name="address1" placeholder="First Address" class="custom-input" />
+                                <input value="<?=$shipment->address_to?->line1?>" type="text" maxLength="45" name="address1" placeholder="First Address" class="custom-input" />
                                 <span class="error"> </span>
                             </div>
                             <div class="w-100 mt-2">
@@ -46,7 +46,7 @@
                                         name="country"
                                         class="custom-select">
                                         @foreach($countries as $country)
-                                            @if($country->sortname == $shipment->address_to->country)
+                                            @if($country->sortname == $shipment->address_to?->country)
                                                 <option selected value="{{$country->sortname}}" data-phonecode="{{$country->phonecode}}" data-id="{{$country->id}}">{{$country->name}}</option>
                                             @else
                                                 <option value="{{$country->sortname}}" data-phonecode="{{$country->phonecode}}" data-id="{{$country->id}}">{{$country->name}}</option>
@@ -60,13 +60,15 @@
                                     <select
                                         name="state"
                                         class="custom-select">
+                                        @if($states["to"])
                                         @foreach($states["to"] as $state)
-                                            @if($state->name == $shipment->address_to->state)
+                                            @if($state->name == $shipment->address_to?->state)
                                                 <option selected value="{{$state->name}}" data-id="{{$state->id}}">{{$state->name}}</option>
                                             @else
                                                 <option value="{{$state->name}}" data-id="{{$state->id}}">{{$state->name}}</option>
                                             @endif
                                         @endforeach
+                                        @endif
                                     </select>
                                     <span class="error"> </span>
                                 </div>
@@ -77,19 +79,21 @@
                                     <select
                                         name="city"
                                         class="custom-select">
+                                        @if($states["to"])
                                         @foreach($cities["to"] as $city)
-                                            @if($city->name == $shipment->address_from->city)
+                                            @if($city->name == $shipment->address_from?->city)
                                                 <option selected value="{{$city->name}}" data-id="{{$city->id}}">{{$city->name}}</option>
                                             @else
                                                 <option value="{{$city->name}}" data-id="{{$city->id}}">{{$city->name}}</option>
                                             @endif
                                         @endforeach
+                                        @endif
                                     </select>
                                     <span class="error"> </span>
                                 </div>
                                 <div class="w-100 mt-md-0 mt-3">
                                     <label class="custom-input-label">Zip Code</label>
-                                    <input value="<?=$shipment->address_to->zip?>" type="text" name="zip_code" placeholder="xyz@gmail.com" class="custom-input" />
+                                    <input value="<?=$shipment->address_to?->zip?>" type="text" name="zip_code" placeholder="xyz@gmail.com" class="custom-input" />
                                     <span class="error"> </span>
                                 </div>
                             </div>
