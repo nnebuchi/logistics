@@ -246,7 +246,7 @@ class ShippingService
         return Response::json([
             'status'    => 'success',
             'message'   => 'file uploaded',
-            'shipment' => $attachment->parcel->shipment,
+            'shipment' => $attachment->parcel->shipment()->first(),
         ], 200);
     }
 }

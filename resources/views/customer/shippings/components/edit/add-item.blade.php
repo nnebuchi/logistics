@@ -523,7 +523,6 @@
     }
 
     const uploadParcelAttachment = async (event, type, input_id) => {
-        console.log(document.getElementById(`${input_id}`));
         const clickedEle = event.target;
         const oldBtnHTML = clickedEle.innerHTML;
         setBtnLoading(clickedEle);
