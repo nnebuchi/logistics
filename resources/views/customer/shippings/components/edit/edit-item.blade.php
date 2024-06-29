@@ -20,9 +20,9 @@
                             
                             <div class="mb-1 d-flex align-items-center justify-content-between">
                                 <h5 class="m-0">Parcel <?=$parcelIndex + 1?></h5>
-                                
-                                    <button class="btn btn-danger delete-parcel" id="delete-parcel-{{$parcel->id}}" onclick="deleteParcel('{{$parcel->id}}', '{{$parcelIndex}}')" data-parcel="<?=$parcelIndex?>" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
-                                
+                                <?php if($parcelIndex > 0): ?>
+                                    <button class="btn btn-danger" id="delete-parcel" data-parcel="<?=$parcelIndex?>" type="button">X Delete Parcel</button>
+                                <?php endif; ?>
                             </div>
                             <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                                 <div class="table-responsive">
@@ -45,17 +45,18 @@
                                                     <td class="pt-0 pb-2"><?=$item->weight?>kg</td>
                                                     <td class="pt-0 pb-2"><b>₦</b><?= number_format($item->value, 2, '.', ',') ?></td>
                                                     <td class="pt-0 pb-2">
-                                                        <a class="edit-item" data-id="<?=$item->id?>" data-parcel="<?=$parcelIndex?>" data-action="edit" type="button" data-bs-target="#editItemModal" onclick="showEditModal('{{$parcelIndex}}', '{{$index}}')">
+                                                        <a class="update-item" data-id="<?=$item->id?>" data-parcel="<?=$parcelIndex?>" data-action="edit" type="button">
                                                             <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
                                                         </a>
                                                     </td>
                                                     <td class="pt-0 pb-2">
-                                                        <a class="delete-item" data-id="<?=$item->id?>" data-parcel="<?=$parcelIndex?>" data-action="delete" type="button" onclick="deleteItem(event, '{{$parcelIndex}}', '{{$index}}')">
+                                                        <a class="update-item" data-id="<?=$item->id?>" data-parcel="<?=$parcelIndex?>" data-action="delete" type="button">
                                                             <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
                                                         </a>
                                                     </td>
-                                                </tr> 
-                                                 
+                                                </tr>
+                                                
+                                                
                                             <?php endforeach;?>              
                                         </tbody>
                                     </table>
@@ -69,27 +70,16 @@
                                 <div class="p-3 bg-white">
                                     <form class="proof-of-purchase-form" data-parcel="<?=$parcelIndex?>" 
                                     action="" method="POST" enctype="multipart/form-data">
-                                        <h5 class="m-0 mb-1">Upload Attachments</h5> <hr>
-                                        <div class="row px-1 justify-content-between">
-                                            <div class="col-lg-5 form-group rounded p-3 parcel-doc-box" >
-                                                <label for="">Proof of Payments <br> <small class="text-danger">MMultiple files allowed PNG, JPG, PDF</small></label>
-                                                <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" id="pop">
-                                                <div class="text-center pt-2">
-                                                    <button type="button" parcel-id="{{$parcel->id}}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'proof_of_payments', 'pop')">Submit</button>
-
-                                                </div>
-                                                
+                                        <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
+                                        <div class="mt-2 d-flex align-items-center">
+                                            <div class="w-10" style="border:2px solid #FCE4C2F7">
+                                                <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />
                                             </div>
-                                            <div class="col-lg-5 form-group rounded p-3 parcel-doc-box">
-                                                <label for="">Rec Docs <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF </small></label>
-                                                <input type="file" class="form-contro custom-input rounded-0"multiple accept="image/jpg,image/png,application/pdf" id="rec-doc">
-                                                <div class="text-center pt-2">
-                                                    <button type="button" parcel-id="{{$parcel->id}}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'rec_docs', 'rec-doc')">Submit</button>
-
-                                                </div>
-                                            </div>
+                                            <label for="document-<?=$parcelIndex?>" type="button" class="m-0 ml-2 rounded-circle d-flex align-items-center justify-content-center" style="background-color:#FCE4C2F7;height:50px;width:50px">
+                                                <img src="{{asset('assets/images/icons/cloud-upload.svg')}}" width="25" >
+                                                <input type="file" id="document-<?=$parcelIndex?>" data-parcel="<?=$parcelIndex?>" data-count="0" class="d-none document-file" />
+                                            </label>
                                         </div>
-                                        
                                         <span class="document-count"> </span>
                                         <div class="mt-1 document-preview">
                                             
@@ -169,8 +159,6 @@
     </div>
 </div>
 
-
-
 <script>
     var parcels = [];
     window.onload = async () => {
@@ -220,8 +208,7 @@
                 <div class="parcel-box" data-id="${index}">
                     <div class="mb-1 d-flex align-items-center justify-content-between">
                         <h5 class="m-0">Parcel ${index + 1}</h5>
-                        
-                        <button class="btn btn-danger delete-parcel" id="delete-parcel-${parcel.id}" onclick="deleteParcel(${parcel.id}, ${index})" data-parcel="${index}" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
+                        <button class="btn btn-danger" id="delete-parcel" data-parcel="${index}" type="button">X Delete Parcel</button>
                     </div>
                     <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                         <div class="table-responsive">
@@ -275,7 +262,7 @@
         $("#add-parcel").attr('data-parcel',  parcels.length);
     }
 
-    const validateItem = async (action) => {
+    const validateItem = async () => {
         
 
         const validation = runValidation([
@@ -310,14 +297,8 @@
             
         ]);
         if(validation === true){
-            if($("#addItemForm").attr("action") === "add"){
-                const parcel_index = $('#addItemModal').attr('data-parcel');
-                await handleAddItem(parcel_index);
-            }
-            
-            if($("#addItemForm").attr("action") === "edit"){
-                await updateItem();
-            }
+            const parcel_index = $('#addItemModal').attr('data-parcel');
+            await handleAddItem(parcel_index);
             
         }
 
@@ -338,13 +319,13 @@
         item.value = $('#item-value').val();
         item.currency ="NGN";
 
-        // await parcels[parcel_index].items.push(item);
+        await parcels[parcel_index].items.push(item);
         const shipment_id = document.querySelector('#addItemModal').querySelector('#shipment_id').value;
         item.shipment_id = shipment_id;
         if(parcels[parcel_index].items.length > 0){//if there is an exisiting gitem in the parcel
             console.log("Saving item");
             item.parcel_id = parcels[parcel_index].id;
-            await saveItem(item);
+            await createitem(item);
             setBtnNotLoading(submitBtn, oldBtnHTML)
         }else{//if there is no exisiting item in the parcel
             console.log("saving Parcel", parcels[parcel_index]);
@@ -363,7 +344,7 @@
                 // console.log(result.parcel); 
                 item.parcel_id = result.parcel.id;
                 // console.log(parcel_i);
-                await saveItem(item);
+                await createitem(item);
                 setBtnNotLoading(submitBtn, oldBtnHTML)
             }
         }
@@ -386,7 +367,7 @@
         });
     }
 
-    const saveItem = async (item) => {
+    const createitem = async (item) => {
         axios.post(url+"/shipping/add-item", item, config)
         .then(async function(response){
         
@@ -419,12 +400,12 @@
                     <td class="pt-0 pb-2">${item.weight}kg</td>
                     <td class="pt-0 pb-2"><b>₦</b>${item?.value.toLocaleString()}</td>
                     <td class="pt-0 pb-2">
-                        <a class="edit-item" data-id="${index}" data-parcel="${parcelIndex}" onclick="showEditModal(${parcelIndex}, ${index})" data-action="edit" type="button">
+                        <a class="update-item" data-id="${index}" data-parcel="${parcelIndex}" data-action="edit" type="button">
                             <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
                         </a>
                     </td>
                     <td class="pt-0 pb-2">
-                        <a class="update-item" data-id="${index}" data-parcel="${parcelIndex}"  onclick="deleteItem(event, ${parcelIndex}, ${index})" data-action="delete" type="button">
+                        <a class="update-item" data-id="${index}" data-parcel="${parcelIndex}" data-action="delete" type="button">
                             <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
                         </a>
                     </td>
@@ -435,122 +416,22 @@
        
     }
 
-    const showEditModal = (parcelIndex, itemIndex) => {
-        const modalElement = $('#addItemModal').modal('show');
-        $("#addItemForm").attr("action", "edit");
-        // modalElement.modal('show');
-        modalElement.find('#item-name').val(parcels[parcelIndex].items[itemIndex]?.name);
-        modalElement.find('#item-category').val(parcels[parcelIndex].items[itemIndex]?.category);
-        modalElement.find('#item-sub-category').val(parcels[parcelIndex].items[itemIndex]?.sub_category);
-        modalElement.find('#item-hs-code').val(parcels[parcelIndex].items[itemIndex]?.hs_code);
-        modalElement.find('#item-weight').val(parcels[parcelIndex].items[itemIndex]?.weight);
-        modalElement.find('#item-quantity').val(parcels[parcelIndex].items[itemIndex]?.quantity);
-        modalElement.find('#item-value').val(parcels[parcelIndex].items[itemIndex]?.value);
-        modalElement.find('#item-id').val(parcels[parcelIndex].items[itemIndex]?.id);
-    }
+    
 
-    const updateItem = () => {
-        const submitBtn = document.querySelector("#editItem");
-        const oldBtnHTML = submitBtn.innerHTML;
-        setBtnLoading(submitBtn);
-        const item = {};
-        const modalElement = $('#addItemModal')
-        item.name =  modalElement.find('#item-name').val();
-        item.weight = modalElement.find('#item-weight').val();
-        item.category = modalElement.find('#item-category').val();
-        item.sub_category = modalElement.find('#item-sub-category').val();
-        item.hs_code = modalElement.find('#item-hs-code').val();
-        item.quantity = modalElement.find('#item-quantity').val();
-        item.value = modalElement.find('#item-value').val();
-        item.currency ="NGN";
-        item.id = modalElement.find('#item-id').val();
 
-        return saveItem(item);
-    }
+   
 
-    const deleteItem = async (event, parcelIndex, itemIndex) => {
-        const clickedEle = event.target;
-        let deleteBtn;
-        if(clickedEle.tagName == "A"){
-            deleteBtn = clickedEle
-        }else{
-            deleteBtn = clickedEle.parentElement;
-        }
-        
-        const oldBtnHTML = deleteBtn.innerHTML;
-        setBtnLoading(deleteBtn);
-        return await axios.get(`${url}/shipping/delete-item?id=${parcels[parcelIndex]?.items[itemIndex]?.id}`)
-        .then( async function(response){
-            console.log(response.data);
-            setBtnNotLoading(deleteBtn);
-            if(response.data.status == 'success'){
-               
-                // parcels[parcelIndex]?.items[itemIndex]
-                parcels[parcelIndex].items.splice(itemIndex, 1);
-                console.log(parcels[parcelIndex]);
-                await updateParcelsUI()
-                populateItems();
-            }
-        }).catch(function(error){
-            setBtnNotLoading(deleteBtn, oldBtnHTML);
-            // setBtnNotLoading(submitBtn, oldBtnHTML)
-            console.log(error);
-            return false;
-            
-        });
-    }
+    
+    
+    
 
-    const deleteParcel = async (parcelId, parcelIndex) => {
-       const clickedEle = document.querySelector(`#delete-parcel-${parcelId}`);
-       const oldBtnHTML = clickedEle.innerHTML;
-        setBtnLoading(clickedEle);
-        return await axios.get(`${url}/shipping/delete-parcel?id=${parcelId}`)
-        .then( async function(response){
-            console.log(response.data);
-            setBtnNotLoading(clickedEle);
-            if(response.data.status == 'success'){
-                parcels.splice(parcelIndex, 1);
-                console.log(parcels[parcelIndex]);
-                await updateParcelsUI()
-                populateItems();
-            }
-        }).catch(function(error){
-            setBtnNotLoading(clickedEle);
-            console.log(error);
-            return false;
-            
-        });
-    }
-
-    const uploadParcelAttachment = async (event, type, input_id) => {
-        console.log(document.getElementById(`${input_id}`));
-        const clickedEle = event.target;
-        const oldBtnHTML = clickedEle.innerHTML;
-        setBtnLoading(clickedEle);
-        const formData = new FormData();
-        formData.append('parcel_id', clickedEle.getAttribute('parcel-id'));
-        formData.append('type', type);
-        
-        const selectedFiles = document.getElementById(`${input_id}`).files;
-        for (const file of selectedFiles) {
-            formData.append('attachments[]', file); // Add each file separately
-        }
-
-        try {
-            const response = await axios.post("{{route('upload-parcel-docs')}}", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            setBtnNotLoading(clickedEle, oldBtnHTML)
-            console.log(response.data); 
-
-            // Optionally clear the form or display a success message
-        } catch (error) {
-            setBtnNotLoading(clickedEle, oldBtnHTML)
-            console.error(error); // Handle upload errors
-            submitButton.disabled = false; // Enable button again
-        }
-    }
+    // const parcels = [
+    //     [
+    //         items:[
+    //             {},
+    //             {}
+    //         ]
+    //     ], 
+    //     []
+    // ]
 </script>

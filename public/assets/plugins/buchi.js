@@ -1,6 +1,6 @@
 const getOriginalWordFromCompoundWord = (compound_word) => {
     
-    return compound_word?.replaceAll('_', ' ');
+    return compound_word?.replaceAll('_', ' ').replaceAll('-', ' ')
 }
 
 const buchi_validate =  (input, constraints, alias=null) => {
@@ -24,19 +24,19 @@ const buchi_validate =  (input, constraints, alias=null) => {
     const rules = {
         required:{
             pass:constraints.required === true ? (input.getAttribute('type') != 'file' ? (input?.value?.length > 0): input.files.length > 0) : true,
-            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id'))  +" is required" : alias +" is required"
+            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id'))+" is required" : alias +" is required"
         },
         min_length:{
             pass:input.value.length > 0 ? input.value.length >= constraints.min_length : true,
-            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id')) +" must have up to "+constraints.min_length+" characters" : alias +" must have up to "+constraints.min_length+" characters"
+            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id'))+" must have up to "+constraints.min_length+" characters" : alias +" must have up to "+constraints.min_length+" characters"
         },
         max_length:{
             pass:input.value.length > 0 ? input.value.length <= constraints.max_length : true,
-            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id')) +" must not exceed "+constraints.max_length+" characters" : alias+" must not exceed "+constraints.max_length+" characters"
+            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id'))+" must not exceed "+constraints.max_length+" characters" : alias+" must not exceed "+constraints.max_length+" characters"
         },
         email:{
             pass: constraints.email === true && input.value.length > 0 ? email_pattern.test(input.value): true,
-            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id')) +" must be a valid email" : alias+" must be a valid email"
+            message:alias ===null ? getOriginalWordFromCompoundWord(input.getAttribute('id'))+" must be a valid email" : alias+" must be a valid email"
         },
         has_special_character:{
             pass: constraints.has_special_character === true && input.value.length > 0 ? specialCharsRegex.test(input.value) : true,
@@ -48,7 +48,7 @@ const buchi_validate =  (input, constraints, alias=null) => {
         },
         max_size:{
             pass:input.getAttribute('type') == 'file' ? (input.files.length > 0 ? input.files[0].size <= constraints.max_size : true): true,
-            message:alias === null ? getOriginalWordFromCompoundWord(input.getAttribute('id')) +" must not exceed "+constraints.max_size+" kb" : alias+" must not exceed "+constraints.max_size+" kb"
+            message:alias === null ? getOriginalWordFromCompoundWord(input.getAttribute('id'))+" must not exceed "+constraints.max_size+" kb" : alias+" must not exceed "+constraints.max_size+" kb"
         },
         match:{
             pass:constraints.hasOwnProperty('match') ? (input.value === document.querySelector(`#${constraints.match}`).value) : true,

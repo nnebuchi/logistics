@@ -224,13 +224,13 @@
                         <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>
                         <td class="">${shipment.address_to?.firstname?.substring(0, 15)+"..."}</td>
                         
-                        <td class=""> ${shipment.external_shipment_id}</td>
+                        <td class=""> ${shipment.external_shipment_id ?shipment.external_shipment_id : ""}</td>
                         <td class="">
-                            <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
+                            <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]} badge-dark">
                             ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                             </span>
                         </td>
-                        <td class=""><a href="${url+'/shipping/'+shipment.slug}">Edit</a>
+                        <td class=""><a href="${url+'/shipping/'+shipment.slug}" class= "btn btn-primary">Edit <i class="fa fa-edit"> </i> </a>
                         </td>
                     </tr> 
                 `);

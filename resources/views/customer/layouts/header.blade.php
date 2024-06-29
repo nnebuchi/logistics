@@ -19,14 +19,16 @@
 		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
 		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		{{-- <link rel="stylesheet" href="{{ mix('css/app.css') }}"> --}}
 		<script>
-			var url = "{{url('')}}"
+			var url = baseUrl =  "{{url('')}}"
 		</script>
 		<script src="{{asset('assets/plugins/buchi.js')}}"></script>
 		<?php date_default_timezone_set("Africa/Lagos"); ?>
 	</head>
 	<body>
 		<!--  Body Wrapper -->
+		
 		<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
 			data-sidebar-position="fixed" data-header-position="fixed">
 			<!-- Sidebar Start -->

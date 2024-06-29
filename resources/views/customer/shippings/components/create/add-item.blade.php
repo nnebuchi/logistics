@@ -45,7 +45,8 @@
                             <div class="p-3 bg-white">
                                 <form class="proof-of-purchase-form" data-parcel="0" 
                                 action="" method="POST" enctype="multipart/form-data">
-                                    <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
+                                    <h5 class="m-0 mb-1">Upload Attachments</h5>
+                                    
                                     <div class="mt-2 d-flex align-items-center">
                                         <div class="w-10" style="border:2px solid #FCE4C2F7">
                                             <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />

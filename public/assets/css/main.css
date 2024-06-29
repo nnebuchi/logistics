@@ -16086,3 +16086,11 @@ ul{
 .timeline-widget .timeline-item .timeline-badge.badge-primary{
     border:2px solid #5D87FF
 }
+
+.btn-danger{
+    background-color: #df365f!important;
+}
+
+.parcel-doc-box{
+    box-shadow: 0px 0px 3px 2px #999fad!important; background:#f8f8f8!important;
+}

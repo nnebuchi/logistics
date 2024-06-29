@@ -36,7 +36,7 @@ class Address extends Model
         return $this->belongsTo(State::class, 'state', 'name');
     }
 
-    public function hostCity(){
+    public function hostcity(){
         return $this->belongsTo(city::class, 'city', 'name');
     }
 

@@ -8,9 +8,9 @@
                         <div class="col-md-10 col-sm-12 mt-sm-2">
                             <h4 style="color:#1E1E1E66">Create  New Shipment</h4>
                             <div class="w-100 mr-2">
-                                <label class="custom-input-label">Title </label>
+                                <label class="custom-input-label">Shipment Title </label>
                                 <small class="text-danger">A descriptive title helps you identify a shipment at a glance</small>
-                                <input type="text" name="Shipment title" placeholder="e.g June Shipment to Fayiza in Canada" class="custom-input" id="title" />
+                                <input type="text" name="title" placeholder="e.g June Shipment to Fayiza in Canada" class="custom-input" id="title" />
                             </div>
                             <div class="text-danger backend-msg">
                                 @error('title')

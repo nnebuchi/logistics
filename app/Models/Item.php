@@ -25,4 +25,12 @@ class Item extends Model
         'updated_at'
     ];
 
+    public function shipment(){
+        return $this->belongsTo(Shipment::class);
+    }
+
+    public function parcel(){
+        return $this->belongsTo(Parcel::class);
+    }
+
 }

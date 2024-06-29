@@ -61,13 +61,13 @@
                                         name="state"
                                         class="custom-select">
                                         @if($states["to"])
-                                        @foreach($states["to"] as $state)
-                                            @if($state->name == $shipment->address_to?->state)
-                                                <option selected value="{{$state->name}}" data-id="{{$state->id}}">{{$state->name}}</option>
-                                            @else
-                                                <option value="{{$state->name}}" data-id="{{$state->id}}">{{$state->name}}</option>
-                                            @endif
-                                        @endforeach
+                                            @foreach($states["to"] as $state)
+                                                @if($state->name == $shipment->address_to?->state)
+                                                    <option selected value="{{$state->name}}" data-id="{{$state->id}}">{{$state->name}}</option>
+                                                @else
+                                                    <option value="{{$state->name}}" data-id="{{$state->id}}">{{$state->name}}</option>
+                                                @endif
+                                            @endforeach
                                         @endif
                                     </select>
                                     <span class="error"> </span>
@@ -79,14 +79,14 @@
                                     <select
                                         name="city"
                                         class="custom-select">
-                                        @if($states["to"])
-                                        @foreach($cities["to"] as $city)
-                                            @if($city->name == $shipment->address_from?->city)
-                                                <option selected value="{{$city->name}}" data-id="{{$city->id}}">{{$city->name}}</option>
-                                            @else
-                                                <option value="{{$city->name}}" data-id="{{$city->id}}">{{$city->name}}</option>
-                                            @endif
-                                        @endforeach
+                                        @if($cities["to"])
+                                            @foreach($cities["to"] as $city)
+                                                @if($city->name == $shipment->address_from?->city)
+                                                    <option selected value="{{$city->name}}" data-id="{{$city->id}}">{{$city->name}}</option>
+                                                @else
+                                                    <option value="{{$city->name}}" data-id="{{$city->id}}">{{$city->name}}</option>
+                                                @endif
+                                            @endforeach
                                         @endif
                                     </select>
                                     <span class="error"> </span>

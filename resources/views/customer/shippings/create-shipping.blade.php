@@ -14,7 +14,7 @@
                     @include('customer.shippings.components.create.add-item')
                     @include('customer.shippings.components.create.add-carrier')
                     @include('customer.shippings.components.create.checkout') --}}
-
+                    @include('customer.modals.edit-item-modal')
                     @include('customer.shippings.components.edit.sender')
                     @include('customer.shippings.components.edit.receiver')
                     @include('customer.shippings.components.edit.add-item')
@@ -41,17 +41,20 @@
 <script src="{{asset('assets/js/shipping/countries.js')}}"></script>
 <script src="{{asset('assets/js/shipping/categories.js')}}"></script>
 <script>
+    
     var step = 2;
     let token = $("meta[name='csrf-token']").attr("content");
     
     var parcelDoc = {};
 
     $(document).ready(function(){
+        
         let formData = { "sender": {}, "receiver": {}, "items": [], "shipment": {}, "total": "" };
         let parcel = {};
         let carriers = [];
         let selectedCarrier = {};
         const createParcel = async (items) => {
+           
             let payload = {
                 "description": 'New parcel for shipment',
                 "weight_unit": "kg",
@@ -217,26 +220,26 @@
                     // alert(error.response.data.message);
                 });
                 
-                axios.post(`${url}/address`, payload, config)
-                .then(function(response){
-                    setBtnNotLoading(event.target, innerHTML)
-                    let results = response.data.results;
-                    formData[type] = results;
-                    console.log(results);
-                    currentStep.hide();
-                    nextStep.show();
-                    if(type == "sender"){
-                        $(".progress").removeClass("bg-primary");
-                        $(".progress").eq(1).addClass("bg-primary");
-                    }else if(type == "receiver"){
-                        $(".progress").removeClass("bg-primary");
-                        $(".progress").eq(2).addClass("bg-primary");
-                    }
-                }).catch(function(error){
-                    setBtnNotLoading(event.target, innerHTML)
-                    let errors = error.response.data.error;
-                    alert(error.response.data.message);
-                });
+                // axios.post(`${url}/address`, payload, config)
+                // .then(function(response){
+                //     setBtnNotLoading(event.target, innerHTML)
+                //     let results = response.data.results;
+                //     formData[type] = results;
+                //     console.log(results);
+                //     currentStep.hide();
+                //     nextStep.show();
+                //     if(type == "sender"){
+                //         $(".progress").removeClass("bg-primary");
+                //         $(".progress").eq(1).addClass("bg-primary");
+                //     }else if(type == "receiver"){
+                //         $(".progress").removeClass("bg-primary");
+                //         $(".progress").eq(2).addClass("bg-primary");
+                //     }
+                // }).catch(function(error){
+                //     setBtnNotLoading(event.target, innerHTML)
+                //     let errors = error.response.data.error;
+                //     alert(error.response.data.message);
+                // });
             }
         });
 
@@ -274,140 +277,8 @@
         $("#add-parcel").on("click", function(event){
             event.preventDefault();
             $parcel = $(this).data("parcel");
-            $("#parcel-container").append(`
-                <div class="parcel-box" data-id="${$parcel}">
-                    <div class="mb-1 d-flex align-items-center justify-content-between">
-                        <h5 class="m-0">Parcel ${$parcel + 1}</h5>
-                        <button class="btn btn-danger" id="delete-parcel" data-parcel="${$parcel}" type="button">X Delete Parcel</button>
-                    </div>
-                    <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
-                        <div class="table-responsive">
-                            <table data-id="0" class="mb-0 items-table table table-borderless text-nowrap align-middle">
-                                <thead class="text-dark fs-3">
-                                    <tr>
-                                        <th>Items</th>
-                                        <th>Quantity</th>
-                                        <th>Weight</th>
-                                        <th>Value</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                </thead>
-                                <tbody>   
-                                                    
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-center p-3">
-                            <button type="button" data-parcel="${$parcel}"
-                            class="btn px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
-                            + Add Item
-                            </button>
-                        </div>
-                        <div class="p-3 bg-white">
-                            <form class="proof-of-purchase-form" data-parcel="${$parcel}" 
-                            action="" method="POST" enctype="multipart/form-data">
-                                <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
-                                <div class="mt-2 d-flex align-items-center">
-                                    <div class="w-10" style="border:2px solid #FCE4C2F7">
-                                        <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />
-                                    </div>
-                                    <label for="document-${$parcel}" type="button" class="m-0 ml-2 rounded-circle d-flex align-items-center justify-content-center" style="background-color:#FCE4C2F7;height:50px;width:50px">
-                                        <img src="{{asset('assets/images/icons/cloud-upload.svg')}}" width="25" >
-                                        <input type="file" id="document-${$parcel}" data-parcel="${$parcel}" data-count="0" class="d-none document-file" />
-                                    </label>
-                                </div>
-                                <span class="document-count"> </span>
-                                <div class="mt-1 document-preview">
-                                    
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `);
-            $(this).data("parcel", $parcel + 1);
         });
 
-        $(document).on("click", "#delete-parcel", function(event){
-            event.preventDefault();
-            $parcel_id = $(this).data("parcel");
-            formData.items = formData.items.filter(item => item.parcel_id !== $parcel_id);
-            $("#add-parcel").data("parcel", $parcel_id);
-            $(this).parent().parent().remove();
-
-            $('.parcel-box').each(function(index) {
-                $(this).find('h5').eq(0).text('Parcel ' + (index + 1)); // Update the parcel number in the heading
-                //$(this).find('#delete-parcel').data('parcel', index); // Update the delete button data-parcel
-                //$(this).find('.update-item').data('parcel', index); // Update the item data-parcel attributes
-                //$(this).find('.openAddItemModal').data('parcel', index); // Update the add item button data-parcel
-                //$(this).find('.proof-of-purchase-form').data('parcel', index); // Update the proof of purchase form data-parcel
-                //$(this).find('.document-file').data('parcel', index).attr('id', 'document-' + index); // Update the file input id and data-parcel
-                //$(this).find('label[for^="document-"]').attr('for', 'document-' + index); // Update the label for attribute
-            });
-
-            // Update the data-parcel attribute on the add new parcel button
-            const newParcelCount = $('.parcel-box').length;
-            $('#add-parcel').data('parcel', newParcelCount);
-        });
-
-        $("#addItem").on("click", async function(event) {
-            event.preventDefault();
-            let item = {};
-            const action = $(this).data("action");
-            let table = $(this).data("parcel");
-            let $currentForm = $(this).closest("form");
-            $currentForm.find("input, select").each(function(){
-                var fieldName = $(this).attr("name");
-                var fieldType = $(this).prop("tagName").toLowerCase();
-                if(fieldType === "input" || fieldType === "select") {
-                    item[fieldName] = $(this).val();
-                    if(fieldName == "hs_code"){
-                        let description = $(this).find("option:selected").data("description");
-                        item["description"] = description;
-                    }
-                }
-            });
-            item["parcel_id"] = table;
-            $(`#shipping .error`).text('');
-            $(`#shipping input`).css("borderColor", "transparent");
-            inputs = [
-                { inputName: 'name', inputValue: $("#shipping input[name='name']").val(), constraints: { required: true } },
-                { inputName: 'category', inputValue: $("#shipping select[name='category']").val(), constraints: { required: true } },
-                { inputName: 'sub_category', inputValue: $("#shipping select[name='sub_category']").val(), constraints: { required: true } },
-                { inputName: 'hs_code', inputValue: $("#shipping select[name='hs_code']").val(), constraints: { required: true } },
-                { inputName: 'weight', inputValue: $("#shipping input[name='weight']").val(), constraints: { required: true } },
-                { inputName: 'quantity', inputValue: $("#shipping input[name='quantity']").val(), constraints: { required: true, integer: true } },
-                { inputName: 'value', inputValue: $("#shipping input[name='value']").val(), constraints: { required: true } }
-            ];
-            const errors = validate("shipping", inputs);
-            if (Object.keys(errors).length === 0) {
-                switch(action){
-                    case "create":
-                        formData.items.push(item);
-                        index = formData.items.length - 1; // The index of the newly added item
-                    break;
-                    case "update":
-                        index = parseInt($(this).data("item"));
-                        formData.items[index] = item;
-                        $(this).data("action", "create");
-                        $(this).data("item", "");
-                        //$row = $(`.items-table tbody:eq(${table}) tr[data-parcel='${index}']`);
-                        //$row.remove();
-                    break;
-                };
-                $(".items-table tbody").eq(table).empty();
-                formData.items.forEach((item, index) => {
-                    if(item.parcel_id == table){
-                        renderTableData(item, index, table);
-                    }
-                });
-                $currentForm[0].reset();
-                $("#addItemModal").modal('hide');
-            } else {
-                //alert("Sender validation failed!");
-            }
-        });
 
         function renderTableData(item, index, table){
             $(".items-table tbody").eq(table).append(`
@@ -490,7 +361,9 @@
         $(document).on("click", ".openAddItemModal", function() {
             let $parcel = $(this).data("parcel");
             $("#addItem").data("parcel", $parcel);
+            $("#addItemModal").attr('data-parcel', $(this).attr('data-parcel'))
             $("#addItemModal").modal("show");
+             $("#addItemForm").attr("action", "add");
         });
         $(document).on("click", "#addItemModal .close", function(){
             $("#addItemModal").modal("hide");

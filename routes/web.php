@@ -65,18 +65,25 @@ Route::group([
     ], function () {
         Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
         Route::group([
-            'prefix' => 'user', 'prefix'=>'shipping', 'middleware'=>'kyc'
+            'prefix'=>'shipping', 'middleware'=>'kyc'
         ], function () {
+            
             Route::get('/track', [ShippingController::class, 'showTrackingForm'])->name('track-shipments');
             Route::get('/create', [ShippingController::class, 'newShipment'])->name('create-shipment');
-            Route::get('/{slug}', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
+            Route::get('/{id}/details', [ShippingController::class, 'getShipment'])->name('add-shipment');
+            Route::post('/save-parcel', [ShippingController::class, 'saveParcel'])->name('shipment.save-parcel');
             Route::post('/save-address', [ShippingController::class, 'saveAddress'])->name('shipment.save-address');
             Route::post('/create', [ShippingController::class, 'createShipment'])->name('shipment.create');
+            Route::post('/add-item', [ShippingController::class, 'saveItem'])->name('item.create');
+            Route::get('/delete-item', [ShippingController::class, 'deleteItem'])->name('item.delete');
+            Route::get('/delete-parcel', [ShippingController::class, 'deleteParcel'])->name('parcel.delete');
+            Route::get('/{slug}', [ShippingController::class, 'showShippingForm'])->name('add-shipment');
             Route::get('/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
             Route::post('/make-payment', [ShippingController::class, 'makePayment'])->name('shipment.pay');
             // Route::get('/{shipmentId}', [ShippingController::class, 'editShipping'])->name('edit-shipping');
             Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
             Route::post('/upload-docs', [ShippingController::class, 'uploadParcelDocument'])->name('upload-parcel-docs');
+            
         });
         
         Route::post('/address', [ShippingController::class, 'createAddress']);

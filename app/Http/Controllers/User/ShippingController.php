@@ -25,6 +25,7 @@ use Exception;
 use App\Models\WebhookLog;
 use App\Notifications\SendInvoice;
 use App\Services\ShippingService;
+use App\Services\UserService;
 
 class ShippingController extends Controller
 {
@@ -146,44 +147,7 @@ class ShippingController extends Controller
 
     public function showShippingForm(Request $request)
     {
-        $slug = $request->slug;
-        $shipment = Shipment::with('address_from', 'address_to', 'items', 'parcels')->where("slug", $slug)->first();
-
-       
-        $fromStates = $shipment?->address_from?->nation()?->first()->states;
-        
-        $toStates = $shipment?->address_to?->nation()?->first()->states;
-       
-        $fromCities = $shipment?->address_from?->hostState()?->first()->cities;
-        
-        $toCities = $shipment?->address_to?->hostState()?->first()->cities;
-
-        
-
-        // City::where("state_id", $toState->id)->get();
-
-        // dd($shipment);
-        $user = User::find(Auth::user()->id);
-       
-        $countries = Country::all();
-
-        $response = $this->logistics->getChapters();
-        $response = json_decode($response);
-        $chapters = $response->data;
-
-        // dd($fromStates->count());
-        $states = [
-            "from" => $fromStates,
-            "to" => $toStates
-        ];
-        
-
-        $cities = [
-            "from" => $fromCities,
-            "to" => $toCities
-        ];
-
-        return view('customer.shippings.create-shipping', compact('user', 'shipment', 'countries', 'chapters', 'states', 'cities', 'slug'));
+        return ShippingService::showShippingForm($request);
       
     }
 
@@ -480,7 +444,7 @@ class ShippingController extends Controller
     public function uploadParcelDocument(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'photo' => 'required|mimes:jpeg,png,jpg,gif,svg,pdf,docx|max:2048',
+            'attachment.*' => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
         if($validator->fails()):
@@ -490,12 +454,7 @@ class ShippingController extends Controller
             ], 422);
         endif;
 
-        if($request->hasFile("photo")):
-            $photo = $request->file("photo");
-            $url = cloudinary()->upload($photo->getRealPath())->getSecurePath();
-        endif;
-
-        return ResponseFormatter::success("Parcel doc uploaded successfully", ["photo" => $url], 200);
+        return ShippingService::uploadParcelDocument($request);
     }
 
     public function saveShipment($data, User $user, $description){
@@ -585,6 +544,26 @@ class ShippingController extends Controller
 
     public static function saveAddress(Request $request){
         return ShippingService::saveAddress($request);
+    }
+
+    public function saveParcel(Request $request){
+        return ShippingService::saveParcel($request);
+    }
+
+    public function saveItem(Request $request){
+        return ShippingService::saveItem($request);
+    }
+
+    public function getShipment(Request $request){
+        return ShippingService::getShipment($request->id);
+    }
+
+    public function deleteItem(Request $request){
+        return ShippingService::deleteItem($request->id);
+    }
+
+    public function deleteParcel(Request $request){
+        return ShippingService::deleteParcel($request->id);
     }
 
     public function editShipment($data, $description){
