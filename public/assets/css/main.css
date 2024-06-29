@@ -6214,7 +6214,7 @@ textarea.form-control-lg{
     --bs-toast-spacing:24px;
     --bs-toast-max-width:350px;
     --bs-toast-font-size:0.875rem;
-    --bs-toast-color:;
+    --bs-toast-color:red;
     --bs-toast-bg:rgba(var(--bs-body-bg-rgb),0.85);
     --bs-toast-border-width:var(--bs-border-width);
     --bs-toast-border-color:var(--bs-border-color-translucent);
@@ -16092,5 +16092,5 @@ ul{
 }
 
 .parcel-doc-box{
-    box-shadow: 0px 0px 3px 2px #999fad!important; background:#f8f8f8!important;
+    box-shadow: 0px 0px 3px 5px #999fad!important; background:#f8f8f8!important;
 }
