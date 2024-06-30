@@ -23,7 +23,7 @@ class Parcel extends Model
         'updated_at'
     ];
 
-    protected $with = ["items"];
+    // protected $with = ["items"];
 
     protected function metadata(): Attribute
     {
@@ -35,6 +35,14 @@ class Parcel extends Model
 
     public function items()
     {
-        return $this->hasMany(Item::class, "parcel_id");
+        return $this->hasMany(Item::class);
+    }
+
+    public function shipment(){
+        return $this->belongsTo(Shipment::class);
+    }
+
+    public function attachments(){
+        return $this->hasMany(Attachment::class);
     }
 }

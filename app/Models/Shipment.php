@@ -23,7 +23,7 @@ class Shipment extends Model
         'updated_at'
     ];
 
-    protected $with = ["address_from", "address_to", "parcels", "items"];
+    // protected $with = ["address_from", "address_to", "parcels", "items"];
 
     protected function pickupDate(): Attribute
     {
@@ -55,6 +55,10 @@ class Shipment extends Model
 
     public function address(){
         return $this->hasMany(Address::class, );
+    }
+
+    public function attachments(){
+        return $this->hasManyThrough(Attachment::class, Parcel::class);
     }
 
 }
