@@ -17,12 +17,9 @@
                     <!-- Table starts here -->
                     <?php foreach($shipment->parcels as $parcelIndex => $parcel): ?>
                         <div class="parcel-box">
-                            
                             <div class="mb-1 d-flex align-items-center justify-content-between">
                                 <h5 class="m-0">Parcel <?=$parcelIndex + 1?></h5>
-                                
-                                    <button class="btn btn-danger delete-parcel" id="delete-parcel-{{$parcel->id}}" onclick="deleteParcel('{{$parcel->id}}', '{{$parcelIndex}}')" data-parcel="<?=$parcelIndex?>" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
-                                
+                                <button class="btn btn-danger delete-parcel" id="delete-parcel-{{$parcel->id}}" onclick="deleteParcel('{{$parcel->id}}', '{{$parcelIndex}}')" data-parcel="<?=$parcelIndex?>" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
                             </div>
                             <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
                                 <div class="table-responsive">
@@ -37,7 +34,7 @@
                                                 <th>Delete</th>
                                             </tr>
                                         </thead>
-                                        <tbody>   
+                                        <tbody data-id="<?=$parcelIndex?>">   
                                             <?php foreach($parcel->items as $index => $item): ?>
                                                 <tr style="">
                                                     <td class="pt-0 pb-2"><?=$item->name?></td>
@@ -110,7 +107,7 @@
                 
             </div>
         </div>
-        <div id="pickUpBox">
+        <div id="pickUpBox" onclick="selectPickupOption(event)">
             <div class="card w-100">
                 <div class="card-body">
                     <h6 style="color:#1E1E1E66">Select preferred option</h6>
@@ -192,8 +189,6 @@
             
         });
     }
-
-    
     const config = {
         headers: {
             Accept: "application/json",
@@ -202,25 +197,24 @@
             "X-Requested-With": "XMLHttpRequest"
         }
     };
-
     const handleAddParcel = async() => {
         // console.log(parcels);
-        parcels[parcels.length] = {items:[]};
+        let highestId = parcels.reduce((maxId, currentParcel) => Math.max(maxId, currentParcel.id), 0);
+        // Assign the new item a unique ID
+        $id = highestId + 1;
+
+        parcels[parcels.length] = {id: $id, items:[]};
         await updateParcelsUI();
         populateItems()
-        
     }
-
 
     const updateParcelsUI = async () => {
         $("#parcel-container").empty();
-        // console.log(parcels);
         parcels.forEach((parcel, index) => {
             $("#parcel-container").append(`
                 <div class="parcel-box" data-id="${index}">
                     <div class="mb-1 d-flex align-items-center justify-content-between">
                         <h5 class="m-0">Parcel ${index + 1}</h5>
-                        
                         <button class="btn btn-danger delete-parcel" id="delete-parcel-${parcel.id}" onclick="deleteParcel(${parcel.id}, ${index})" data-parcel="${index}" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
                     </div>
                     <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
@@ -236,7 +230,7 @@
                                         <th>Delete</th>
                                     </tr>
                                 </thead>
-                                <tbody>   
+                                <tbody data-id="${parcel.id}">   
                                                     
                                 </tbody>
                             </table>
@@ -270,14 +264,11 @@
                 </div>
             `);
             console.log($("#add-parcel"));
-            
         });
         $("#add-parcel").attr('data-parcel',  parcels.length);
     }
 
     const validateItem = async (action) => {
-        
-
         const validation = runValidation([
             {
                 id:"item-name",
@@ -314,15 +305,11 @@
                 const parcel_index = $('#addItemModal').attr('data-parcel');
                 await handleAddItem(parcel_index);
             }
-            
             if($("#addItemForm").attr("action") === "edit"){
                 await updateItem();
             }
-            
         }
-
     }
-
 
     const handleAddItem = async (parcel_index) => {
         const submitBtn = document.querySelector("#addItem");
@@ -336,9 +323,11 @@
         item.hs_code = $('#item-hs-code').val();
         item.quantity = $('#item-quantity').val();
         item.value = $('#item-value').val();
-        item.currency ="NGN";
+        item.currency = "NGN";
+        let description = $('#item-hs-code').find("option:selected").data("description");
+        item.description = description;
 
-        // await parcels[parcel_index].items.push(item);
+        /////////// await parcels[parcel_index].items.push(item);
         const shipment_id = document.querySelector('#addItemModal').querySelector('#shipment_id').value;
         item.shipment_id = shipment_id;
         if(parcels[parcel_index].items.length > 0){//if there is an exisiting gitem in the parcel
@@ -349,11 +338,9 @@
         }else{//if there is no exisiting item in the parcel
             console.log("saving Parcel", parcels[parcel_index]);
             let totalWeight = 0;
-
             for (const item of parcels[parcel_index].items) {
                 totalWeight += parseFloat(item.weight);
             }
-
             parcels[parcel_index].shipment_id = shipment_id;
             parcels[parcel_index].weight = totalWeight
 
@@ -367,7 +354,6 @@
                 setBtnNotLoading(submitBtn, oldBtnHTML)
             }
         }
-        
     }
 
     const createParcel = async (parcel) => {
@@ -389,9 +375,7 @@
     const saveItem = async (item) => {
         axios.post(url+"/shipping/add-item", item, config)
         .then(async function(response){
-        
             let result = response.data;
-        
             if(result?.status === "success"){
                 shipment = response.data.shipment;
                 parcels = response.data.shipment.parcels;
@@ -410,43 +394,45 @@
     }
 
     const populateItems = async () => {
-        parcels.forEach((parcel, parcelIndex)=>{
-            parcel.items.forEach((item, index)=>{
-                 $(".items-table tbody").eq(parcelIndex).append(`
-                <tr class="">
-                    <td class="pt-0 pb-2">${item.name}</td>
-                    <td class="pt-0 pb-2">${item.quantity}pieces</td>
-                    <td class="pt-0 pb-2">${item.weight}kg</td>
-                    <td class="pt-0 pb-2"><b>₦</b>${item?.value.toLocaleString()}</td>
-                    <td class="pt-0 pb-2">
-                        <a class="edit-item" data-id="${index}" data-parcel="${parcelIndex}" onclick="showEditModal(${parcelIndex}, ${index})" data-action="edit" type="button">
-                            <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
-                        </a>
-                    </td>
-                    <td class="pt-0 pb-2">
-                        <a class="update-item" data-id="${index}" data-parcel="${parcelIndex}"  onclick="deleteItem(event, ${parcelIndex}, ${index})" data-action="delete" type="button">
-                            <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
-                        </a>
-                    </td>
-                </tr>  
-            `);
+        parcels.forEach((parcel, parcelIndex) => {
+            parcel.items.forEach((item, index) => {
+                /*$(".items-table tbody[data-id='" + parcel.id + "']").append(`*/
+                $(".items-table tbody").eq(parcelIndex).append(`
+                    <tr class="">
+                        <td class="pt-0 pb-2">${item.name}</td>
+                        <td class="pt-0 pb-2">${item.quantity}pieces</td>
+                        <td class="pt-0 pb-2">${item.weight}kg</td>
+                        <td class="pt-0 pb-2"><b>₦</b>${item?.value.toLocaleString()}</td>
+                        <td class="pt-0 pb-2">
+                            <a class="edit-item" data-id="${index}" data-parcel="${parcelIndex}" onclick="showEditModal(${parcelIndex}, ${index})" data-action="edit" type="button">
+                                <img src="{{asset('assets/images/icons/material-edit-outline.svg')}}" width="20" />
+                            </a>
+                        </td>
+                        <td class="pt-0 pb-2">
+                            <a class="update-item" data-id="${index}" data-parcel="${parcelIndex}"  onclick="deleteItem(event, ${parcelIndex}, ${index})" data-action="delete" type="button">
+                                <img src="{{asset('assets/images/icons/mdi-light_delete.svg')}}" width="20" />
+                            </a>
+                        </td>
+                    </tr>  
+                `);
             })
         });
-       
     }
 
-    const showEditModal = (parcelIndex, itemIndex) => {
+    const showEditModal = async (parcelIndex, itemIndex) => {
         const modalElement = $('#addItemModal').modal('show');
         $("#addItemForm").attr("action", "edit");
         // modalElement.modal('show');
         modalElement.find('#item-name').val(parcels[parcelIndex].items[itemIndex]?.name);
-        modalElement.find('#item-category').val(parcels[parcelIndex].items[itemIndex]?.category);
-        modalElement.find('#item-sub-category').val(parcels[parcelIndex].items[itemIndex]?.sub_category);
-        modalElement.find('#item-hs-code').val(parcels[parcelIndex].items[itemIndex]?.hs_code);
         modalElement.find('#item-weight').val(parcels[parcelIndex].items[itemIndex]?.weight);
         modalElement.find('#item-quantity').val(parcels[parcelIndex].items[itemIndex]?.quantity);
         modalElement.find('#item-value').val(parcels[parcelIndex].items[itemIndex]?.value);
         modalElement.find('#item-id').val(parcels[parcelIndex].items[itemIndex]?.id);
+        modalElement.find('#item-category').val(parcels[parcelIndex].items[itemIndex]?.category);
+
+        await populateForm($("#addItemForm"), parcels[parcelIndex].items[itemIndex]);
+        modalElement.find('#item-sub-category').val(parcels[parcelIndex].items[itemIndex]?.sub_category);
+        modalElement.find('#item-hs-code').val(parcels[parcelIndex].items[itemIndex]?.hs_code);
     }
 
     const updateItem = () => {
@@ -552,4 +538,21 @@
             submitButton.disabled = false; // Enable button again
         }
     }
+
+    const selectPickupOption = (event) => {
+        const pickUpBox = $("#pickUpBox");
+        const targetLabel = $(event.target).closest('label');
+        if (targetLabel.length) {
+            // Reset all dots-line borders and hide all dots
+            pickUpBox.find("label .dots-line").css("border-color", "#233E8366");
+            pickUpBox.find("label .dots").addClass("d-none");
+            // Highlight the selected option
+            targetLabel.find(".dots-line").css("border-color", "#233E83");
+            targetLabel.find(".dots").removeClass("d-none");
+
+            const hasNonEmptyParcel = parcels.some(parcel => Array.isArray(parcel.items) && parcel.items.length > 0);
+            // Enable the step3 button if there is at least one non-empty parcel
+            $("#step3Btn").prop("disabled", !hasNonEmptyParcel);
+        }
+    };
 </script>
