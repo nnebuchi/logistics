@@ -2,16 +2,15 @@
 namespace App\Services;
 
 use App\Mail\ShippingReportMail;
-use Illuminate\Support\Facades\{Mail, Response};
+use Illuminate\Support\Facades\{Mail, Response, Auth};
 use App\Models\{User, Shipment, Country, Address, Parcel, Item, Attachment};
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Util\Logistics;
-use Inertia\Inertia;
+use App\Util\{Logistics, ResponseFormatter};
+use Carbon\Carbon;
 
 
 class ShippingService
-{
+{   
     public static function reportShippingUpdate($mail_data){
         Mail::to(env("SHIPPING_REPORT_MAIL"))->send(new ShippingReportMail($mail_data));
         // Mail::to([env("SHIPPING_REPORT_MAIL"), env("ADMIN_MAIL")])->send(new ShippingReportMail($mail_data));
@@ -40,18 +39,12 @@ class ShippingService
         $user = User::find(Auth::user()->id);
        
         $countries = Country::all();
-        //  $cc =json_encode($countries, true);
-        //  dd($cc);
 
         $logistics = new Logistics();
-    
-
         $response = $logistics->getChapters();
-        // dd($response);
         $response = json_decode($response);
         $chapters = $response->data;
 
-        
         $states = [
             "from" => $fromStates,
             "to" => $toStates
@@ -63,22 +56,11 @@ class ShippingService
             "to" => $toCities
         ];
 
-        // return Inertia::render('Shipping/Parcel', []);
-        return view('customer.shippings.create-shipping', compact('user', 'shipment', 'countries', 'chapters', 'states', 'cities', 'slug', 'parcels'));
-        
-        // $logistics = new Logistics();
-        // dd($logistics->getChapters());
-        
-        // $user = User::find(Auth::user()->id);
-        // if($user->is_verified):
-        //     $countries = Country::all();
-        //     $logistics = new Logistics();   
-        //     $response = $logistics->getChapters();
-        //     $response = json_decode($response);
-        //     $chapters = $response->data;
-
-        //     return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters'));
-        // endif;
+        return view('customer.shippings.create-shipping', compact(
+            'user', 'shipment', 'countries', 
+            'chapters', 'states', 
+            'cities', 'slug', 'parcels'
+        ));
     }
 
     public static function saveShipment(Request $request){
@@ -178,15 +160,12 @@ class ShippingService
                 $query->where('user_id', Auth::user()->id);
             })
             ->first();
-
-            // dd($newItem);
         }else{
             $newItem = new Item;
             $newItem->parcel_id = sanitize_input($request->parcel_id);
             $newItem->shipment_id = sanitize_input($request->shipment_id);
-            $newItem->description = sanitize_input($request->description);
+            //$newItem->description = sanitize_input($request->description);
         }
-        
         
         $newItem->name = sanitize_input($request->name);
         $newItem->currency = sanitize_input($request->currency);
@@ -195,10 +174,10 @@ class ShippingService
         $newItem->weight = sanitize_input($request->weight);
         $newItem->category = sanitize_input($request->category);
         $newItem->sub_category = sanitize_input($request->sub_category);
-
+        $newItem->hs_code = sanitize_input($request->hs_code);
+        $newItem->description = sanitize_input($request->description);
         $newItem->save();
         
-
         return Response::json([
             'status'    => 'success',
             'item'   => $newItem,
@@ -210,6 +189,39 @@ class ShippingService
 
         
         
+    }
+
+    public static function getUserShipments(Request $request)
+    {
+        $shipments = Shipment::where('user_id', Auth::user()->id)->with('address_from', 'address_to')
+        ->with(['parcels' => function ($query) {
+            $query->with(['items', 'attachments']); 
+        }]);
+        // Filter transactions by period
+        if ($request->has('period')):
+            switch($request->period):
+                case "today":
+                    $shipments = $shipments->whereDate('created_at', Carbon::today())
+                    ->orderByDesc("created_at");
+                break;
+                case "week":
+                    $shipments = $shipments->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->orderByDesc("created_at");
+                break;
+                case "month":
+                    $shipments = $shipments->whereMonth('created_at', Carbon::now()->month)
+                    ->orderByDesc("created_at");
+                break;
+                case "year":
+                    $shipments = $shipments->whereYear('created_at', Carbon::now()->year)
+                    ->orderByDesc("created_at");
+                break;
+            endswitch;
+        else:
+            $shipments = $shipments->orderByDesc("created_at");
+        endif;
+
+        return ResponseFormatter::success("Shipments:", $shipments->get(), 200);
     }
 
     public static function getShipment(string $id){

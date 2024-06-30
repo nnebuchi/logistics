@@ -7,13 +7,15 @@
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping > Create Shipment</h5>
                     </div>
                     
-                    @include('customer.shippings.components.step-indicator')
+                    @include('customer.shippings.components.step-indicator', ['step' => 2])
                     
                     {{-- @include('customer.shippings.components.create.sender')
                     @include('customer.shippings.components.create.receiver')
                     @include('customer.shippings.components.create.add-item')
                     @include('customer.shippings.components.create.add-carrier')
                     @include('customer.shippings.components.create.checkout') --}}
+
+
                     @include('customer.modals.edit-item-modal')
                     @include('customer.shippings.components.edit.sender')
                     @include('customer.shippings.components.edit.receiver')
@@ -114,9 +116,7 @@
         }
 
         $(".next").on("click", async function(event){
-            
             event.preventDefault();
-           
             let type = $(this).data("type");
             var currentStep = $(this).closest(".step");
             var nextStep = currentStep.next(".step");
@@ -193,26 +193,23 @@
                 axios.post("{{route('shipment.save-address')}}", address_data, config)
                 .then(function(response){
                     setBtnNotLoading(event.target, innerHTML)
-                    
                     let result = response.data;
-                   
                     if(result?.status === "success"){
                         currentStep.hide();
                         nextStep.show();
                         step = step + 1;
+                        if(type == "sender"){
+                            $(".progress").removeClass("bg-primary");
+                            $(".progress").eq(2).addClass("bg-primary");
+                        }else if(type == "receiver"){
+                            $(".progress").removeClass("bg-primary");
+                            $(".progress").eq(3).addClass("bg-primary");
+                        }
                     }
-                   
                     // formData[type] = results;
                     // console.log(results);
                     // currentStep.hide();
                     // nextStep.show();
-                    // if(type == "sender"){
-                    //     $(".progress").removeClass("bg-primary");
-                    //     $(".progress").eq(1).addClass("bg-primary");
-                    // }else if(type == "receiver"){
-                    //     $(".progress").removeClass("bg-primary");
-                    //     $(".progress").eq(2).addClass("bg-primary");
-                    // }
                 }).catch(function(error){
                     setBtnNotLoading(event.target, innerHTML)
                     console.log(error);
@@ -249,17 +246,16 @@
             var prevStep = currentStep.prev(".step");
             currentStep.hide();
             prevStep.show();
-
             let type = $(this).data("type");
             if(type == "receiver"){
                 $(".progress").removeClass("bg-primary");
-                $(".progress").eq(0).addClass("bg-primary");
+                $(".progress").eq(1).addClass("bg-primary");
             }else if(type == "shipping"){
                 $(".progress").removeClass("bg-primary");
-                $(".progress").eq(1).addClass("bg-primary");
+                $(".progress").eq(2).addClass("bg-primary");
             }else if(type == "carrier"){
                 $(".progress").removeClass("bg-primary");
-                $(".progress").eq(2).addClass("bg-primary");
+                $(".progress").eq(3).addClass("bg-primary");
             }
         });
 
@@ -274,11 +270,10 @@
             $(this).val(sanitizedValue);
         });
 
-        $("#add-parcel").on("click", function(event){
+        /*$("#add-parcel").on("click", function(event){
             event.preventDefault();
             $parcel = $(this).data("parcel");
-        });
-
+        });*/
 
         function renderTableData(item, index, table){
             $(".items-table tbody").eq(table).append(`
@@ -301,7 +296,7 @@
             `);
         }
 
-        $(document).on("click", ".update-item", function(event){
+        /*$(document).on("click", ".update-item", function(event){
             event.preventDefault();
             const itemId = $(this).data("id");
             const action = $(this).data("action");
@@ -356,14 +351,14 @@
                     $("#step3Btn").prop("disabled", !(formData.items.length != 0));
                 break;
             }
-        });
+        });*/
 
         $(document).on("click", ".openAddItemModal", function() {
             let $parcel = $(this).data("parcel");
             $("#addItem").data("parcel", $parcel);
             $("#addItemModal").attr('data-parcel', $(this).attr('data-parcel'))
             $("#addItemModal").modal("show");
-             $("#addItemForm").attr("action", "add");
+            $("#addItemForm").attr("action", "add");
         });
         $(document).on("click", "#addItemModal .close", function(){
             $("#addItemModal").modal("hide");
@@ -372,14 +367,14 @@
             $("#addItemModal").modal("hide");
         });
 
-        $("#pickUpBox label").click(function() {
+        /*$("#pickUpBox label").click(function() {
             $("#pickUpBox label > div").find(".dots-line").css("border-color", "#233E8366");
             $(this).children("div").find(".dots-line").css("border-color", "#233E83");
             $("#pickUpBox label .dots").addClass("d-none");
             $(this).find(".dots").removeClass("d-none");
             
             $("#step3Btn").prop("disabled", !(formData.items.length != 0));
-        });
+        });*/
 
         $(document).on("click", "#chooseCarrier .radio-group", function(){
             // Remove the 'selected' class from all radio items
