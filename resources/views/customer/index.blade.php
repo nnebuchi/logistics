@@ -163,7 +163,8 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-
+    const user_id = "<?=$user->id?>";
+    
     function fetchWallet(){
         const config = {
             headers: {
@@ -173,7 +174,9 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
+
+        
+        axios.get(`${baseUrl}/user/${user_id}/wallet`, config)
         .then((res) => {
             let results = res.data.results;
             $(".balance").eq(0).text("₦"+parseInt(results?.wallet.balance).toLocaleString());
@@ -199,7 +202,7 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/user/${<?=$user->id?>}/shipments`, config)
+        axios.get(`${baseUrl}/user/${user_id}/shipments`, config)
         .then((res) => {
             let shipments = res.data.results.slice(0, 5);
             renderData(shipments);

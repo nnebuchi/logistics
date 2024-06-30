@@ -20,7 +20,6 @@ use App\Models\{
 use App\Util\ResponseFormatter;
 use App\Util\Logistics;
 use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
 use Exception;
 use App\Models\WebhookLog;
 use App\Notifications\SendInvoice;
@@ -104,41 +103,7 @@ class ShippingController extends Controller
 
     public function getUserShipments(Request $request)
     {
-        $user = User::find(Auth::user()->id);
-
-        // Filter transactions by period
-        if ($request->has('period')):
-            switch($request->period):
-                case "today":
-                    $shipments = $user->shipments()
-                    ->whereDate('created_at', Carbon::today())
-                    ->orderByDesc("created_at")
-                    ->get();
-                break;
-                case "week":
-                    $shipments = $user->shipments()
-                    ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-                    ->orderByDesc("created_at")
-                    ->get();
-                break;
-                case "month":
-                    $shipments = $user->shipments()
-                    ->whereMonth('created_at', Carbon::now()->month)
-                    ->orderByDesc("created_at")
-                    ->get();
-                break;
-                case "year":
-                    $shipments = $user->shipments()
-                    ->whereYear('created_at', Carbon::now()->year)
-                    ->orderByDesc("created_at")
-                    ->get();
-                break;
-            endswitch;
-        else:
-            $shipments = $user->shipments()->orderByDesc("created_at")->get();
-        endif;
-
-        return ResponseFormatter::success("Shipments:", $shipments, 200);
+       return ShippingService::getUserShipments($request);
     }
 
     public function newShipment(){

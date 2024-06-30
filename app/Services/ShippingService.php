@@ -2,16 +2,15 @@
 namespace App\Services;
 
 use App\Mail\ShippingReportMail;
-use Illuminate\Support\Facades\{Mail, Response};
+use Illuminate\Support\Facades\{Mail, Response, Auth};
 use App\Models\{User, Shipment, Country, Address, Parcel, Item, Attachment};
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Util\Logistics;
-use Inertia\Inertia;
+use App\Util\{Logistics, ResponseFormatter};
+use Carbon\Carbon;
 
 
 class ShippingService
-{
+{   
     public static function reportShippingUpdate($mail_data){
         Mail::to(env("SHIPPING_REPORT_MAIL"))->send(new ShippingReportMail($mail_data));
         // Mail::to([env("SHIPPING_REPORT_MAIL"), env("ADMIN_MAIL")])->send(new ShippingReportMail($mail_data));
@@ -210,6 +209,39 @@ class ShippingService
 
         
         
+    }
+
+    public static function getUserShipments(Request $request)
+    {
+        $shipments = Shipment::where('user_id', Auth::user()->id)->with('address_from', 'address_to')
+        ->with(['parcels' => function ($query) {
+            $query->with(['items', 'attachments']); 
+        }]);
+        // Filter transactions by period
+        if ($request->has('period')):
+            switch($request->period):
+                case "today":
+                    $shipments = $shipments->whereDate('created_at', Carbon::today())
+                    ->orderByDesc("created_at");
+                break;
+                case "week":
+                    $shipments = $shipments->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->orderByDesc("created_at");
+                break;
+                case "month":
+                    $shipments = $shipments->whereMonth('created_at', Carbon::now()->month)
+                    ->orderByDesc("created_at");
+                break;
+                case "year":
+                    $shipments = $shipments->whereYear('created_at', Carbon::now()->year)
+                    ->orderByDesc("created_at");
+                break;
+            endswitch;
+        else:
+            $shipments = $shipments->orderByDesc("created_at");
+        endif;
+
+        return ResponseFormatter::success("Shipments:", $shipments->get(), 200);
     }
 
     public static function getShipment(string $id){
