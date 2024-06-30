@@ -21,8 +21,11 @@ class ShippingService
     {   
         
         $slug = $request->slug;
-        $shipment = Shipment::with('address_from', 'address_to', 'items', 'parcels')->where("slug", $slug)->first();
-
+        $shipment = Shipment::with('address_from', 'address_to')
+        ->with(['parcels' => function ($query) {
+            $query->with(['items', 'attachments']); 
+        }])->where("slug", $slug)->first();
+        // dd($shipment);
        
         $fromStates = $shipment?->address_from?->nation()?->first()->states;
         
@@ -90,8 +93,12 @@ class ShippingService
 
     public static function saveAddress(Request $request){
         // dd(Auth::user()->id);
-        $shipment = Shipment::where(['slug'=>sanitize_input($request->slug), 'user_id'=>Auth::user()->id])->first();
-        // dd($shipment);
+        $shipment = Shipment::where(['slug'=>sanitize_input($request->slug), 'user_id'=>Auth::user()->id])
+       ->with('address_from', 'address_to')
+        ->with(['parcels' => function ($query) {
+            $query->with(['items', 'attachments']); 
+        }])
+        ->first();
 
         if($shipment){
             $type_match = [
@@ -156,7 +163,10 @@ class ShippingService
         return Response::json([
             'status'    => 'success',
             'parcel'   => $parcel,
-            'shipment' => Shipment::where(['id'=>$parcel->shipment_id, 'user_id'=>Auth::user()->id])->with('parcels.items')->first(),
+            'shipment' => Shipment::where(['id'=>$parcel->shipment_id, 'user_id'=>Auth::user()->id])->with('address_from', 'address_to')
+            ->with(['parcels' => function ($query) {
+                $query->with(['items', 'attachments']); 
+            }])->first(),
         ], 201);
     }
 
@@ -192,15 +202,23 @@ class ShippingService
         return Response::json([
             'status'    => 'success',
             'item'   => $newItem,
-            'shipment' => Shipment::where(['id'=>$newItem->shipment_id, 'user_id'=>Auth::user()->id])->with('parcels.items')->first(),
+            'shipment' => Shipment::where(['id'=>$newItem->shipment_id, 'user_id'=>Auth::user()->id])->with('address_from', 'address_to')
+            ->with(['parcels' => function ($query) {
+                $query->with(['items', 'attachments']); 
+            }])->first(),
         ], 201);
+
+        
         
     }
 
     public static function getShipment(string $id){
         return Response::json([
             'status'    => 'success',
-            'shipment'   => Shipment::where(['id'=>$id, 'user_id'=>Auth::user()->id])->with('parcels.items')->first(),
+            'shipment'   => Shipment::where(['id'=>$id, 'user_id'=>Auth::user()->id])->with('address_from', 'address_to')
+            ->with(['parcels' => function ($query) {
+                $query->with(['items', 'attachments']); 
+            }])->first(),
         ], 200);
     }
 
@@ -210,7 +228,7 @@ class ShippingService
             $query->where('user_id', Auth::user()->id);
         })->first();
 
-        $other_items_count = Item::where('parcel_id', $item->id)->count();
+        $other_items_count = Item::where('parcel_id', $item->parcel->id)->count();
 
         if($other_items_count == 0){
            return self::deleteParcel($item->parcel->id);
@@ -236,7 +254,9 @@ class ShippingService
         
         $files = $request->file("attachments");
         foreach ($files as $file) {
-            $url = cloudinary()->upload($file->getRealPath())->getSecurePath();
+            $url = cloudinary()->upload($file->getRealPath())->getPath();
+            
+            // ->getSecurePath();
             $attachment = new Attachment();
             $attachment->file = $url;
             $attachment->parcel_id = sanitize_input($request->parcel_id);
@@ -246,7 +266,10 @@ class ShippingService
         return Response::json([
             'status'    => 'success',
             'message'   => 'file uploaded',
-            'shipment' => $attachment->parcel->shipment()->first(),
+            'shipment' => $attachment->parcel->shipment()->with('address_from', 'address_to')
+            ->with(['parcels' => function ($query) {
+                $query->with(['items', 'attachments']); 
+            }])->first(),
         ], 200);
     }
 }

@@ -71,8 +71,21 @@
                                     action="" method="POST" enctype="multipart/form-data">
                                         <h5 class="m-0 mb-1">Upload Attachments</h5> <hr>
                                         <div class="row px-1 justify-content-between">
+                                            <div class="col-12 mb-3 d-flex justify-content-left gap-1 attached-files">
+                                                @foreach($parcel->attachments as $index=>$attachment)
+                                                <a href="{{$attachment->file}}" target="_blank" class="attachment-holder" style="height: 60px; width: 60px; position: relative;">
+                                                    <img src="{{asset('assets/images/icons/file.png')}}" alt="" height="50" class="attachment-file">
+                                                    <div class="text-center doc-overlay">
+                                                        <div class="doc-download"><i class="fa fa-download"></i></div>
+                                                        <h6 class="doc-txt">File {{$index + 1}}</h6>
+                                                        <h6 class="doc-txt">{{substr($attachment->file, -3)}}</h6>
+                                                    </div>
+                                                </a>
+                                                @endforeach
+                                                
+                                            </div>
                                             <div class="col-lg-5 form-group rounded p-3 parcel-doc-box" >
-                                                <label for="">Proof of Payments <br> <small class="text-danger">MMultiple files allowed PNG, JPG, PDF</small></label>
+                                                <label for="">Proof of Payments <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF</small></label>
                                                 <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" id="pop">
                                                 <div class="text-center pt-2">
                                                     <button type="button" parcel-id="{{$parcel->id}}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'proof_of_payments', 'pop')">Submit</button>
@@ -88,11 +101,6 @@
 
                                                 </div>
                                             </div>
-                                        </div>
-                                        
-                                        <span class="document-count"> </span>
-                                        <div class="mt-1 document-preview">
-                                            
                                         </div>
                                     </form>
                                 </div>
@@ -248,24 +256,32 @@
                             </button>
                         </div>
                         <div class="p-3 bg-white">
-                            <form class="proof-of-purchase-form" data-parcel="${index}" 
-                            action="" method="POST" enctype="multipart/form-data">
-                                <h5 class="m-0 mb-1">Upload Proof of Purchase</h5>
-                                <div class="mt-2 d-flex align-items-center">
-                                    <div class="w-10" style="border:2px solid #FCE4C2F7">
-                                        <input type="text" name="document" placeholder="Title" class="custom-input rounded-0" />
-                                    </div>
-                                    <label for="document-${index}" type="button" class="m-0 ml-2 rounded-circle d-flex align-items-center justify-content-center" style="background-color:#FCE4C2F7;height:50px;width:50px">
-                                        <img src="{{asset('assets/images/icons/cloud-upload.svg')}}" width="25" >
-                                        <input type="file" id="document-${index}" data-parcel="${index}" data-count="0" class="d-none document-file" />
-                                    </label>
+                                    <form class="proof-of-purchase-form" data-parcel="${index}" 
+                                    action="" method="POST" enctype="multipart/form-data">
+                                        <h5 class="m-0 mb-1">Upload Attachments</h5> <hr>
+                                        <div class="row px-1 justify-content-between">
+                                            <div class="col-12 mb-3 d-flex justify-content-left gap-1 attached-files">     
+                                            </div>
+                                            <div class="col-lg-5 form-group rounded p-3 parcel-doc-box" >
+                                                <label for="">Proof of Payments <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF</small></label>
+                                                <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" id="pop">
+                                                <div class="text-center pt-2">
+                                                    <button type="button" parcel-id="${parcel.id}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'proof_of_payments', 'pop')">Submit</button>
+
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="col-lg-5 form-group rounded p-3 parcel-doc-box">
+                                                <label for="">Rec Docs <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF </small></label>
+                                                <input type="file" class="form-contro custom-input rounded-0"multiple accept="image/jpg,image/png,application/pdf" id="rec-doc">
+                                                <div class="text-center pt-2">
+                                                    <button type="button" parcel-id="${parcel.id}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'rec_docs', 'rec-doc')">Submit</button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
-                                <span class="document-count"> </span>
-                                <div class="mt-1 document-preview">
-                                    
-                                </div>
-                            </form>
-                        </div>
                     </div>
                 </div>
             `);
@@ -431,8 +447,29 @@
                 </tr>  
             `);
             })
+            populateAttachments(parcel);
         });
        
+    }
+
+    const populateAttachments = (parcel) => {
+        let attachments = ``;
+        parcel?.attachments?.forEach((attachment, index)=>{
+            $("#parcel-container").find('.attached-files').append(`
+            <a href="${attachment.file}" target="_blank" class="attachment-holder" style="height: 60px; width: 60px; position: relative;">
+                <img src="${url}/assets/images/icons/file.png" alt="" height="50" class="attachment-file">
+                <div class="text-center doc-overlay">
+                    <div class="doc-download"><i class="fa fa-download"></i></div>
+                    <h6 class="doc-txt">File ${index + 1}}</h6>
+                    <h6 class="doc-txt">${attachment.file.slice(-3)}</h6>
+                </div>
+            </a>`);
+            
+        })
+        // console.log(attachments);
+        // $("#parcel-container")
+        // $("#parcel-container").querySelector('.attached-files').innerHTML = attachments;
+         
     }
 
     const showEditModal = (parcelIndex, itemIndex) => {
@@ -543,7 +580,14 @@
             });
 
             setBtnNotLoading(clickedEle, oldBtnHTML)
-            console.log(response.data); 
+            // console.log(response.data); 
+            if(response.data.status === 'success'){
+                shipment = await response.data.shipment;
+                parcels = await response.data.shipment.parcels;
+                await updateParcelsUI()
+                populateItems()
+                // populateAttachments()
+            }
 
             // Optionally clear the form or display a success message
         } catch (error) {
