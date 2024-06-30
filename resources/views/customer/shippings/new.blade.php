@@ -7,7 +7,7 @@
                         <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping > Create Shipment</h5>
                     </div>
                     
-                    @include('customer.shippings.components.step-indicator')
+                    @include('customer.shippings.components.step-indicator', ['step' => 1])
                     @include('customer.shippings.components.create.title')
                 </div>
             </div>
@@ -19,6 +19,5 @@
 <script src="{{asset('assets/js/slim.min.js')}}"></script>
 <script src="{{asset('assets/js/popper.min.js')}}"></script>
 <script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
-
 
 @include("customer.layouts.footer")

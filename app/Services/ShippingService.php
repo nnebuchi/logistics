@@ -39,18 +39,12 @@ class ShippingService
         $user = User::find(Auth::user()->id);
        
         $countries = Country::all();
-        //  $cc =json_encode($countries, true);
-        //  dd($cc);
 
         $logistics = new Logistics();
-    
-
         $response = $logistics->getChapters();
-        // dd($response);
         $response = json_decode($response);
         $chapters = $response->data;
 
-        
         $states = [
             "from" => $fromStates,
             "to" => $toStates
@@ -62,22 +56,11 @@ class ShippingService
             "to" => $toCities
         ];
 
-        // return Inertia::render('Shipping/Parcel', []);
-        return view('customer.shippings.create-shipping', compact('user', 'shipment', 'countries', 'chapters', 'states', 'cities', 'slug', 'parcels'));
-        
-        // $logistics = new Logistics();
-        // dd($logistics->getChapters());
-        
-        // $user = User::find(Auth::user()->id);
-        // if($user->is_verified):
-        //     $countries = Country::all();
-        //     $logistics = new Logistics();   
-        //     $response = $logistics->getChapters();
-        //     $response = json_decode($response);
-        //     $chapters = $response->data;
-
-        //     return view('customer.shippings.create-shipping', compact('user', 'countries', 'chapters'));
-        // endif;
+        return view('customer.shippings.create-shipping', compact(
+            'user', 'shipment', 'countries', 
+            'chapters', 'states', 
+            'cities', 'slug', 'parcels'
+        ));
     }
 
     public static function saveShipment(Request $request){
@@ -177,15 +160,12 @@ class ShippingService
                 $query->where('user_id', Auth::user()->id);
             })
             ->first();
-
-            // dd($newItem);
         }else{
             $newItem = new Item;
             $newItem->parcel_id = sanitize_input($request->parcel_id);
             $newItem->shipment_id = sanitize_input($request->shipment_id);
-            $newItem->description = sanitize_input($request->description);
+            //$newItem->description = sanitize_input($request->description);
         }
-        
         
         $newItem->name = sanitize_input($request->name);
         $newItem->currency = sanitize_input($request->currency);
@@ -194,10 +174,10 @@ class ShippingService
         $newItem->weight = sanitize_input($request->weight);
         $newItem->category = sanitize_input($request->category);
         $newItem->sub_category = sanitize_input($request->sub_category);
-
+        $newItem->hs_code = sanitize_input($request->hs_code);
+        $newItem->description = sanitize_input($request->description);
         $newItem->save();
         
-
         return Response::json([
             'status'    => 'success',
             'item'   => $newItem,

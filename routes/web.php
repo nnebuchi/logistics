@@ -84,7 +84,6 @@ Route::group([
             Route::get('/list', [ShippingController::class, 'showShippings'])->name('shippings');
             Route::get('/{slug}', [ShippingController::class, 'showShippingForm'])->name('edit-shipment');
             Route::post('/upload-docs', [ShippingController::class, 'uploadParcelDocument'])->name('upload-parcel-docs');
-            
         });
         
         Route::post('/address', [ShippingController::class, 'createAddress']);
