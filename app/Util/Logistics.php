@@ -32,20 +32,6 @@ class Logistics
 
     public function createAddress($payload)
     {
-        /*$response = Http::acceptJson()
-            ->withToken($this->secretKey)
-                ->post($this->baseUrl.'addresses', [
-                    'city' => $payload["city"],
-                    'state' => $payload["state"],
-                    'country' => $payload["country"],
-                    'email' => $payload["email"],
-                    'first_name' => $payload["firstname"],
-                    'last_name' => $payload["lastname"],
-                    'line1' => $payload["line1"],
-                    'phone' => $payload["phone"],
-                    'zip' => $payload["zip"]
-                ]);
-        return $response;*/
         $response = $this->client->request('POST', $this->baseUrl.'addresses', [
             'http_errors' => false,
             'headers' => [

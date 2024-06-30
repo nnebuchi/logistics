@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Util\{Logistics, ResponseFormatter};
 use Carbon\Carbon;
 
-
 class ShippingService
 {   
     public static function reportShippingUpdate($mail_data){
@@ -104,20 +103,16 @@ class ShippingService
             $address->line1 = sanitize_input($request->line1);
             if($request->type == 'sender'){
                 $address->type = 'from';
-            }
-            if($request->type == 'receiver'){
+            }elseif($request->type == 'receiver'){
                 $address->type = 'to';
             }
-            // $address->type =   ? sanitize_input($request->type);
             $address->shipment_id = $shipment->id;
-
             $address->save(); 
 
             return Response::json([
                 'status'    => 'success',
                 'message'   => 'Address saved',
             ], 200);
- 
         }
 
         return Response::json([
@@ -125,8 +120,6 @@ class ShippingService
             'error'   => 'Shipment Not Found',
         ], 404);
     }
-
-    
 
     public static function saveParcel(Request $request){
         // dd($request)->all();
@@ -263,11 +256,9 @@ class ShippingService
     }
 
     public static function uploadParcelDocument(Request $request) {
-        
         $files = $request->file("attachments");
         foreach ($files as $file) {
             $url = cloudinary()->upload($file->getRealPath())->getPath();
-            
             // ->getSecurePath();
             $attachment = new Attachment();
             $attachment->file = $url;
@@ -282,6 +273,86 @@ class ShippingService
             ->with(['parcels' => function ($query) {
                 $query->with(['items', 'attachments']); 
             }])->first(),
+        ], 200);
+    }
+
+    public static function getCarriers(Request $request, string $id){
+       $shipment = Shipment::with('address_from', 'address_to')
+       ->with(['parcels' => function ($query) {
+           $query->with(['items', 'attachments']); 
+       }])->where("id", $id)->first();
+
+       $logistics = new Logistics();
+
+       $address_from = $logistics->createAddress($shipment->address_from);
+       $address_from = json_decode($address_from, true);
+
+       $address_to = $logistics->createAddress($shipment->address_to);
+       $address_to = json_decode($address_to, true);
+
+        $shipmentArray = $shipment->toArray();
+        $parcels = [];
+        $keys1 = ['id', 'shipment_id', 'external_parcel_id', 'weight', 'weight_unit', 'metadata', 'attachments'];
+        $keys2 = ['id', 'category', 'parcel_id', 'sub_category', 'shipment_id']; // Assuming you want to remove keys from items as well
+        $attachments = [];
+        foreach ($shipmentArray['parcels'] as &$parcel) :
+            $parcel["docs"] = [];
+            // Remove keys from parcel array
+            foreach ($keys1 as $key):
+                if (array_key_exists($key, $parcel)) {
+                    unset($parcel[$key]);
+                }
+            endforeach;
+            $parcel["description"] = "white coloured wrapped with a cellophane paper";
+            // Remove keys from items within each parcel
+            foreach ($parcel['items'] as &$item) :
+                foreach ($keys2 as $key) {
+                    if (array_key_exists($key, $item)) {
+                        unset($item[$key]);
+                    }
+                }
+                // Convert value to integer
+                $item['value'] = (int) $item['value'];
+                $item['weight'] = (float) $item['weight'];
+                $item['type'] = "parcel";
+            endforeach;
+
+            $parcell = $logistics->createParcel([
+                "description" => $parcel["description"],
+                "items" => $parcel["items"],
+                "docs" => $parcel["docs"]
+            ]);
+            $parcell = json_decode($parcell);
+            $parcell = $parcell->data;
+            array_push($parcels, $parcell);
+        endforeach;
+
+        $newShipment = $logistics->createShipment([
+            "parcels" => array_column($parcels, "parcel_id"),
+            'address_from' => $address_from['data']["address_id"],
+            'address_to' => $address_to['data']["address_id"]
+        ]);
+        $newShipment = json_decode($newShipment);
+        $newShipment = $newShipment->data;
+        
+        //get Rates for Shipment
+        $rates = $logistics->getRateForShipment([
+            "shipment_id" => $newShipment->shipment_id,
+            'address_from' => $address_from['data']["address_id"],
+            'address_to' => $address_to['data']["address_id"]
+        ]);
+        $rates = json_decode($rates);
+        $rates = $rates->data;
+
+        $data = [
+            "parcels" => $parcels,
+            "rates" => $rates
+        ];
+
+        return Response::json([
+            'status' => 'success',
+            'message' => 'Carriers successfully fetched',
+            'results' => $data
         ], 200);
     }
 }

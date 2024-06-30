@@ -230,7 +230,7 @@
         }else{
             shipments.forEach(function(shipment, index){
                 $(".shipments-table tbody").append(`
-                    <tr style="cursor:pointer" data-status="${shipment.status}" data-id="${shipment.external_shipment_id}">
+                    <tr style="cursor:pointer" data-status="${shipment.status}" data-id="${shipment.slug}">
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.title}</td>
                         <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>

@@ -242,17 +242,6 @@ class ShippingController extends Controller
                 $shipment->status = $pickup->data->status;
                 $shipment->pickup_date = $data->pickup_date;
                 $shipment->save();
-
-                /*if($data->extras):
-                    $notificationData = [
-                        "subject" => "Customer Invoice & Waybill",
-                        "title" => "Ziga Afrika Invoice & Waybill",
-                        "message" => "Customer invoice and waybill details",
-                        "attachment1" => $data->extras->commercial_invoice_url,
-                        "attachment2" => $data->extras->shipping_label_url
-                    ];
-                    $user->notify(new SendInvoice($notificationData));
-                endif;*/
             endif;
         endif;
 
@@ -277,8 +266,6 @@ class ShippingController extends Controller
     }
 
     public function createShipment(Request $request){
-        
-
         /*$payload = [
             "address_from"=> "AD-9GXPHFVGFKY1PPXJ",
             "address_to"=> "AD-8N1HQ62VRE7IB9XH",
@@ -598,6 +585,10 @@ class ShippingController extends Controller
         $to->save();
 
         return ["parcels" => $parcels, "shipment" => $newShipment];
+    }
+
+    public function getCarriers(Request $request, $id){
+        return ShippingService::getCarriers($request, $id);
     }
 
 
