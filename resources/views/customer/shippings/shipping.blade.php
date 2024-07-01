@@ -198,6 +198,7 @@
 
     const per_page = 10;
     let current_page = 1;
+    let user_id = "<?=$user->id?>";
     let data = [];
     function getShipments(){
         const config = {
@@ -208,7 +209,7 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/user/${<?=$user->id?>}/shipments`, config)
+        axios.get(`${baseUrl}/user/${user_id}/shipments`, config)
         .then((res) => {
             data = res.data.results;
             renderData();
@@ -230,7 +231,7 @@
         }else{
             shipments.forEach(function(shipment, index){
                 $(".shipments-table tbody").append(`
-                    <tr style="cursor:pointer" data-status="${shipment.status}" data-id="${shipment.external_shipment_id}">
+                    <tr style="cursor:pointer" data-status="${shipment.status}" data-id="${shipment.slug}">
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.title}</td>
                         <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>

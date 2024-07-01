@@ -85,9 +85,8 @@
     const updateParcelsUI = async () => {
         $("#parcel-container").empty();
         parcels.forEach((parcel, index) => {
-            let html =``;
-            if(parcel?.items.length > 0){
-                html = `<div class="parcel-box" data-id="${index}" id="parcel-${parcel.id}">
+            $("#parcel-container").append(`
+                <div class="parcel-box" data-id="${index}" id="parcel-${parcel.id}">
                     <div class="mb-1 d-flex align-items-center justify-content-between">
                         <h5 class="m-0">Parcel ${index + 1}</h5>
                         <button class="btn btn-danger delete-parcel" id="delete-parcel-${parcel.id}" onclick="deleteParcel(${parcel.id}, ${index})" data-parcel="${index}" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
@@ -125,7 +124,7 @@
                                             </div>
                                             <div class="col-lg-5 form-group rounded p-3 parcel-doc-box" >
                                                 <label for="">Proof of Payments <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF</small></label>
-                                                <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" parcel-input-no="pop">
+                                                <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" id="pop">
                                                 <div class="text-center pt-2">
                                                     <button type="button" parcel-id="${parcel.id}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'proof_of_payments', 'pop')">Submit</button>
 
@@ -134,7 +133,7 @@
                                             </div>
                                             <div class="col-lg-5 form-group rounded p-3 parcel-doc-box">
                                                 <label for="">Rec Docs <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF </small></label>
-                                                <input type="file" class="form-contro custom-input rounded-0"multiple accept="image/jpg,image/png,application/pdf" parcel-input-no="rec-doc">
+                                                <input type="file" class="form-contro custom-input rounded-0"multiple accept="image/jpg,image/png,application/pdf" id="rec-doc">
                                                 <div class="text-center pt-2">
                                                     <button type="button" parcel-id="${parcel.id}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'rec_docs', 'rec-doc')">Submit</button>
 
@@ -144,42 +143,8 @@
                                     </form>
                                 </div>
                     </div>
-                </div>`;
-            }else{
-                html = ` <div class="parcel-box" data-id="${index}" id="parcel-${parcel.id}">
-                    <div class="mb-1 d-flex align-items-center justify-content-between">
-                        <h5 class="m-0">Parcel ${index + 1}</h5>
-                        <button class="btn btn-danger delete-parcel" id="delete-parcel-${parcel.id}" onclick="deleteParcel(${parcel.id}, ${index})" data-parcel="${index}" type="button"><i class="fa fa-close"></i> Delete Parcel</button>
-                    </div>
-                    <div class="mb-2 p-2" style="background-color:#E9EFFD;border-radius:10px;">
-                        <div class="table-responsive">
-                            <table data-id="0" class="mb-0 items-table table table-borderless text-nowrap align-middle">
-                                <thead class="text-dark fs-3">
-                                    <tr>
-                                        <th>Items</th>
-                                        <th>Quantity</th>
-                                        <th>Weight</th>
-                                        <th>Value</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                </thead>
-                                <tbody data-id="${parcel.id}">   
-                                                    
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-center p-3">
-                            <button type="button" data-parcel="${index}"
-                            class="btn px-4 openAddItemModal" style="background-color:#FCE4C2F7;">
-                            + Add Item
-                            </button>
-                        </div>
-                       
-                    </div>
-                </div>`;
-            }
-            $("#parcel-container").append(html);
+                </div>
+            `);
             console.log($("#add-parcel"));
         });
         
@@ -453,15 +418,14 @@
     }
 
     const uploadParcelAttachment = async (event, type, input_id) => {
-        console.log('input id: ', input_id);
         const clickedEle = event.target;
         const oldBtnHTML = clickedEle.innerHTML;
         setBtnLoading(clickedEle);
         const formData = new FormData();
         formData.append('parcel_id', clickedEle.getAttribute('parcel-id'));
         formData.append('type', type);
-        console.log( document.querySelector(`#parcel-${clickedEle.getAttribute('parcel-id')}`));
-        const selectedFiles = document.querySelector(`#parcel-${clickedEle.getAttribute('parcel-id')}`).querySelector(`[parcel-input-no="${input_id}"]`).files;
+        
+        const selectedFiles = document.getElementById(`${input_id}`).files;
         for (const file of selectedFiles) {
             formData.append('attachments[]', file); // Add each file separately
         }
@@ -797,14 +761,12 @@
             event.preventDefault();
             let url = $(this).data("url");
             let btn = $(this);
-            // oldBtnHTML = btn.html
-            // setBtnLoading(btn)
-            btn.html(`<i class="fa fa-spin fa-spinner"></i>`);
+            btn.html(`<img src="/assets/images/loader.gif" id="loader-gif">`);
             btn.attr("disabled", true);
             let payload = {
                 total: formData.total,
                 rate_id: selectedCarrier.rate_id,
-                shipment_id: shipment.id
+                shipment_id: formData.shipment.shipment_id
             }
             $('#checkout .message').text('');
             // Append loader immediately
@@ -819,13 +781,9 @@
                 };
                 axios.post(url, payload, config)
                 .then(function(response){
-                    console.log(response);
-                    if(response?.data?.status === 'success'){
-                        window.location.replace("{{route('shippings')}}") 
-                    }
-                    // let message = response.data.message;
-                    // $("#checkout .message").css("color", "green").text(message);
-                    // btn.attr("disabled", true).text("Payment Successful...");
+                    let message = response.data.message;
+                    $("#checkout .message").css("color", "green").text(message);
+                    btn.attr("disabled", true).text("Payment Successful...");
                 })
                 .catch(function(error){
                     let errors = error.response.data.error;

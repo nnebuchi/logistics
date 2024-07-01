@@ -35,18 +35,6 @@ class ShippingController extends Controller
         $this->logistics = $logistics;
     }
 
-    private function generateReference($id)
-    {
-        $token = "";
-        $codeAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $codeAlphabet .= 'abcdefghijklmnopqrstuvwxyz';
-        $codeAlphabet .= '0123456789';
-        $max = strlen($codeAlphabet) - 1;
-        for($i=0; $i<14; $i++):
-            $token .= $codeAlphabet[mt_rand(0, $max)]; 
-        endfor; 
-        return $id.strtolower($token);
-    }
 
     public function showShippings()
     {
@@ -198,65 +186,21 @@ class ShippingController extends Controller
     }
 
     public function makePayment(Request $request)
-    {
-        
-        $user = User::find(Auth::user()->id);
-        $wallet = $user->wallet;
-        if($wallet->balance <= $request->total):
-            return ResponseFormatter::success("Insufficient wallet balance...", null, 400);
+    {   
+        $validator = Validator::make($request->all(), [
+            'rate_id' => 'required|string',
+            'shipment_id' => 'required|integer',
+            'total' => 'numeric'
+        ]);
+
+        if($validator->fails()):
+            return response([
+                'status'=>'fail',
+                'message' => "Failed to update document",
+                'error' => $validator->getMessageBag()->toArray()
+            ], 422);
         endif;
-
-        $wallet->balance -= $request->total;
-
-        $transaction = new Transaction();
-        $transaction->wallet_id = $wallet->id;
-        $transaction->amount = $request->total;
-        $transaction->type = "Debit";
-        $transaction->purpose = "Payment for ".$request->shipment_id." shipment";
-        $transaction->reference = $this->generateReference($wallet->id);
-        $transaction->status = "success";
-        $transaction->verified = true;
-
-        $payload = [
-            'rate_id' => $request->rate_id
-            //'shipment_id' => $request->shipment_id, //optional
-        ];
-        //Arrange pickup for shipment
-        $pickup = $this->logistics->arrangePickup($payload);
-        $pickup = json_decode($pickup);
-       
-        
-        if(!$pickup->status):
-            return ResponseFormatter::error("Oops!! ".$pickup?->message, 400, $pickup);
-        else:
-            $statuses = ["confirmed", "in-transit"];
-            if(in_array($pickup->data->status, $statuses)):
-                $wallet->save();
-                $transaction->save();
-
-                $response = $this->logistics->getShipment($request->shipment_id);
-                $response = json_decode($response);
-                $data = $response->data;
-
-                $shipment = Shipment::where("external_shipment_id", $request->shipment_id)->first();
-                $shipment->status = $pickup->data->status;
-                $shipment->pickup_date = $data->pickup_date;
-                $shipment->save();
-
-                /*if($data->extras):
-                    $notificationData = [
-                        "subject" => "Customer Invoice & Waybill",
-                        "title" => "Ziga Afrika Invoice & Waybill",
-                        "message" => "Customer invoice and waybill details",
-                        "attachment1" => $data->extras->commercial_invoice_url,
-                        "attachment2" => $data->extras->shipping_label_url
-                    ];
-                    $user->notify(new SendInvoice($notificationData));
-                endif;*/
-            endif;
-        endif;
-
-        return ResponseFormatter::success("Shipment arranged successfully", null, 200);
+        return ShippingService::makePayment($request);
     }
 
     public function createParcel($items, $description)
@@ -279,73 +223,9 @@ class ShippingController extends Controller
     public function createShipment(Request $request){
         
 
-        /*$payload = [
-            "address_from"=> "AD-9GXPHFVGFKY1PPXJ",
-            "address_to"=> "AD-8N1HQ62VRE7IB9XH",
-            "description"=> "white paper",
-            "items"=> [
-                [
-                    "items" => [
-                        [
-                        "name"=> "Books",
-                        "description"=> "white coloured wrapped with a cellophane paper",
-                        "type"=> "parcel",
-                        "currency"=> "NGN",
-                        "value"=> 125.50,
-                        "quantity"=> 2,
-                        "weight"=> 1,
-                        "hs_code"=> "071290"
-                        ],
-                    ],
-                    "docs" => [
-                        ["title" => "Homebook", "photo" => "https://imgcrop/savage.png"]
-                    ]
-                ],
-                [
-                    "items" => [
-                        [
-                        "name"=> "Books",
-                        "description"=> "white coloured wrapped with a cellophane paper",
-                        "type"=> "parcel",
-                        "currency"=> "NGN",
-                        "value"=> 125.50,
-                        "quantity"=> 2,
-                        "weight"=> 1,
-                        "hs_code"=> "071290"
-                        ],
-                    ],
-                    "docs" => [
-                        ["title" => "Homebook", "photo" => "https://imgcrop/savage.png"]
-                    ]
-                ],
-            ],
-            //"shipment_id" => "SH-CNZQK9GKE40ZKX2U"
-        ];
-        $request = new Request();
-        $request->merge($payload);
-
-        //Create parcel
-        $parcels = $this->createParcel($request->items, $request->description);
-        */
-
         if($request->has("shipment_id")):
-            /*$shipment = $this->logistics->updateShipment($request->shipment_id, [
-                "parcels" => array_column($parcels, "parcel_id"),
-                'address_from' => $request->address_from,
-                'address_to' => $request->address_to
-            ]);
-            $shipment = json_decode($shipment);
-            $shipment = $shipment->data;*/
             $response = $this->editShipment($request->all(), $request->description);
         else:
-            /*$shipment = $this->logistics->createShipment([
-                "parcels" => array_column($parcels, "parcel_id"),
-                'address_from' => $request->address_from,
-                'address_to' => $request->address_to
-            ]);
-            $shipment = json_decode($shipment);
-            $shipment = $shipment->data;*/
-            // $response = $this->saveShipment($request->all(), $user, $request->description);
             return ShippingService::saveShipment($request);
         endif;
         $parcels = $response["parcels"];
@@ -598,6 +478,10 @@ class ShippingController extends Controller
         $to->save();
 
         return ["parcels" => $parcels, "shipment" => $newShipment];
+    }
+
+    public function getCarriers($id){
+        return ShippingService::getCarriers($id);
     }
 
 
