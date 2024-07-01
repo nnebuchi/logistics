@@ -62,6 +62,7 @@
                                     + Add Item
                                     </button>
                                 </div>
+                                @if(count($parcel->items) > 0)
                                 <div class="p-3 bg-white">
                                     <form class="proof-of-purchase-form" data-parcel="<?=$parcelIndex?>" 
                                     action="" method="POST" enctype="multipart/form-data">
@@ -82,7 +83,7 @@
                                             </div>
                                             <div class="col-lg-5 form-group rounded p-3 parcel-doc-box" >
                                                 <label for="">Proof of Payments <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF</small></label>
-                                                <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" id="pop">
+                                                <input type="file" class="form-contro custom-input rounded-0" multiple accept="image/jpg,image/png,application/pdf" parcel-input-no="pop">
                                                 <div class="text-center pt-2">
                                                     <button type="button" parcel-id="{{$parcel->id}}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'proof_of_payments', 'pop')">Submit</button>
 
@@ -91,7 +92,7 @@
                                             </div>
                                             <div class="col-lg-5 form-group rounded p-3 parcel-doc-box">
                                                 <label for="">Rec Docs <br> <small class="text-danger">Multiple files allowed PNG, JPG, PDF </small></label>
-                                                <input type="file" class="form-contro custom-input rounded-0"multiple accept="image/jpg,image/png,application/pdf" id="rec-doc">
+                                                <input type="file" class="form-contro custom-input rounded-0"multiple accept="image/jpg,image/png,application/pdf" parcel-input-no="rec-doc">
                                                 <div class="text-center pt-2">
                                                     <button type="button" parcel-id="{{$parcel->id}}" class="btn btn-outline-primary" onclick="uploadParcelAttachment(event, 'rec_docs', 'rec-doc')">Submit</button>
 
@@ -100,6 +101,7 @@
                                         </div>
                                     </form>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     <?php endforeach; ?>

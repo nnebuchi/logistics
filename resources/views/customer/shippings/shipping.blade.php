@@ -198,6 +198,7 @@
 
     const per_page = 10;
     let current_page = 1;
+    let user_id = "<?=$user->id?>";
     let data = [];
     function getShipments(){
         const config = {
@@ -208,7 +209,7 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/user/${<?=$user->id?>}/shipments`, config)
+        axios.get(`${baseUrl}/user/${user_id}/shipments`, config)
         .then((res) => {
             data = res.data.results;
             renderData();
@@ -230,7 +231,7 @@
         }else{
             shipments.forEach(function(shipment, index){
                 $(".shipments-table tbody").append(`
-                    <tr style="cursor:pointer" data-status="${shipment.status}" data-id="${shipment.slug}">
+                    <tr data-status="${shipment.status}" data-id="${shipment.slug}">
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.title}</td>
                         <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>
@@ -244,9 +245,11 @@
                             </span>
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-primary">View</button>
-                            <button class="btn btn-sm btn-outline-primary">Edit</button>
-                            <button class="btn btn-sm btn-danger">Delete</button>
+                           
+                             <a href="${url}/shipping/track?tracking_id=${shipment.external_shipment_id}" class="btn btn-sm btn-primary" target="_blank">Track</a>
+                            
+                            <a href="${url}/shipping/${shipment.slug}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <button class="btn btn-sm btn-danger">Cancel</button>
                         </td>
                     </tr> 
                 `);

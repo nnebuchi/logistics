@@ -70,6 +70,7 @@ Route::group([
             
             Route::get('/track', [ShippingController::class, 'showTrackingForm'])->name('track-shipments');
             Route::get('/create', [ShippingController::class, 'newShipment'])->name('create-shipment');
+            Route::post('/create', [ShippingController::class, 'createShipment'])->name('add-shipment');
             Route::get('/{id}/details', [ShippingController::class, 'getShipment'])->name('get-shipment');
             Route::post('/save-parcel', [ShippingController::class, 'saveParcel'])->name('shipment.save-parcel');
             Route::post('/save-address', [ShippingController::class, 'saveAddress'])->name('shipment.save-address');

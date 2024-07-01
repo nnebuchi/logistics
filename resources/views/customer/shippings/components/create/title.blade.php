@@ -2,14 +2,14 @@
     <div class="col-xl-9 col-lg-9">
         <div class="card w-100">
             <div class="card-body">
-                <form action="{{route('shipment.create')}}" method="POST" id="title-form">
+                <form action="{{route('add-shipment')}}" method="POST" id="title-form">
                     @csrf
                     <div class="row justify-content-center">
                         <div class="col-md-10 col-sm-12 mt-sm-2">
                             <h4 style="color:#1E1E1E66">Create  New Shipment</h4>
                             <div class="w-100 mr-2">
                                 <label class="custom-input-label">Shipment Title </label>
-                                <small class="text-danger">A descriptive title helps you identify a shipment at a glance</small>
+                                <small class="text-info">A descriptive title helps you identify a shipment at a glance</small>
                                 <input type="text" name="title" placeholder="e.g June Shipment to Fayiza in Canada" class="custom-input" id="title" />
                             </div>
                             <div class="text-danger backend-msg">

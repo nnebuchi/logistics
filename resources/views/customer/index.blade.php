@@ -233,7 +233,7 @@
                             ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                             </span>
                         </td>
-                        <td class=""><a href="${url+'/shipping/'+shipment.slug}" class= "btn btn-primary">Edit <i class="fa fa-edit"> </i> </a>
+                        <td class=""><a href="${url+'/shipping/'+shipment.slug}" class= "btn btn-sm btn-primary">Edit <i class="fa fa-edit"> </i> </a>
                         </td>
                     </tr> 
                 `);
