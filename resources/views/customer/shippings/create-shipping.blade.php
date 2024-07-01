@@ -766,7 +766,7 @@
             let payload = {
                 total: formData.total,
                 rate_id: selectedCarrier.rate_id,
-                shipment_id: formData.shipment.shipment_id
+                shipment_id: shipment.shipment_id
             }
             $('#checkout .message').text('');
             // Append loader immediately
