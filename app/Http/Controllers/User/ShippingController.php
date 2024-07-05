@@ -411,6 +411,11 @@ class ShippingController extends Controller
         return ShippingService::deleteParcel($request->id);
     }
 
+    public function deleteShipment($slug){
+        return ShippingService::deleteShipment($slug);
+    }
+    
+
     public function editShipment($data, $description){
         $shipment = Shipment::where("external_shipment_id", $data["shipment_id"])->first();
         $shipment->parcels()->delete();

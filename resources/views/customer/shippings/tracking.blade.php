@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping > Track Shipment</h5>
+                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill"><a href="{{route('dashboard')}}" class="text-dark">Dashboard</a> > <a href="{{route('shippings')}}" class="text-dark">Shipping</a> > Track Shipment</h5>
                     </div>
 
 
@@ -67,6 +67,12 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
+    window.addEventListener('load', function() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const tracking_id = urlParams.get('tracking_id');
+        document.querySelector('#shipment_id').value = tracking_id
+    })
 
     function formatDate(dateString) {
         const date = new Date(dateString);

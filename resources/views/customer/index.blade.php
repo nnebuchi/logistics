@@ -1,5 +1,5 @@
 @include("customer.layouts.header")
-        <div class="container-fluid" style="background-color:#F6F6F7;">
+        <div class="container-fluid main" style="background-color:#F6F6F7;">
 
             <!--  Row 1 -->
             <div class="row">
@@ -99,7 +99,7 @@
                                             <button type="button" class="btn btn-light mr-2 mb-3 period" data-value="year">
                                                 This Year
                                             </button>
-                                            <a class="btn" href="/shippings">
+                                            <a class="mt-2 text-dark" href="{{route('shippings')}}">
                                                 See All
                                                 <img src="{{asset('assets/images/icons/move-right.svg')}}" />
                                             </a>
@@ -220,12 +220,35 @@
             `);
         }else{
             shipments.forEach(function(shipment, index){
+                let edit_btn_class = `btn btn-sm btn-outline-primary`;
+                let track_btn_class = `btn btn-sm btn-primary`;
+                let delete_btn_text;
+                let modal_text;
+                let modal_footer;
+                let modal_title;
+                if(shipment.status !== "draft" && shipment.status !== 'cancelled'){
+                    edit_btn_class+= ` disabled`;
+                    delete_btn_text = "Cancel";
+                    modal_text = `To cancel a shipement after submission, kindly send a mail to \n support@zigaafrica.com Use ${shipment.external_shipment_id} as your Shipment ID.`;
+                    modal_footer='';
+                    modal_title="Cancel Shipment ?"
+                }else{
+                    track_btn_class+= ` disabled`;
+                    delete_btn_text = "Delete";
+                    modal_text = "Are you sure you want to delete this shipment";
+                    modal_footer=`<div class="modal-footer text-center d-flex justify-content-center">
+                                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"> <i class="fa fa-arrow-left"></i> Go Back</button>
+                                <a href="${url}/shipping/${shipment.slug}/delete" class="btn btn-primary">proceed >>> </a>
+                            </div>`;
+                    modal_title="Delete Shipment ?"
+                   
+                }
                 $(".shipments-table tbody").append(`
                     <tr style="cursor:pointer">
                         <td class="">${index + 1}.</td>
                         <td class="">${shipment.title}</td>
-                        <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>
-                        <td class="">${shipment.address_to?.firstname?.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment?.address_from?.firstname ?? ""}</td>
+                        <td class="">${shipment?.address_to?.firstname ?? ""}</td>
                         
                         <td class=""> ${shipment.external_shipment_id ?shipment.external_shipment_id : ""}</td>
                         <td class="">
@@ -233,10 +256,31 @@
                             ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                             </span>
                         </td>
-                        <td class=""><a href="${url+'/shipping/'+shipment.slug}" class= "btn btn-sm btn-primary">Edit <i class="fa fa-edit"> </i> </a>
+                        <td>
+                            <a href="${url}/shipping/track?tracking_id=${shipment.external_shipment_id}" class="${track_btn_class}" >Track</a>
+                        
+                            <a href="${url}/shipping/${shipment.slug}" class="${edit_btn_class}" onclick="reloadToTrackingScreen(event)"> Edit</a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#shipment-${index}-Modal">${delete_btn_text}</button>
                         </td>
                     </tr> 
                 `);
+                
+                $(".main").append(`
+                    <div class="modal fade" id="shipment-${index}-Modal" tabindex="-1" aria-labelledby="shipment-${index}-ModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h1 class="modal-title fs-5 ms-5" id="shipment-${index}-ModalLabel">${modal_title}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                ${modal_text}
+                            </div>
+                            ${modal_footer}
+                            </div>
+                        </div>
+                    </div>
+                `)
             });
         }
     }

@@ -823,9 +823,6 @@
                     if(response?.data?.status === 'success'){
                         window.location.replace("{{route('shippings')}}") 
                     }
-                    // let message = response.data.message;
-                    // $("#checkout .message").css("color", "green").text(message);
-                    // btn.attr("disabled", true).text("Payment Successful...");
                 })
                 .catch(function(error){
                     let errors = error.response.data.error;

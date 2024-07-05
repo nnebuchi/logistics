@@ -262,6 +262,18 @@ class ShippingService
         
     }
 
+    public static function deleteShipment($slug){
+        $shipment = Shipment::where(['slug'=>$slug])->first();
+        foreach ($shipment->parcels as  $parcel) {
+            $parcel->items()->delete();
+            $parcel->attachments()->delete();
+            $parcel->delete();
+        }
+        $shipment->delete();
+        
+        return redirect()->back();
+    }
+
     public static function uploadParcelDocument(Request $request) {
         $files = $request->file("attachments");
         foreach ($files as $file) {
