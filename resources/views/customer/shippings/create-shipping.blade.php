@@ -460,6 +460,12 @@
     }
 
     const deleteParcel = async (parcelId, parcelIndex) => {
+        // Add a confirmation prompt
+        const confirmation = window.confirm("Are you sure you want to delete this parcel?");
+        if (!confirmation) {
+            return; // If the user cancels, return early and do nothing
+        }
+
         const clickedEle = document.querySelector(`#delete-parcel-${parcelId}`);
         const oldBtnHTML = clickedEle.innerHTML;
         setBtnLoading(clickedEle);
@@ -550,7 +556,7 @@
         .then(function(response){
             carriers = response.data.results.rates;
             console.log(response.data.results.rates);
-            setBtnNotLoading(clickedEle, oldBtnHTML)
+            setBtnNotLoading(clickedEle, oldBtnHTML);
             carriers.forEach((carrier, index) => {
                 $(`#chooseCarrier`).append(`
                     <label for="${carrier.rate_id}" class="radio-group d-flex justify-content-between p-2" style="overflow-x:auto;">
@@ -579,7 +585,7 @@
             $(".progress").removeClass("bg-primary");
             $(".progress").eq(4).addClass("bg-primary");
         }).catch(function(error){
-            setBtnNotLoading(submitBtn, oldBtnHTML)
+            setBtnNotLoading(clickedEle, oldBtnHTML)
             console.log(error);
             return false;
         });
