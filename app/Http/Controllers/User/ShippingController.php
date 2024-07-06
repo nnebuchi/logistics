@@ -407,6 +407,10 @@ class ShippingController extends Controller
         return ShippingService::deleteItem($request->id);
     }
 
+    public function deleteAttachment(Request $request){
+        return ShippingService::deleteAttachment($request->id);
+    }
+
     public function deleteParcel(Request $request){
         return ShippingService::deleteParcel($request->id);
     }

@@ -334,29 +334,60 @@
                     </tr>  
                 `);
             })
-            populateAttachments(parcel);
+            populateAttachments(parcel, parcelIndex);
         });
     }
 
-    const populateAttachments = (parcel) => {
+    const populateAttachments = (parcel, parcelIndex) => {
         let attachments = ``;
-        console.log(parcel.id);
         parcel?.attachments?.forEach((attachment, index)=>{
             $("#parcel-container").find(`#parcel-${parcel.id}`).find('.attached-files').append(`
-            <a href="${attachment.file}" target="_blank" class="attachment-holder" style="height: 60px; width: 60px; position: relative;">
-                <img src="${url}/assets/images/icons/file.png" alt="" height="50" class="attachment-file">
-                <div class="text-center doc-overlay">
-                    <div class="doc-download"><i class="fa fa-download"></i></div>
-                    <h6 class="doc-txt">File ${index + 1}}</h6>
-                    <h6 class="doc-txt">${attachment.file.slice(-3)}</h6>
-                </div>
-            </a>`);
+            <div class="d-flex flex-column">
+                <a href="${attachment.file}" target="_blank" class="attachment-holder mb-1" style="height: 60px; width: 60px; position: relative;">
+                    <img src="${url}/assets/images/icons/file.png" alt="" height="60" width="60" class="attachment-file">
+                    <div class="text-center doc-overlay">
+                        <div class="doc-download"><i class="fa fa-download"></i></div>
+                        <h6 class="doc-txt">File ${index + 1}</h6>
+                        <h6 class="doc-txt">${attachment.file.slice(-3)}</h6>
+                    </div>
+                </a>
+             <span href="#" class="btn btn-danger btn-sm" style="width: 60px; cursor:pointer;" onclick="deleteAttachment(event, ${parcelIndex}, ${index})"> <i class="fa fa-trash"></i></span>
+            </div>
+            `);
             
         })
-        // console.log(attachments);
-        // $("#parcel-container")
-        // $("#parcel-container").querySelector('.attached-files').innerHTML = attachments;
             
+    }
+
+    const deleteAttachment = async (event, parcelIndex, attachmentIndex) => {
+        const clickedEle = event.target;
+        let deleteBtn;
+        if(clickedEle.tagName == "A"){
+            deleteBtn = clickedEle
+        }else{
+            deleteBtn = clickedEle.parentElement;
+        }
+        
+        const oldBtnHTML = deleteBtn.innerHTML;
+        setBtnLoading(deleteBtn);
+        return await axios.get(`${url}/shipping/delete-attachment?id=${parcels[parcelIndex]?.attachments[attachmentIndex]?.id}`)
+        .then( async function(response){    
+            setBtnNotLoading(deleteBtn);
+            if(response.data.status == 'success'){
+                
+                // parcels[parcelIndex]?.attachments[attachmentIndex]
+                parcels[parcelIndex].attachments.splice(attachmentIndex, 1);
+                // console.log(parcels[parcelIndex]);
+                await updateParcelsUI()
+                populateItems();
+            }
+        }).catch(function(error){
+            setBtnNotLoading(deleteBtn, oldBtnHTML);
+            // setBtnNotLoading(submitBtn, oldBtnHTML)
+            console.log(error);
+            return false;
+            
+        });
     }
 
     const showEditModal = async (parcelIndex, itemIndex) => {

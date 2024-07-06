@@ -70,14 +70,19 @@
                                         <div class="row px-1 justify-content-between">
                                             <div class="col-12 mb-3 d-flex justify-content-left gap-1 attached-files">
                                                 @foreach($parcel->attachments as $index=>$attachment)
-                                                <a href="{{$attachment->file}}" target="_blank" class="attachment-holder" style="height: 60px; width: 60px; position: relative;">
-                                                    <img src="{{asset('assets/images/icons/file.png')}}" alt="" height="50" class="attachment-file">
-                                                    <div class="text-center doc-overlay">
-                                                        <div class="doc-download"><i class="fa fa-download"></i></div>
-                                                        <h6 class="doc-txt">File {{$index + 1}}</h6>
-                                                        <h6 class="doc-txt">{{substr($attachment->file, -3)}}</h6>
-                                                    </div>
-                                                </a>
+                                                <div class="d-flex flex-column">
+                                                    <a href="{{$attachment->file}}" target="_blank" class="attachment-holder mb-1" style="height: 60px; width: 60px; position: relative;">
+                                                        <img src="{{asset('assets/images/icons/file.png')}}" alt="" height="60" width="60" class="attachment-file">
+                                                        <div class="text-center doc-overlay">
+                                                            <div class="doc-download"><i class="fa fa-download"></i></div>
+                                                            <h6 class="doc-txt">File {{$index + 1}}</h6>
+                                                            <h6 class="doc-txt">{{substr($attachment->file, -3)}}</h6>
+                                                        </div>
+                                                    </a>
+                                                    <span href="#" class="btn btn-danger btn-sm" style="width: 60px; cursor:pointer;" onclick="deleteAttachment(event, '{{$parcelIndex}}', '{{$index}}')"> <i class="fa fa-trash"></i></span>
+                                                </div>
+                                                
+                                                
                                                 @endforeach
                                                 
                                             </div>
@@ -151,23 +156,13 @@
             </div>
             <div class="d-flex justify-content-center mt-3">
                 <div class="mr-3">
-                    <button 
-                    data-type="shipping"
-                    type="button"
-                    class="btn btn-light fs-4 fw-bold prev">
-                    <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
-                    Previous
+                    <button  data-type="shipping" type="button" class="btn btn-light fs-4 fw-bold prev"> 
+                        <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt=""> Previous
                     </button>
                 </div>
                 <div class="">
-                    <button 
-                        type="button"
-                        id="step3Btn"
-                        disabled
-                        onclick="getCarriers(event)"
-                        class="custom-btn fs-4 fw-bold">
-                    Next
-                    <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                    <button  type="button" id="step3Btn" disabled onclick="getCarriers(event)" class="custom-btn fs-4 fw-bold"> 
+                        Next <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
                     </button>
                 </div>
             </div>
