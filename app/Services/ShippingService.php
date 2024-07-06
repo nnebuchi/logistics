@@ -7,6 +7,7 @@ use App\Models\{User, Shipment, Country, Address, Parcel, Item, Attachment, Tran
 use Illuminate\Http\Request;
 use App\Util\{Logistics, ResponseFormatter};
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class ShippingService
 {  
@@ -74,7 +75,7 @@ class ShippingService
         $shipment = new Shipment;
         $shipment->user_id = $user->id;
         $shipment->title = sanitize_input($request->title);
-        $shipment->slug = slugify($shipment->title);
+        $shipment->slug = Str::random(10);
         $shipment->save();
         return redirect()->route('edit-shipment', $shipment->slug);
     }
@@ -252,6 +253,19 @@ class ShippingService
         ], 200);
     }
 
+    public static function deleteAttachment($id){
+        $attachment = Attachment::where('id', sanitize_input($id))
+        ->whereHas('shipment', function ($query) {
+            $query->where('user_id', Auth::user()->id);
+        })->first();
+
+        $attachment ->delete();
+        return Response::json([
+            'status'    => 'success',
+            'message'   => 'attachment successfully deleted'
+        ], 200);
+    }
+
     public static function deleteParcel($parcel_id){
         Item::where('parcel_id', $parcel_id)->delete();
         Parcel::where('id', $parcel_id)->delete();
@@ -260,6 +274,18 @@ class ShippingService
             'message'   => 'Parcel successfully deleted'
         ], 200);
         
+    }
+
+    public static function deleteShipment($slug){
+        $shipment = Shipment::where(['slug'=>$slug])->first();
+        foreach ($shipment->parcels as  $parcel) {
+            $parcel->items()->delete();
+            $parcel->attachments()->delete();
+            $parcel->delete();
+        }
+        $shipment->delete();
+        
+        return redirect()->back();
     }
 
     public static function uploadParcelDocument(Request $request) {

@@ -1,10 +1,10 @@
 @include("customer.layouts.header")
-        <div class="container-fluid" style="background-color:#F6F6F7;">
+        <div class="container-fluid main" style="background-color:#F6F6F7;">
             <!--  Row 1 -->
             <div class="row">
                 <div class="col">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill">Dashboard > Shipping</h5>
+                        <h5 class="card-title fw-normal bg-white py-2 px-3 rounded-pill"><a href="{{route('dashboard')}}" class="text-dark">Dashboard</a> > Shipping</h5>
                         <div class="d-flex">
                             @php
                                 $isVerified = auth()->user()->is_verified; // Assuming `verified` is the column that checks if a user is verified
@@ -119,36 +119,21 @@
 
                     <div class="d-flex justify-content-center mt-2">
                         <div class="mr-3">
-                            <button 
-                            type="button"
-                            disabled
-                            data-page=""
-                            class="btn btn-light fs-4 fw-bold paginate">
-                            <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">
-                            Previous
+                            <button  type="button" disabled data-page="" class="btn btn-light fs-4 fw-bold paginate">
+                                <img src="{{asset('assets/images/icons/auth/cil_arrow-left.svg')}}" width="20" class="mr-2" alt="">Previous
                             </button>
                         </div>
                         <div class="">
-                            <button 
-                            type="button"
-                            data-page=""
-                            class="custom-btn fs-4 fw-bold paginate">
-                            Next
-                            <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
+                            <button  type="button" data-page="" class="custom-btn fs-4 fw-bold paginate">
+                                Next <img src="{{asset('assets/images/icons/auth/cil_arrow-right.svg')}}" width="20" class="mr-2" alt="">
                             </button>
                         </div>
                     </div>
                     <!--  Pagination Starts -->
                     <div class="my-2 pl-2">
-                        Showing
-                        <span class="entries fw-semibold">. </span> to
-                        <span class="entries fw-semibold">. </span> of
-                        <span class="entries fw-semibold">. </span>
-                        shipments
+                        Showing <span class="entries fw-semibold">. </span> to <span class="entries fw-semibold">. </span> of <span class="entries fw-semibold">. </span> shipments
                     </div>
                     <!--  Pagination Ends -->
-
-
                     @include('customer.modals.broadcast-modal')
                 </div>
             </div>
@@ -156,6 +141,7 @@
         </div>
     </div>
 </div>
+
 <script src="{{asset('assets/libs/jquery/dist/jquery.min.js')}}"></script>
 <script src="{{asset('assets/js/slim.min.js')}}"></script>
 <script src="{{asset('assets/js/popper.min.js')}}"></script>
@@ -186,6 +172,10 @@
         "in-transit": "custom-bg-success",
         cancelled: "custom-bg-danger"
     };
+
+    const reloadToTrackingScreen = (event) => {
+        window.location.href=event.target.href
+    }
 
     function getIndex(per_page, current_page, index)
     {
@@ -230,12 +220,35 @@
             `);
         }else{
             shipments.forEach(function(shipment, index){
+                let edit_btn_class = `btn btn-sm btn-outline-primary`;
+                let track_btn_class = `btn btn-sm btn-primary`;
+                let delete_btn_text;
+                let modal_text;
+                let modal_footer;
+                let modal_title;
+                if(shipment.status !== "draft" && shipment.status !== 'cancelled'){
+                    edit_btn_class+= ` disabled`;
+                    delete_btn_text = "Cancel";
+                    modal_text = `To cancel a shipement after submission, kindly send a mail to \n support@zigaafrica.com Use ${shipment.external_shipment_id} as your Shipment ID.`;
+                    modal_footer='';
+                    modal_title="Cancel Shipment ?"
+                }else{
+                    track_btn_class+= ` disabled`;
+                    delete_btn_text = "Delete";
+                    modal_text = "Are you sure you want to delete this shipment";
+                    modal_footer=`<div class="modal-footer text-center d-flex justify-content-center">
+                                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"> <i class="fa fa-arrow-left"></i> Go Back</button>
+                                <a href="${url}/shipping/${shipment.slug}/delete" class="btn btn-primary">proceed >>> </a>
+                            </div>`;
+                    modal_title="Delete Shipment ?"
+                   
+                }
                 $(".shipments-table tbody").append(`
                     <tr data-status="${shipment.status}" data-id="${shipment.slug}">
                         <td class="">${getIndex(per_page, current_page, index)}.</td>
                         <td class="">${shipment.title}</td>
-                        <td class="">${shipment.address_from?.firstname?.substring(0, 15)+"..."}</td>
-                        <td class="">${shipment.address_to?.firstname?.substring(0, 15)+"..."}</td>
+                        <td class="">${shipment.address_from?.firstname?? ""}</td>
+                        <td class="">${shipment.address_to?.firstname?? ""}</td>
                         
                         <td class=""> ${shipment.external_shipment_id ?shipment.external_shipment_id : ""}</td>
                         
@@ -245,14 +258,30 @@
                             </span>
                         </td>
                         <td>
-                           
-                             <a href="${url}/shipping/track?tracking_id=${shipment.external_shipment_id}" class="btn btn-sm btn-primary" target="_blank">Track</a>
-                            
-                            <a href="${url}/shipping/${shipment.slug}" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <button class="btn btn-sm btn-danger">Cancel</button>
+                            <a href="${url}/shipping/track?tracking_id=${shipment.external_shipment_id}" class="${track_btn_class}" >Track</a>
+                        
+                            <a href="${url}/shipping/${shipment.slug}" class="${edit_btn_class}" onclick="reloadToTrackingScreen(event)"> Edit</a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#shipment-${index}-Modal">${delete_btn_text}</button>
                         </td>
                     </tr> 
                 `);
+
+                $(".main").append(`
+                    <div class="modal fade" id="shipment-${index}-Modal" tabindex="-1" aria-labelledby="shipment-${index}-ModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h1 class="modal-title fs-5 ms-5" id="shipment-${index}-ModalLabel">${modal_title}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                ${modal_text}
+                            </div>
+                            ${modal_footer}
+                            </div>
+                        </div>
+                    </div>
+                `)
             });
         }
 
@@ -286,30 +315,7 @@
         });
         
         //Add shipment ID to clipboard text
-        $(document).on("click", ".shipments-table tbody tr", function(event){
-            event.preventDefault();
-            let status = $(this).data("status");
-            if(status == "draft"){
-                // Get the data-id attribute of the clicked row
-                let shipmentId = $(this).data("id");
-                // Construct the URL
-                let url = `/shipping/${shipmentId}`;
-                //window.open(url, '_blank');  // Open the URL in a new tab
-                // Redirect to the desired page with the shipment ID
-                window.location.href = url;
-            }
-            /*// Create a temporary element to hold the text to copy
-            var $temp = $("<input>");
-            // Add the $id as the value of the temporary input element
-            $("body").append($temp);
-            $temp.val($id).select();
-            // Execute the copy command
-            document.execCommand("copy");
-            // Remove the temporary element
-            $temp.remove();
-            // Show a success message to the user
-            alert("ID copied to clipboard: " + $id);*/
-        });
+       
     });
 </script>
 @include("customer.layouts.footer")

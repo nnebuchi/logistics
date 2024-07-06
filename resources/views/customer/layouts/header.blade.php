@@ -50,7 +50,7 @@
 							<li class="sidebar-item mb-3">
 								<a class="sidebar-link" href="{{route('dashboard')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/circle-gauge.svg')}}" />
+										<img class="" src="{{asset('assets/images/sidebar/dashboard.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Dashboard</span>
 								</a>

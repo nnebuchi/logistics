@@ -42,26 +42,20 @@
 					<!-- Sidebar navigation-->
 					<nav class="sidebar-nav scroll-sidebar" data-simplebar="">
 						<ul id="sidebarnav">
-							<li class="nav-small-cap">
-								<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-								<span class="hide-menu">Home</span>
-							</li>
+							
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/circle-gauge.svg')}}" />
+										<img class="" src="{{asset('assets/images/sidebar/dashboard.svg')}}" width="20" />
 									</span>
 									<span class="hide-menu">Dashboard</span>
 								</a>
 							</li>
-							<li class="nav-small-cap">
-								<i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-								<span class="hide-menu">UI COMPONENTS</span>
-							</li>
+							
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/users')}}" aria-expanded="false">
 									<span>
-										<img style="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img width="20" style="" src="{{asset('assets/images/sidebar/users.png')}}" />
 									</span>
 									<span class="hide-menu">Customers</span>
 								</a>
@@ -69,7 +63,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/transactions')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/wallet.svg')}}" />
+										<img width="20" class="" src="{{asset('assets/images/sidebar/transactions.png')}}" />
 									</span>
 									<span class="hide-menu">Transactions</span>
 								</a>
@@ -77,7 +71,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/shippings')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img width="20" class="" src="{{asset('assets/images/sidebar/shipping.svg')}}" />
 									</span>
 									<span class="hide-menu">Shippings</span>
 								</a>
@@ -85,7 +79,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/admins')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img width="20" class="" src="{{asset('assets/images/sidebar/admins.png')}}" />
 									</span>
 									<span class="hide-menu">Subadmins</span>
 								</a>
@@ -93,7 +87,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/accounts')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/user.svg')}}" />
+										<img width="20" class="" src="{{asset('assets/images/sidebar/accounts.png')}}" />
 									</span>
 									<span class="hide-menu">Accounts</span>
 								</a>
@@ -101,7 +95,7 @@
 							<li class="sidebar-item">
 								<a class="sidebar-link" href="{{url('/admin/logout')}}" aria-expanded="false">
 									<span>
-										<img class="" src="{{asset('assets/images/icons/logout.svg')}}" />
+										<img width="20" class="" src="{{asset('assets/images/sidebar/logout.png')}}" />
 									</span>
 									<span class="hide-menu">Logout</span>
 								</a>
@@ -109,8 +103,8 @@
 						</ul>
 						<div class="unlimited-access hide-menu mb-7 mt-5">
 							<div class="">
-								<h6 class="fs-2 text-center">Copyright &copy; 2024</h6>
-								<h6 class="fs-2 text-center">Ziga Afrika All Rights Reserved</h6>
+								<h6 class="fs-2 text-center text-white">Copyright &copy; <script>document.write(new Date().getFullYear());</script></h6>
+								<h6 class="fs-2 text-center text-white">{{env('APP_NAME')}} All Rights Reserved</h6>
 							</div>
 						</div>
 						
@@ -151,42 +145,8 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<!--<div class="navbar-collapse justify-content-end px-0" id="navbarNav">
-							<ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-								<li class="nav-item dropdown">
-									<a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
-										aria-expanded="false">
-										<img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="" width="35" height="35" class="rounded-circle">
-									</a>
-									<div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
-										<div class="message-body">
-											<a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-												<i class="ti ti-user fs-6"></i>
-												<p class="mb-0 fs-3">My Profile</p>
-											</a>
-											<a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-												<i class="ti ti-mail fs-6"></i>
-												<p class="mb-0 fs-3">My Account</p>
-											</a>
-											<a href="{{url('/subadmin')}}" class="d-flex align-items-center gap-2 dropdown-item">
-												<i class="ti ti-mail fs-6"></i>
-												<p class="mb-0 fs-3">Add Subadmin</p>
-											</a>
-											<button 
-											class="d-flex align-items-center gap-2 dropdown-item"
-											type="button" data-toggle="modal" data-target="#changePasswordModal">
-												<i class="ti ti-list-check fs-6"></i>
-												<p class="mb-0 fs-3">Change Password</p>
-											</button>
-											<a href="{{url('/logout')}}" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
-										</div>
-									</div>
-								</li>
-							</ul>
-						</div>-->
+						
 					</nav>
 				</header>
-				<!--  Header End -->
 			
 		

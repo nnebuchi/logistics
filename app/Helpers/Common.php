@@ -1,10 +1,7 @@
 <?php
 
-use Laravel\Sanctum\PersonalAccessToken;
-use Illuminate\Support\Facades\Response;
+
 use Illuminate\Support\Str;
-use App\Models\Schedule;
-use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('generateOTP')) {
 
@@ -16,7 +13,7 @@ if (!function_exists('generateOTP')) {
 
     function slugify(String $string)
     {
-        return str_replace(' ', '-', $string).'-'.Str::random(5);
+        return preg_replace('/[^a-zA-Z0-9_\']/','_', $string).'-'.Str::random(5);
     }
 
     /**
