@@ -140,17 +140,20 @@ class WalletController extends Controller
     }
 
     public function paymentWebhook(Request $request)
-    {
+    {   
+        
         // Log the webhook payload
-        WebhookLog::create([
-            'event' => $request['event'],
-            'payload' => json_encode($request->all())
-        ]);
+       
         // Parse the event (which is a JSON string) as an object
         //$event = json_decode($request->getContent(), true); // Decoding JSON to array
         //Log::info('Paystack Webhook Signature Verified', $event);
 
         try{
+            WebhookLog::create([
+                'event' => $request->event ? $request->event : "Unknown",
+                'payload' => json_encode($request->all())
+            ]);
+
             if($request['event'] == "charge.success"): //If charge was successful
                 $reference = $request["data"]["reference"];
                 $trx = Transaction::where(['reference' => $reference])->first();
@@ -207,7 +210,7 @@ class WalletController extends Controller
         }catch (Exception $e) {
             // Log the error
             WebhookLog::create([
-                'event' => $request['event'],
+                'event' => $request->event ? $request->event : "Unknown",
                 'payload' => json_encode($request->all()),
                 'error_message' => $e->getMessage()
             ]);
