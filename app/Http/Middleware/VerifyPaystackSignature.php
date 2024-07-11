@@ -20,18 +20,16 @@ class VerifyPaystackSignature
         //     exit();
         // endif;
 
-        // Retrieve the request's raw body content
+       
         $input = $request->getContent();
-        // Verify the Paystack signature
+
         $paystackSecret = env('PAYSTACK_SECRET', '');
         $expectedSignature = hash_hmac('sha512', $input, $paystackSecret);
 
-        if($request->header('X-Paystack-Signature') !== $expectedSignature):
-            //Log::info('Invalid Paystack Signature', ['input' => $input]);
-            // If the signature does not match, abort with a 403 Forbidden status
-            //abort(403, 'Forbidden');
-            exit();
-        endif;
+        // if($request->header('X-Paystack-Signature') !== $expectedSignature):
+           
+        //     exit();
+        // endif;
 
         return $next($request);
     }
