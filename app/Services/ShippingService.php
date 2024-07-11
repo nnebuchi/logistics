@@ -3,7 +3,7 @@ namespace App\Services;
 
 use App\Mail\ShippingReportMail;
 use Illuminate\Support\Facades\{Mail, Response, Auth};
-use App\Models\{User, Shipment, Country, Address, Parcel, Item, Attachment, Transaction,};
+use App\Models\{User, Shipment, Country, Address, Parcel, Item, Attachment, Transaction};
 use Illuminate\Http\Request;
 use App\Util\{Logistics, ResponseFormatter};
 use Carbon\Carbon;
@@ -233,6 +233,47 @@ class ShippingService
                 $query->with(['items', 'attachments']); 
             }])->first(),
         ], 200);
+    }
+
+    public static function getAllShipment(Request $request){
+        $query = Shipment::orderByDesc("created_at")->with('address_from', 'address_to')
+        ->with(['parcels' => function ($query) {
+            $query->with(['items', 'attachments']); 
+        }]);
+
+        // Check if a combined search term is provided
+        if ($request->has('searchTerm')) {
+            $searchTerm = $request->input('searchTerm');
+
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('external_shipment_id', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filter transactions by date range
+        if ($request->has('startDate') || $request->has('endDate')) {
+            if ($request->has('startDate')) {
+                $startDate = $request->input('startDate');
+            }
+        
+            if ($request->has('endDate')) {
+                $endDate = $request->input('endDate');
+            }
+        
+            $query->where(function ($query) use ($startDate, $endDate) {
+                if (isset($startDate) && isset($endDate)) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                } elseif (isset($startDate)) {
+                    $query->where('created_at', '>=', $startDate);
+                } elseif (isset($endDate)) {
+                    $query->where('created_at', '<=', $endDate);
+                }
+            });
+        }
+
+        $shipments = $query->get();
+
+        return ResponseFormatter::success("shipments:", $shipments, 200);
     }
 
     public static function deleteItem($id){

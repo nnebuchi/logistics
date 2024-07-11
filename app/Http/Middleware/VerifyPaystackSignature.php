@@ -16,11 +16,9 @@ class VerifyPaystackSignature
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!$request->hasHeader('X-Paystack-Signature')):
-            //Log::info('Missing Paystack Signature', ['input' => $request->all()]);
-            exit();
-            //abort(403, 'Forbidden');
-        endif;
+        // if(!$request->hasHeader('X-Paystack-Signature')):
+        //     exit();
+        // endif;
 
         // Retrieve the request's raw body content
         $input = $request->getContent();

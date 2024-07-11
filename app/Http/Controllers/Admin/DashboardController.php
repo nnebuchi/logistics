@@ -13,6 +13,7 @@ use App\Util\Helper;
 use Illuminate\Support\Facades\{DB, Auth};
 use App\Util\ResponseFormatter;
 use App\Http\Requests\CreateAccount;
+use App\Services\ShippingService;
 use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
 
@@ -136,6 +137,8 @@ class DashboardController extends Controller
     {
         $user = Admin::find(Auth::user()->id);
         $shipments = Shipment::orderByDesc("created_at")->get();
+
+        // return ResponseFormatter::success("Shipments:", $shipments->get(), 200);
         
         return view('admin.shipping.shipping', compact('user', 'shipments'));
     }
@@ -160,41 +163,7 @@ class DashboardController extends Controller
     }
 
     public function getAllShipment(Request $request){
-        $query = Shipment::orderByDesc("created_at");
-
-        // Check if a combined search term is provided
-        if ($request->has('searchTerm')) {
-            $searchTerm = $request->input('searchTerm');
-
-            $query->where(function ($query) use ($searchTerm) {
-                $query->where('external_shipment_id', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        // Filter transactions by date range
-        if ($request->has('startDate') || $request->has('endDate')) {
-            if ($request->has('startDate')) {
-                $startDate = $request->input('startDate');
-            }
-        
-            if ($request->has('endDate')) {
-                $endDate = $request->input('endDate');
-            }
-        
-            $query->where(function ($query) use ($startDate, $endDate) {
-                if (isset($startDate) && isset($endDate)) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                } elseif (isset($startDate)) {
-                    $query->where('created_at', '>=', $startDate);
-                } elseif (isset($endDate)) {
-                    $query->where('created_at', '<=', $endDate);
-                }
-            });
-        }
-
-        $shipments = $query->get();
-
-        return ResponseFormatter::success("shipments:", $shipments, 200);
+       return ShippingService::getAllShipment($request);
     }
 
     public function getAllCustomers(Request $request){

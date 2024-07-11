@@ -22,9 +22,9 @@ use App\Util\Logistics;
 use Illuminate\Support\Facades\Http;
 use Exception;
 use App\Models\WebhookLog;
-use App\Notifications\SendInvoice;
 use App\Services\ShippingService;
-use App\Services\UserService;
+
+use Illuminate\Support\Facades\{Response};
 
 class ShippingController extends Controller
 {
@@ -250,14 +250,23 @@ class ShippingController extends Controller
 
 
     public function trackShipment($shipmentId){
-        $shipment = $this->logistics->trackShipment($shipmentId);
-        $shipment = json_decode($shipment);
-        $shipment = $shipment->data;
+        try {
+            $shipment = $this->logistics->trackShipment($shipmentId);
+       
+            $shipment = json_decode($shipment);
+            $shipment = $shipment->data;
 
-        $getShipping = Shipment::where("external_shipment_id", $shipmentId)->first();
-        $shipment->items = $getShipping->items;
-
-        return ResponseFormatter::success("Shipment fetched successfully:", $shipment, 200);
+            $getShipping = Shipment::where("external_shipment_id", $shipmentId)->first();
+            $shipment->items = $getShipping->items;
+            return ResponseFormatter::success("Shipment fetched successfully:", $shipment, 200);
+        } catch(\Throwable $th) {
+            return Response::json([
+                'status' => 'fail',
+                'message' => "Something went wrong",
+                'error' => $th->getMessage()
+            ], 404);
+        }
+        
     }
 
     public function createAddress(Request $request){

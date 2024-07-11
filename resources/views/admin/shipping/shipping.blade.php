@@ -38,19 +38,22 @@
                                                         <h6 class="fw-semibold mb-0">Shipping ID</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Customer (Info)</h6>
+                                                        <h6 class="fw-semibold mb-0">Customer Name</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
-                                                        <h6 class="fw-semibold mb-0">Date</h6>
+                                                        <h6 class="fw-semibold mb-0">Booking Date</h6>
                                                     </th>
-                                                    <th class="border-bottom-0">
+                                                    {{-- <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Pick Up</h6>
                                                     </th>
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Destination</h6>
-                                                    </th>
+                                                    </th> --}}
                                                     <th class="border-bottom-0">
                                                         <h6 class="fw-semibold mb-0">Status</h6>
+                                                    </th>
+                                                    <th class="border-bottom-0">
+                                                        Action
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -138,7 +141,7 @@
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
-
+    let all_shipments = [];
     flatpickr('#startDate', {
         enableTime: false,
         dateFormat: "Y-m-d H:i"
@@ -156,8 +159,10 @@
         "in-transit": "custom-bg-success",
         cancelled: "custom-bg-danger"
     };
-
+// <td class="">${shipment?.pickup_date ?? ""}</td>
+//                         <td class="">${shipment?.address_from?.line1.substring(0, 15) ?? ""+"..."}</td>
     function renderData(shipments, currentPage, perPage, totalEntries){
+        all_shipments = shipments
         $(".shipments-table tbody").empty();
         if(shipments.length == 0){
             $(".shipments-table tbody").append(`
@@ -167,22 +172,48 @@
             `);
         }else{
             shipments.forEach(function(shipment, index){
+                let view_btn_class = `btn btn-sm btn-outline-primary`;
+                let track_btn_class = `btn btn-sm btn-primary`;
+                let delete_btn_text;
+                let modal_text;
+                let modal_footer;
+                let modal_title;
+                if(shipment.status !== "draft" && shipment.status !== 'cancelled'){
+                    // view_btn_class+= ` disabled`;
+                    delete_btn_text = "Cancel";
+                    modal_text = `To cancel a shipement after submission, kindly send a mail to \n support@zigaafrica.com Use ${shipment.external_shipment_id} as your Shipment ID.`;
+                    modal_footer='';
+                    modal_title="Cancel Shipment ?"
+                }else{
+                    track_btn_class+= ` disabled`;
+                    delete_btn_text = "Delete";
+                    modal_text = "Are you sure you want to delete this shipment";
+                    modal_footer=`<div class="modal-footer text-center d-flex justify-content-center">
+                                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"> <i class="fa fa-arrow-left"></i> Go Back</button>
+                                <a href="${url}/shipping/${shipment.slug}/delete" class="btn btn-primary">proceed >>> </a>
+                            </div>`;
+                    modal_title="Delete Shipment ?"
+                   
+                }
                 $(".shipments-table tbody").append(`
-                    <tr style="cursor:pointer;font-size" data-id="${shipment.external_shipment_id}">
+                    <tr style="cursor:pointer;font-size" data-id="${shipment?.external_shipment_id}">
                         <td class="">${(currentPage - 1) * perPage + index + 1}.</td>
-                        <td class="">${shipment.external_shipment_id}</td>
+                        <td class="">${shipment?.external_shipment_id ?? ""}</td>
                         <td class="">
-                            <span class="fw-semibold">${shipment.address_from.firstname+" "+shipment.address_from.lastname}</span><br>
-                            <span>${shipment.address_from.email}</span><br>
-                            <span>${shipment.address_from.phone}</span>
+                            <span class="fw-semibold">${shipment?.address_from?.firstname+" "+shipment?.address_from?.lastname }</span><br>
                         </td>
-                        <td class="">${shipment.pickup_date ?? ""}</td>
-                        <td class="">${shipment.address_from.line1.substring(0, 15)+"..."}</td>
-                        <td class="">${shipment.address_to.line1.substring(0, 15)+"..."}</td>
+                        
+                        <td class="">${shipment?.address_to?.line1.substring(0, 15) ?? ""+"..."}</td>
                         <td class="">
-                            <span class="py-2 badge rounded-2 fw-semibold ${status[shipment.status]}">
-                            ${shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
+                            <span class="py-2 badge rounded-2 fw-semibold ${status[shipment?.status]}">
+                            ${shipment?.status.charAt(0).toUpperCase() + shipment?.status.slice(1)}
                             </span>
+                        </td>
+                        <td>
+                            <button class="${track_btn_class}" id="track-${index}" onclick="trackShipment('${shipment?.external_shipment_id}', ${index})">Track</button>
+                        
+                            <button class="${view_btn_class}"  onclick="showShipmentDetail(${index})"> View</button>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#shipment-${index}-Modal">${delete_btn_text}</button>
                         </td>
                     </tr> 
                 `);
@@ -208,8 +239,11 @@
     });
 
     //Add shipment ID to clipboard text
-    $(document).on("click", ".shipments-table tbody tr", function(event){
-        event.preventDefault();
+
+    const trackShipment = async(shipment_id, index) => {
+         let clickedBtn = document.querySelector("#track-"+index)
+        let oldBtnHTML = clickedBtn.innerHTML;
+        setBtnLoading(clickedBtn)
         let $id = $(this).data("id");
         // Create a temporary element to hold the text to copy
         var $temp = $("<input>");
@@ -231,11 +265,12 @@
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/admin/shipping/${$id}/track`, config)
+        axios.get(`${baseUrl}/admin/shipping/${shipment_id}/track`, config)
         .then((res) => {
+            setBtnNotLoading(clickedBtn, oldBtnHTML);
             let shipment = res.data.results;
             let items = "";
-            for(const item of shipment.items){
+            for(const item of shipment?.items){
                 items += `<div class="mt-2">
                     <div class="d-flex justify-content-between">
                         <p class="m-0">Item: <span class="fw-semibold">${item.name}</span></p>
@@ -250,24 +285,24 @@
             $("#shipmentData").empty();
             $("#shipmentData").append(`
                 <div class="p-2" style="border-radius:10px;border:1px solid #bbb">
-                    <h4>${shipment.shipment_id}</h4>
+                    <h4>${shipment?.shipment_id}</h4>
                 </div>
                 <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
                     <h5>Customer Details</h5>
                     <div class="px-2 small">
-                        <p class="m-0">Name: <span class="fw-semibold">${shipment.address_from.first_name+" "+shipment.address_from.last_name}</span></p>
-                        <p class="m-0">Email: <span class="fw-semibold">${shipment.address_from.email}</span></p>
-                        <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_from.phone}</span></p>
-                        <p class="m-0">Address: <span class="fw-semibold">${shipment.address_from.line1}</span></p>
+                        <p class="m-0">Name: <span class="fw-semibold">${shipment?.address_from?.first_name+" "+shipment?.address_from?.last_name}</span></p>
+                        <p class="m-0">Email: <span class="fw-semibold">${shipment?.address_from?.email}</span></p>
+                        <p class="m-0">Phone: <span class="fw-semibold">${shipment?.address_from?.phone}</span></p>
+                        <p class="m-0">Address: <span class="fw-semibold">${shipment?.address_from?.line1}</span></p>
                     </div>
                 </div>
                 <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
                     <h5>Delivery Details</h5>
                     <div class="px-2 small">
-                        <p class="m-0">Name: <span class="fw-semibold">${shipment.address_to.first_name+" "+shipment.address_to.last_name}</span></p>
-                        <p class="m-0">Email: <span class="fw-semibold">${shipment.address_to.email}</span></p>
-                        <p class="m-0">Phone: <span class="fw-semibold">${shipment.address_to.phone}</span></p>
-                        <p class="m-0">Address: <span class="fw-semibold">${shipment.address_to.line1}</span></p>
+                        <p class="m-0">Name: <span class="fw-semibold">${shipment?.address_to?.first_name+" "+shipment?.address_to?.last_name}</span></p>
+                        <p class="m-0">Email: <span class="fw-semibold">${shipment?.address_to?.email}</span></p>
+                        <p class="m-0">Phone: <span class="fw-semibold">${shipment?.address_to?.phone}</span></p>
+                        <p class="m-0">Address: <span class="fw-semibold">${shipment?.address_to?.line1}</span></p>
                     </div>
                 </div>
                 <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
@@ -279,7 +314,64 @@
             `);
             $("#shipmentDataModal").modal("show");
         });
-    });
+    }
+    // $(document).on("click", ".shipments-table tbody tr", function(event){
+       
+    // });
+
+    const showShipmentDetail = (index) => {
+        let shipment =  all_shipments[index];
+        console.log(shipment);
+        let items = "";
+        if(shipment.parcels){
+            for(const parcel of shipment?.parcels){
+                for(const item of parcel.items){
+                    items += `<div class="mt-2">
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Item: <span class="fw-semibold">${item.name}</span></p>
+                            <p class="m-0">Weight: <span class="fw-semibold">${item.weight}Kg</span></p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="m-0">Quantity: <span class="fw-semibold">${item.quantity}pieces</span></p>
+                            <p class="m-0">Value: <span class="fw-semibold">₦${parseFloat(item.value).toLocaleString()}</span></p>
+                        </div>
+                    </div>`;
+                }
+            }
+        }
+        
+        $("#shipmentData").empty();
+        $("#shipmentData").append(`
+            <div class="p-2" style="border-radius:10px;border:1px solid #bbb">
+                <h4>${all_shipments[index].external_shipment_id}</h4>
+            </div>
+            <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                <h5>Customer Details</h5>
+                <div class="px-2 small">
+                    <p class="m-0">Name: <span class="fw-semibold">${all_shipments[index].address_from?.firstname+" "+all_shipments[index].address_from?.last_name}</span></p>
+                    <p class="m-0">Email: <span class="fw-semibold">${all_shipments[index].address_from?.email}</span></p>
+                    <p class="m-0">Phone: <span class="fw-semibold">${all_shipments[index].address_from?.phone}</span></p>
+                    <p class="m-0">Address: <span class="fw-semibold">${all_shipments[index].address_from?.line1}</span></p>
+                </div>
+            </div>
+            <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                <h5>Delivery Details</h5>
+                <div class="px-2 small">
+                    <p class="m-0">Name: <span class="fw-semibold">${all_shipments[index].address_to?.firstname+" "+all_shipments[index].address_to?.last_name}</span></p>
+                    <p class="m-0">Email: <span class="fw-semibold">${all_shipments[index].address_to?.email}</span></p>
+                    <p class="m-0">Phone: <span class="fw-semibold">${all_shipments[index].address_to?.phone}</span></p>
+                    <p class="m-0">Address: <span class="fw-semibold">${all_shipments[index].address_to?.line1}</span></p>
+                </div>
+            </div>
+            <div class="p-2 mt-2" style="border-radius:10px;border:1px solid #bbb">
+                <h5>Shipment Details</h5>
+                <div class="px-2 small">
+                    ${items}
+                </div>
+            </div>
+        `);
+        $("#shipmentDataModal").modal("show");
+    }
 
     $("#shipmentDataModal .close").on("click", function(){
         $("#shipmentDataModal").modal("hide");

@@ -18,10 +18,13 @@
 		<link rel="stylesheet" href="{{asset('assets/css/main.css')}}" />
 		<link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}" />
 		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<?php date_default_timezone_set("Africa/Lagos"); ?>
 		<script>
 			var url = "{{url('/')}}";
 		</script>
+		
+		<script src="{{asset('assets/plugins/buchi.js')}}"></script>
 	</head>
 	<body>
 		<!--  Body Wrapper -->
