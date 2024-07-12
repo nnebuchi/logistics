@@ -73,6 +73,7 @@ Route::group([
             Route::post('/create', [ShippingController::class, 'createShipment'])->name('add-shipment');
             Route::get('/{id}/details', [ShippingController::class, 'getShipment'])->name('get-shipment');
             Route::post('/save-parcel', [ShippingController::class, 'saveParcel'])->name('shipment.save-parcel');
+            Route::post('/delete-parcel', [ShippingController::class, 'deleteParcel'])->name('shipment.delete-parcel');
             Route::post('/save-address', [ShippingController::class, 'saveAddress'])->name('shipment.save-address');
             Route::get('/{id}/carriers', [ShippingController::class, 'getCarriers'])->name('shipment.create');
             Route::post('/add-item', [ShippingController::class, 'saveItem'])->name('item.create');
