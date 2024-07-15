@@ -33,4 +33,9 @@ class Item extends Model
         return $this->belongsTo(Parcel::class);
     }
 
+    public function getQuantityAttribute($value)
+    {
+        return (int) $value;
+    }
+
 }

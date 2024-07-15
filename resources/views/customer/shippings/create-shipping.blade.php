@@ -41,7 +41,7 @@
 <script src="{{asset('assets/js/shipping/validate.js')}}"></script>
 <script src="{{asset('assets/js/shipping/countries.js')}}"></script>
 <script src="{{asset('assets/js/shipping/categories.js')}}"></script>
-<script src="{{asset('assets/js/shipping/parrcels.js')}}"></script>
+{{-- <script src="{{asset('assets/js/shipping/parcels.js')}}"></script> --}}
 <script>
     var parcels = [];
     var shipment = {};
