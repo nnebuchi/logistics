@@ -221,6 +221,7 @@ to your wallet using the account details above</p>
 <script>
     let token = $("meta[name='csrf-token']").attr("content");
     let baseUrl = $("meta[name='base-url']").attr("content");
+    const user_id = "{{$user->id}}"
 
     flatpickr('#startDate', {
         enableTime: false,
@@ -241,7 +242,7 @@ to your wallet using the account details above</p>
                 "X-Requested-With": "XMLHttpRequest"
             }
         };
-        axios.get(`${baseUrl}/user/${<?=$user->id?>}/wallet`, config)
+        axios.get(`${baseUrl}/user/${user_id}/wallet`, config)
         .then((res) => {
             let data = res.data.results;
             console.log(data);
@@ -288,13 +289,14 @@ to your wallet using the account details above</p>
             `);
         }else{
             transactions.forEach(function(transaction, index){
+                const status_color = transaction?.type === "credit" || transaction?.type === "Credit" ? "success":"danger"
                 $(".transactions-table tbody").append(`
                     <tr style="cursor:pointer">
                         <td scope="row">${getIndex(per_page, current_page, index)}.</td>
-                        <td scope="row"><b>₦</b>${transaction?.amount}</td>
+                        <td scope="row"><b>₦</b>${formatCurrency(transaction?.amount, 2)}</td>
                         <td scope="row">${transaction?.created_at}</td>
                         <td scope="row">${transaction?.purpose}</td>
-                        <td scope="row">${transaction?.type}</td>
+                        <td scope="row"><span class="badge badge-${status_color}">${transaction?.type}</span></td>
                         <td scope="row">
                             <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
                                 ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
@@ -350,7 +352,7 @@ to your wallet using the account details above</p>
         };
         const inputs = {amount: $('#paymentForm #amount').val()}
         try {
-            const response = await axios.post(`${baseUrl}/user/${<?=$user->id?>}/transaction`, inputs, config);
+            const response = await axios.post(`${baseUrl}/user/${user_id}/transaction`, inputs, config);
             let results = response.data.results;
             let handler = PaystackPop.setup({
                 key: results.key, 
@@ -421,12 +423,12 @@ to your wallet using the account details above</p>
                 let startDate = $("#startDate").val();
                 let endDate = $("#endDate").val();
                 $(".trx-filter div span").text("Date");
-                filterTrx(`${baseUrl}/user/${<?=$user->id?>}/transactions?${key}=${true}&startDate=${startDate}&endDate=${endDate}`)
+                filterTrx(`${baseUrl}/user/${user_id}/transactions?${key}=${true}&startDate=${startDate}&endDate=${endDate}`)
                 break;
             default:
                 var value = $(this).data("value");
                 $(".trx-filter div span").text(value);
-                filterTrx(`${baseUrl}/user/${<?=$user->id?>}/transactions?${key}=${value}`)
+                filterTrx(`${baseUrl}/user/${user_id}/transactions?${key}=${value}`)
         }
         //$(".dropdown-menu").removeClass("show");  //Hide the dropdown menu
         /**/

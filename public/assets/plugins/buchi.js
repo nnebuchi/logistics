@@ -174,3 +174,23 @@ const togglePasswordReveal = (revealIconId, passwordFieldId) => {
         $("#"+revealIconId).html("<i class='bi-eye-slash'></i>");
     }
 }
+
+const formatCurrency = (number, decimalPlaces = 2) => {
+    // Handle non-numeric input
+    if (isNaN(number)) {
+      return "Invalid Number";
+    }
+  
+    // Convert to absolute value
+    const absNumber = Math.abs(number);
+  
+    // Separate the integer and decimal parts
+    const integerPart = Math.floor(absNumber).toString();
+    const decimalPart = (absNumber % 1).toFixed(decimalPlaces).substring(2);
+  
+    // Add comma separators for thousands
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  
+    // Combine integer and decimal parts
+    return `${formattedInteger}${decimalPart.length > 0 ? "." : ""}${decimalPart}`;
+  }

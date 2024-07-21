@@ -454,7 +454,7 @@ class ShippingService
         $transaction->wallet_id = $wallet->id;
         $transaction->amount = $request->total;
         $transaction->type = "Debit";
-        $transaction->purpose = "Payment for ".$request->shipment_id." shipment";
+        $transaction->purpose = env("APP_NAME")." Payment for shipment id:".$request->shipment_id;
         $transaction->reference = generateReference($wallet->id);
         $transaction->status = "success";
         $transaction->verified = true;
