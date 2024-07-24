@@ -194,8 +194,8 @@
             `);
         }else{
             transactions.forEach(function(transaction, index){
-                let name = transaction.wallet.user.firstname+" "+transaction.wallet.user.lastname;
-                const userCard = (transaction.wallet.user.photo == null ) ? `
+                let name = transaction?.wallet?.user?.firstname+" "+transaction?.wallet?.user?.lastname;
+                const userCard = (transaction?.wallet?.user?.photo == null ) ? `
                     <td scope="row">
                         <div class="user-card">
                             <div class="user-avatar ${status[transaction.status]}">
@@ -212,7 +212,7 @@
                     <td scope="row">
                         <div class="user-card">
                             <div class="user-avatar">
-                                <img src="${transaction.wallet.user.photo}" class="w-100 h-100">
+                                <img src="${transaction?.wallet?.user?.photo}" class="w-100 h-100">
                             </div>
                             <div class="user-name">
                                 <span class="fw-normal">${name}</span>                        
@@ -224,12 +224,12 @@
                 $(".trx-table tbody").append(`
                     <tr style="cursor:pointer">
                         <td scope="row">${getIndex(per_page, current_page, index)}.</td>
-                        <td scope="row"><b>${transaction.wallet.user.email}</b></td>
-                        <td scope="row">${transaction.reference}</td>
-                        <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
-                        <td scope="row">${transaction.updated_at}</td>
-                        <td scope="row">${transaction.purpose}</td>
-                        <td scope="row">${transaction.type}</td>
+                        <td scope="row"><b>${transaction?.wallet?.user?.email}</b></td>
+                        <td scope="row">${transaction?.reference}</td>
+                        <td scope="row"><b>₦</b>${transaction?.amount?.toLocaleString()}</td>
+                        <td scope="row">${transaction?.updated_at}</td>
+                        <td scope="row">${transaction?.purpose}</td>
+                        <td scope="row">${transaction?.type}</td>
                         <td scope="row">
                             <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
                             ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
