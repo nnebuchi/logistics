@@ -550,7 +550,7 @@
                             <p>Delivery: ${carrier.delivery_time}</p>
                         </div>
                         <div class="d-flex align-items-center" style="min-width:200px">
-                            <p><b>₦</b>${carrier.amount}</p>
+                            <p><b>₦</b>${formatCurrency(carrier.amount)}</p>
                         </div>
                         <div class="d-flex align-items-center" style="min-width:100px">
                             <div class="dots-line rounded-circle d-flex align-items-center justify-content-center" style="height:20px;width:20px;border:2px solid #233E8366;">

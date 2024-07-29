@@ -421,6 +421,8 @@ class ShippingService
         ]);
         $rates = json_decode($rates);
         $rates = $rates->data;
+        
+        array_map(fn($rate) => $rate->amount = (float)$rate->amount + (float)$rate->amount * (Auth::user()->account->markup_price/100), $rates);
 
         $data = [
             "parcels" => $parcels,

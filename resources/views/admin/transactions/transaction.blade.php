@@ -194,7 +194,13 @@
             `);
         }else{
             transactions.forEach(function(transaction, index){
-                let name = transaction?.wallet?.user?.firstname+" "+transaction?.wallet?.user?.lastname;
+                let name = transaction?.wallet?.user?.firstname ? 
+                            transaction?.wallet?.user?.firstname+" "+transaction?.wallet?.user?.lastname : 
+                            "";
+
+                let email = transaction?.wallet?.user?.email ? 
+                            transaction?.wallet?.user?.email : 
+                            "";
                 const userCard = (transaction?.wallet?.user?.photo == null ) ? `
                     <td scope="row">
                         <div class="user-card">
@@ -224,7 +230,7 @@
                 $(".trx-table tbody").append(`
                     <tr style="cursor:pointer">
                         <td scope="row">${getIndex(per_page, current_page, index)}.</td>
-                        <td scope="row"><b>${transaction?.wallet?.user?.email}</b></td>
+                        <td scope="row"><b>${email}</b></td>
                         <td scope="row">${transaction?.reference}</td>
                         <td scope="row"><b>₦</b>${transaction?.amount?.toLocaleString()}</td>
                         <td scope="row">${transaction?.updated_at}</td>

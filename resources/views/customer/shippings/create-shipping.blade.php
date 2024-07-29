@@ -564,7 +564,7 @@
                             <p>Delivery: ${carrier.delivery_time}</p>
                         </div>
                         <div class="d-flex align-items-center" style="min-width:200px">
-                            <p><b>₦</b>${carrier.amount}</p>
+                            <p><b>₦</b>${formatCurrency(carrier.amount)}</p>
                         </div>
                         <div class="d-flex align-items-center" style="min-width:100px">
                             <div class="dots-line rounded-circle d-flex align-items-center justify-content-center" style="height:20px;width:20px;border:2px solid #233E8366;">
@@ -798,16 +798,16 @@
             });
 
             // Given values
-            const subtotal = selectedCarrier.amount;
-            const subchargePercentage = <?=$user->account->markup_price?>;
-            const subcharge = (subtotal * subchargePercentage) / 100;
-            const total = subtotal + subcharge;
+            // const subtotal = selectedCarrier.amount;
+            // const subchargePercentage = <?=$user->account->markup_price?>;
+            // const subcharge = (subtotal * subchargePercentage) / 100;
+            // const total = subtotal + subcharge;
             // Format values to 2 significant figures
-            const formattedSubcharge = Number(subcharge.toFixed(2));
-            const formattedTotal = Number(total.toFixed(2));
+            // const formattedSubcharge = Number(subcharge.toFixed(2));
+            const formattedTotal =formatCurrency(selectedCarrier.amount)
             formData.total = formattedTotal;
             $('#checkout').find(".total").text("₦"+formattedTotal);
-            $('#checkout').find(".subcharge").text("₦"+formattedSubcharge);
+            // $('#checkout').find(".subcharge").text("₦"+formattedSubcharge);
 
             currentStep.hide();
             nextStep.show();

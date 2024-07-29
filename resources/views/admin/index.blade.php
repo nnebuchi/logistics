@@ -219,11 +219,11 @@
 
         $(".transactions-table tbody").empty();
         transactions.forEach(function(transaction, index){
-            let name = transaction.wallet.user.firstname+" "+transaction.wallet.user.lastname;
-            const userCard = (transaction.wallet.user.photo == null ) ? `
+            let name = transaction?.wallet?.user?.firstname+" "+transaction?.wallet?.user?.lastname;
+            const userCard = (transaction?.wallet?.user?.photo == null ) ? `
                 <td scope="row">
                     <div class="user-card">
-                        <div class="user-avatar ${status[transaction.status]}">
+                        <div class="user-avatar ${status[transaction?.status]}">
                             <span>${getInitials(name)}</span>
                         </div>
                         <div class="user-name">
@@ -237,7 +237,7 @@
                 <td scope="row">
                     <div class="user-card">
                         <div class="user-avatar">
-                            <img src="${transaction.wallet.user.photo}" class="w-100 h-100">
+                            <img src="${transaction?.wallet?.user?.photo}" class="w-100 h-100">
                         </div>
                         <div class="user-name">
                             <span class="fw-normal">${name}</span>                        
@@ -249,11 +249,11 @@
             $(".transactions-table tbody").append(`
                 <tr>
                     ${userCard}
-                    <td scope="row"><b>₦</b>${transaction.amount.toLocaleString()}</td>
-                    <td scope="row">${transaction.created_at}</td>
+                    <td scope="row"><b>₦</b>${transaction?.amount?.toLocaleString()}</td>
+                    <td scope="row">${transaction?.created_at}</td>
                     <td scope="row">
-                        <span class="py-2 badge rounded-2 fw-semibold ${status[transaction.status]}">
-                        ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                        <span class="py-2 badge rounded-2 fw-semibold ${status[transaction?.status]}">
+                        ${transaction?.status?.charAt(0).toUpperCase() + transaction?.status.slice(1)}
                         </span>
                     </td>
                 </tr>  
