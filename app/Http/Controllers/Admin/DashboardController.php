@@ -4,16 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Admin;
-use App\Models\User;
-use App\Models\Account;
-use App\Models\Shipment;
-use App\Models\Transaction;
+use App\Models\{Admin, User, Account, Shipment, Transaction, Wallet};
 use App\Util\Helper;
 use Illuminate\Support\Facades\{DB, Auth};
 use App\Util\ResponseFormatter;
 use App\Http\Requests\CreateAccount;
-use App\Models\Wallet;
 use App\Services\ShippingService;
 use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
@@ -23,8 +18,6 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Admin::find(Auth::user()->id);
-        dd(User::find("7"));
-        dd(Wallet::with('user')->where('user_id', '7')->first());
         $transactions = Transaction::with(['wallet', 'user'])->orderByDesc("created_at")->get();
         // dd($transactions);
         $statistics = [
