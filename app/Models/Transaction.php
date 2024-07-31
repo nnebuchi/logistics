@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use \Znck\Eloquent\Traits\BelongsToThrough;
 
 class Transaction extends Model
 {
     use HasFactory;
+    use BelongsToThrough;
 
     protected $fillable = [
         "wallet_id",
@@ -49,11 +51,17 @@ class Transaction extends Model
 
     public function shipments()
     {
-        return $this->hasOne(Shipping::class, "transaction_id");
+        return $this->hasOne(Shipment::class, "transaction_id");
     }
 
     public function wallet()
     {
         return $this->belongsTo(Wallet::class, "wallet_id");
     }
+
+    public function user()
+    {
+        return $this->belongsToThrough(User::class, [Wallet::class]);
+    }
+    
 }

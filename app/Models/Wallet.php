@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToUser;
+// use App\Traits\BelongsToUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Wallet extends Model
 {
     use HasFactory;
-    use BelongsToUser;
+    // use BelongsToUser;
 
     protected $fillable = [
         "user_id",
@@ -34,5 +34,9 @@ class Wallet extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class, "wallet_id");
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }

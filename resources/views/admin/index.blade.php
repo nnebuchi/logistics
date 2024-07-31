@@ -11,7 +11,7 @@
                                 Send Broadcast
                             </button>
                             <a href="{{url('/admin/users')}}" class="btn btn-primary rounded-0">
-                                <img src="{{asset('assets/images/icons/user-plus-light.svg')}}" />
+                                <img src="{{asset('assets/images/sidebar/users.png')}}" width="20" />
                                 Customers
                             </a>
                         </div>
@@ -219,7 +219,7 @@
 
         $(".transactions-table tbody").empty();
         transactions.forEach(function(transaction, index){
-            let name = transaction?.wallet?.user?.firstname+" "+transaction?.wallet?.user?.lastname;
+            let name =  transaction?.wallet?.user?.firstname ? transaction?.wallet?.user?.firstname+" "+transaction?.wallet?.user?.lastname :"";
             const userCard = (transaction?.wallet?.user?.photo == null ) ? `
                 <td scope="row">
                     <div class="user-card">
