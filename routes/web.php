@@ -134,46 +134,44 @@ Route::post('/admin/login', [AdminAuthController::class, 'login']);
 Route::post('/admin/forgot-password', [AdminAuthController::class, 'forgotPassword']);
 Route::post('/admin/reset-password', [AdminAuthController::class, 'resetPassword']);
 
-Route::group([
-    'middleware' => [
-        'ziga.admin.auth:admin', 
-        'verified'
-    ]
-], function () {
-    Route::get('/admin/logout', [AdminAuthController::class, 'logOut']);
-
-    Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-
-    Route::get('/admin/users', [AdminDashboardController::class, 'showUsers'])->name('admin.users');
-    Route::get('/admin/users/{uuid}', [AdminDashboardController::class, 'showUser'])->name('admin.user');
-    Route::get('/admin/users/{uuid}/verify-kyc', [AdminController::class, 'verifyCustomerAccount']);
-
-    Route::get('/admin/shippings', [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
-    Route::get('/admin/transactions', [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
-    Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
-
-    Route::get('/admin/accounts', [AdminDashboardController::class, 'showAccounts']);
-    Route::get('/admin/get-all-shippings', [AdminDashboardController::class, 'getAllShipment']);
-
-    Route::get('/admin/get-all-customers', [AdminDashboardController::class, 'getAllCustomers']);
-    Route::get('/admin/customer/{userId}', [AdminDashboardController::class, 'getUserData']);
-    Route::delete('/admin/customer/{userId}', [AdminDashboardController::class, 'deleteCustomer']);
-
+Route::group(['middleware' => ['ziga.admin.auth:admin', 'verified']], function () {
     Route::post('/account', [AdminDashboardController::class, 'createAccount'])->name("account.create");
     Route::post('/account/{accountId}', [AdminDashboardController::class, 'updateAccount']);
-
-    Route::get('/admin/admins', [AdminDashboardController::class, 'showAdmins']);
-    Route::get('/admin/{userId}', [AdminDashboardController::class, 'getAdminData']);
-    Route::post('/admin', [AdminController::class, 'createAdmin'])->name("subadmin.create");
-    Route::post('/admin/{adminId}', [AdminController::class, 'updateAdmin']);
-
     Route::get('/get-chart-data', [AdminDashboardController::class, 'getChartData']);
-
     Route::get('impersonate/{user_id}', [ImpersonateController::class, 'impersonate'])->name('impersonate');
+    Route::group(['prefix' => 'admin'], function(){
+        Route::get('/logout', [AdminAuthController::class, 'logOut']);
 
-    Route::get('/admin/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
+        Route::get('', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    
+        Route::get('/users', [AdminDashboardController::class, 'showUsers'])->name('admin.users');
+        Route::get('/users/{uuid}', [AdminDashboardController::class, 'showUser'])->name('admin.user');
+        Route::get('/users/{uuid}/verify-kyc', [AdminController::class, 'verifyCustomerAccount']);
+    
+        Route::get('/shippings', [AdminDashboardController::class, 'showShippings'])->name('admin.shippings');
+        Route::get('/transactions', [AdminDashboardController::class, 'showTransactions'])->name('admin.transactions');
+        Route::get('admin/get-all-transactions', [AdminDashboardController::class, 'getTransactions']);
+    
+        Route::get('/accounts', [AdminDashboardController::class, 'showAccounts']);
+        Route::get('/get-all-shippings', [AdminDashboardController::class, 'getAllShipment']);
+    
+        Route::get('/get-all-customers', [AdminDashboardController::class, 'getAllCustomers']);
+        Route::get('/customer/{userId}', [AdminDashboardController::class, 'getUserData']);
+        Route::delete('/customer/{userId}', [AdminDashboardController::class, 'deleteCustomer']);
+        Route::get('/admins', [AdminDashboardController::class, 'showAdmins']);
+        Route::get('/{userId}', [AdminDashboardController::class, 'getAdminData']);
+        Route::post('', [AdminController::class, 'createAdmin'])->name("subadmin.create");
+        Route::post('/{adminId}', [AdminController::class, 'updateAdmin']);
 
-    Route::post('/admin/customer/vitual-account/{userId}', [AdminController::class, 'updateUserVirtualAccount'])->name("virtual-account.save");
+        Route::get('/shipping/{shipmentId}/track', [ShippingController::class, 'trackShipment']);
 
-    Route::post('/admin/customer/send-notification', [AdminController::class, 'broadcastToCustomer'])->name("broadcast.send");
+        Route::post('/customer/vitual-account/{userId}', [AdminController::class, 'updateUserVirtualAccount'])->name("virtual-account.save");
+
+        Route::post('/customer/send-notification', [AdminController::class, 'broadcastToCustomer'])->name("broadcast.send");
+    });
+   
+
+   
+
+    
 });

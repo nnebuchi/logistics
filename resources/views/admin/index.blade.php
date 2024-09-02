@@ -249,7 +249,7 @@
             $(".transactions-table tbody").append(`
                 <tr>
                     ${userCard}
-                    <td scope="row"><b>₦</b>${transaction?.amount?.toLocaleString()}</td>
+                    <td scope="row"><b>₦</b>${formatCurrency(transaction?.amount)}</td>
                     <td scope="row">${transaction?.created_at}</td>
                     <td scope="row">
                         <span class="py-2 badge rounded-2 fw-semibold ${status[transaction?.status]}">

@@ -9,7 +9,7 @@
         <meta name="theme-color" content="" />
         <meta name="apple-mobile-web-app-status-bar-style" content="" />
         <title>Ziga Afrika Dashboard</title>
-        <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
+        <link rel="shortcut icon" type="image/jpg" href="{{asset('assets/images/logos/favicon.jpg')}}" />
         <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}" />

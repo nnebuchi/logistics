@@ -18,7 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Admin::find(Auth::user()->id);
-        $transactions = Transaction::with(['wallet', 'user'])->orderByDesc("created_at")->get();
+        $transactions = Transaction::with('wallet.user')->orderByDesc("created_at")->get();
         // dd($transactions);
         $statistics = [
             "customers_count" => User::count(),

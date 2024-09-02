@@ -14,7 +14,7 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script src="{{asset('assets/libs/sweetalert2/sweetalert2.all.js')}}"></script>
-        <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
+        <link rel="shortcut icon" type="image/jpg" href="{{asset('assets/images/logos/favicon.jpg')}}" />
         <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
         <link rel="stylesheet" href="{{asset('assets/libs/sweetalert2/sweetalert2.css')}}" />
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

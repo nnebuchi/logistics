@@ -20,7 +20,7 @@
             </div>
 
             <div style="background-color: #cedee4; border-radius: 35px; padding: 5% 4%; margin-top: 5%; text-align: center;">
-                <img src="{{asset('assets/images/logos/favicon.png')}}" style="display: block; margin-left: auto; margin-right: auto; margin-bottom: 3%; width: 30px;" alt="">
+                <img src="{{asset('assets/images/logos/favicon.jpg')}}" style="display: block; margin-left: auto; margin-right: auto; margin-bottom: 3%; width: 30px;" alt="">
                 <p>For support, contact us via <a href="mailto:support@dinma.com">support@dinma.com</a></p>
                 <p style="text-align: center;">© <script>document.write(new Date().getFullYear())</script> {{ env('APP_NAME') }}. All rights reserved.</p>
             </div>
