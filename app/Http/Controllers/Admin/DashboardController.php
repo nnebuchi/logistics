@@ -159,6 +159,22 @@ class DashboardController extends Controller
         return ResponseFormatter::success("users:", $users, 200);
     }
 
+    public function updateCustomer(Request $request){
+        $request->validate([
+            'user_id' => 'required',
+        ]);
+        $customer = User::where('id', $request->user_id)->first();
+        if($customer){
+            foreach ($request->all() as $key => $value) {
+                if($key != 'user_id' && $key != 'password'){
+                    $customer->{$key} = $value;
+                } 
+            }
+            $customer->save();
+        }
+        return ResponseFormatter::success("success", $customer, 200);
+    }
+
     public function getAllShipment(Request $request){
        return ShippingService::getAllShipment($request);
     }

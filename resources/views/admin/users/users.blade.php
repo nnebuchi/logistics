@@ -333,6 +333,11 @@
     $(document).on("click", ".edit-user", function(event){
         event.preventDefault();
         const userId = $(this).data("id");
+       
+        document.querySelector("#userModal").querySelector("[name=user_id]").value = userId;
+        
+        // document.querySelector("#userModal").querySelector("[name=user_id]").value = userId
+        
         const config = {
             headers: {
                 Accept: "application/json",
@@ -346,23 +351,32 @@
             let user = res.data.results;
 
             let userData = $("#userModal input");
-            userData.eq(0).val(user?.firstname+" "+user?.lastname);
-            userData.eq(1).val(user?.email);
-            userData.eq(2).val(user?.phone);
-            userData.eq(3).val(user?.country);
-            let fields = [
-                {field: userData.eq(4), value: user?.wallet?.bank_name},
-                {field: userData.eq(5), value: user?.wallet?.account_name},
-                {field: userData.eq(6), value: user?.wallet?.account_number}
-            ];
-            fields.forEach(item => {
-                item.field.val(item.value);
-                if (item.value) {
-                    item.field.prop("readonly", true);
-                } else {
-                    item.field.prop("readonly", false); // Optional, to ensure it's not readonly if empty
-                }
-            });
+            
+            document.querySelector("#userModal").querySelector("[name=firstname]").value = user?.firstname
+            document.querySelector("#userModal").querySelector("[name=lastname]").value = user?.lastname
+            document.querySelector("#userModal").querySelector("[name=email]").value = user?.email
+            document.querySelector("#userModal").querySelector("[name=phone]").value = user?.phone
+            document.querySelector("#userModal").querySelector("[name=country]").value = user?.country
+            document.querySelector("#userModal").querySelector("[name=bank_name]").value = user?.wallet?.bank_name
+            document.querySelector("#userModal").querySelector("[name=account_name]").value = user?.wallet?.account_name
+            document.querySelector("#userModal").querySelector("[name=account_number]").value = user?.wallet?.account_number
+            // userData.eq(0).val(user?.firstname+" "+user?.lastname);
+            // userData.eq(1).val(user?.email);
+            // userData.eq(2).val(user?.phone);
+            // userData.eq(3).val(user?.country);
+            // let fields = [
+            //     {field: userData.eq(4), value: user?.wallet?.bank_name},
+            //     {field: userData.eq(5), value: user?.wallet?.account_name},
+            //     {field: userData.eq(6), value: user?.wallet?.account_number}
+            // ];
+            // fields.forEach(item => {
+            //     item.field.val(item.value);
+            //     if (item.value) {
+            //         item.field.prop("readonly", true);
+            //     } else {
+            //         item.field.prop("readonly", false); // Optional, to ensure it's not readonly if empty
+            //     }
+            // });
             $("#userModal select[name='account']").val(user?.account.id);
             $('#userModal .avatar').attr("src", user?.photo);
             $("#userModal").modal("show");
